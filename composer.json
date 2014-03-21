@@ -1,0 +1,12 @@
+{
+    "name": "IISH/presentornot",
+    "description": "Present or not",
+    "minimum-stability": "stable",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Gordan Gupac",
+            "email": "gcu@iisg.nl"
+        }
+    ]
+}

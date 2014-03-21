@@ -1,0 +1,4 @@
+settings.inc.php
+*.ipr
+*.iml
+.idea
