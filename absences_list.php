@@ -41,7 +41,7 @@ if ( $selectedYear == '' ) {
 	$selectedYear = date("Y");
 }
 
-// TODOTODO: in vakantie.php moet url gedisabled worden als min/max bereikt is
+// TODOTODO: in absences.php moet url gedisabled worden als min/max bereikt is
 if ( $selectedYear < date("Y") ) {
 	$selectedYear = date("Y");
 	$selectedMonth = 1;
@@ -54,7 +54,7 @@ $daysInCurrentMonth = cal_days_in_month(CAL_GREGORIAN, $selectedMonth, $selected
 
 $cellWidth = 18;
 
-$arrFeestdagen = getFeestdagen($selectedYear, $selectedMonth );
+$arrHolidays = getNationalHolidays($selectedYear, $selectedMonth );
 
 if ( $to_short != 1 ) {
 
@@ -103,7 +103,7 @@ if ( $to_short != 1 ) {
 			//
 			$celValue = '&nbsp;&nbsp;';
 
-			$cellStyle = getColors($selectedYear, $selectedMonth, $i, $arrVakantie, $arrFeestdagen);
+			$cellStyle = getColors($selectedYear, $selectedMonth, $i, $arrVakantie, $arrHolidays);
 			$style .= $cellStyle["tdStyle"];
 
 			if ( $cellStyle["alt"] != '' ) {
@@ -133,7 +133,7 @@ if ( $to_short != 1 ) {
 
 		$celValue = $i;
 
-		$cellStyle = getColors($selectedYear, $selectedMonth, $i, array(), $arrFeestdagen);
+		$cellStyle = getColors($selectedYear, $selectedMonth, $i, array(), $arrHolidays);
 
 		$extrastyle .= $cellStyle["tdStyle"];
 
@@ -179,7 +179,7 @@ function calculateNrOfDaysForMonth($year, $month) {
 	return cal_days_in_month(CAL_GREGORIAN, $month, $year);
 }
 
-function getColors($selectedYear, $selectedMonth, $day, $absences = array(), $feestdagen = array()) {
+function getColors($selectedYear, $selectedMonth, $day, $absences = array(), $holidays = array()) {
 	$tdStyle = '';
 	$hrefStyle = '';
 	$alt = '';
@@ -187,18 +187,18 @@ function getColors($selectedYear, $selectedMonth, $day, $absences = array(), $fe
 	$datum = createDateAsString($selectedYear, $selectedMonth, $day);
 	$dayOfWeek = date("w", mktime(0,0,0,$selectedMonth, $day, $selectedYear));
 
-	// feestdagen
+	//
 	if ( $tdStyle == '' && $dayOfWeek != 0 && $dayOfWeek != 6 ) {
-		for ($i = 0; $i < count($feestdagen); $i++) {
-			if ( $datum == $feestdagen[$i]->getDate() ) {
-				if ( strtolower($feestdagen[$i]->getDescription()) == 'brugdag' ) {
+		for ($i = 0; $i < count($holidays); $i++) {
+			if ( $datum == $holidays[$i]->getDate() ) {
+				if ( strtolower($holidays[$i]->getDescription()) == 'brugdag' ) {
 					$tdStyle = getColor("td", "brugdag");
 					$hrefStyle = getColor("href", "brugdag");
 				} else {
-					$tdStyle = getColor("td", "feestdag");
-					$hrefStyle = getColor("href", "feestdag");
+					$tdStyle = getColor("td", "holiday");
+					$hrefStyle = getColor("href", "holiday");
 				}
-				$alt = $feestdagen[$i]->getDescription();
+				$alt = $holidays[$i]->getDescription();
 			}
 		}
 	}
@@ -243,7 +243,7 @@ function isHoliday($datum, $holidays) {
 	return false;
 }
 
-function getFeestdagen($year, $month) {
+function getNationalHolidays($year, $month) {
 	global $dbhandleTimecard, $settings;
 
 	$arr = array();
@@ -251,7 +251,7 @@ function getFeestdagen($year, $month) {
 	$query = "SELECT * FROM Feestdagen WHERE datum LIKE '" . $year . substr("0" . $month,-2) . "%' AND isdeleted=0 ";
 	$result = mssql_query($query, $dbhandleTimecard);
 	while ($row = mssql_fetch_assoc($result)) {
-		$arr[] = new class_feestdag($row["ID"], $settings);
+		$arr[] = new class_holiday($row["ID"], $settings);
 	}
 	mssql_free_result($result);
 

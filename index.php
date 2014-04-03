@@ -1,4 +1,3 @@
 <?php 
-Header("Location: present_or_not.php");
+Header("Location: presentornot.php");
 die();
-?>

@@ -5,12 +5,12 @@ require_once "classes/class_file.inc.php";
 require_once "classes/class_misc.inc.php";
 
 class class_page {
-	var $page_template;
-	var $project_settings;
-	var $content;
-	var $tab;
-	var $title;
-	var $color;
+	protected $page_template;
+	protected $project_settings;
+	protected $content;
+	protected $tab;
+	protected $title;
+	protected $color;
 
 	// TODOEXPLAIN
 	function class_page($page_template, $project_settings) {
@@ -42,10 +42,7 @@ class class_page {
 		$welcome = 'Welcome';
 		$logout = '';
 		if ( $oWebuser->isLoggedIn() ) {
-//			if ( $_SESSION["presentornot"]["name"] != '' ) {
-//            $welcome .= ', ' . $_SESSION["presentornot"]["name"];
 			$welcome .= ', ' . $oWebuser->getFirstname() . ' ' . $oWebuser->getLastname();
-//			}
 			$logout = '<a href="logout.php" onclick="if (!confirm(\'Please confirm logout\')) return false;">(logout)</a>';
 		}
 		$page = str_replace('{welcome}', $welcome, $page);
@@ -58,22 +55,13 @@ class class_page {
 	}
 
 	function createMenu() {
-		global $menuList;
+		global $menu;
 
-		$sMenu = '';
-
-		// GROUPS
 		$sMenu = "<ul>";
 
-		// TODOTODO MODIFY
-		foreach ( $menuList as $a=>$b ) {
-			foreach ( $b as $c ) {
-
-				foreach ( $c->getMenuItems() as $mitem ) {
-					$sMenu .= "				<li><a href=\"" . $mitem->getUrl() . "\">" . $mitem->getLabel() . "</a></li>\n";
-				}
-
-			}
+		//
+		foreach ( $menu as $a ) {
+			$sMenu .= "				<li><a href=\"" . $a->getUrl() . "\">" . $a->getLabel() . "</a></li>\n";
 		}
 
 		$sMenu .= "</ul>";
@@ -88,7 +76,8 @@ class class_page {
 
 	// TODOEXPLAIN
 	function getLastModified() {
-		return 'Last modified: ' . $this->project_settings["last_modified"];
+        global $settings_from_database;
+		return 'Last modified: ' . $settings_from_database["last_modified"];
 	}
 
 	// TODOEXPLAIN

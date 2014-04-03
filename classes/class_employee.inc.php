@@ -2,13 +2,13 @@
 // version: 2014-01-20
 
 class class_employee {
-	var $user = '';
-	var $project_settings;
-	var $protime_id = 0;
-	var $email = '';
-	var $authorisation = array();
-    var $lastname = '';
-    var $firstname = '';
+	protected $user = '';
+	protected $project_settings;
+	protected $protime_id = 0;
+	protected $email = '';
+	protected $authorisation = array();
+	protected $lastname = '';
+	protected $firstname = '';
 
 	// TODOEXPLAIN
 	function class_employee($user, $project_settings) {
@@ -16,7 +16,8 @@ class class_employee {
 
 		$this->user = $user;
 		$this->project_settings = $project_settings;
-
+echo "TMPTMP";
+/*
         // get protime_id and email
         $query_project = 'SELECT * FROM Employees WHERE LongCode=\'' . $this->getUser() . '\' ';
 //echo $query_project . ' +<br>';
@@ -38,7 +39,7 @@ class class_employee {
             }
         }
         mysql_free_result($resultAuthorisation);
-
+*/
 	}
 
 	// TODOEXPLAIN

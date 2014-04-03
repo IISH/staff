@@ -4,9 +4,9 @@
 require_once("./classes/class_view/fieldtypes/class_field.inc.php");
 
 class class_field_date extends class_field {
-	var $project_settings;
+	protected $project_settings;
 
-	var $m_format;
+	protected $m_format;
 
 	// TODOEXPLAIN
 	function class_field_date($settings) {
@@ -34,7 +34,6 @@ class class_field_date extends class_field {
 	// TODOEXPLAIN
 	function view_field($row, $criteriumResult = 0) {
 		$retval = parent::view_field($row, $criteriumResult);
-		$retval_org = $retval;
 
 		if ( $retval != '' ) {
 			// verwijder tijd uit datum
@@ -87,28 +86,6 @@ class class_field_date extends class_field {
 				$retval = "<nobr>" . $retval . "</nobr>";
 			}
 
-			if ( is_array($criteriumResult ) ) {
-				$fieldname = $criteriumResult["fieldname"];
-				$fieldname_pointer = $criteriumResult["fieldname_pointer"];
-			} else {
-				$fieldname = $this->get_fieldname();
-				$fieldname_pointer = $this->get_fieldname_pointer();
-			}
-
-			if ( $fieldname_pointer <> "" ) {
-				$fieldname_pointer = $this->oClassMisc->ReplaceSpecialFieldsWithDatabaseValues($fieldname_pointer, $row);
-				$fieldname_pointer = $this->oClassMisc->ReplaceSpecialFieldsWithQuerystringValues($fieldname_pointer);
-			}
-
-		} else {
-			if ( $href2otherpage <> "" ) {
-				$retval = $this->get_if_no_value_value($retval);
-			}
-
-			// no break - keep together
-			if ( $this->m_nobr === true ) {
-				$retval = "<nobr>" . $retval . "</nobr>";
-			}
 		}
 
 		return $retval;

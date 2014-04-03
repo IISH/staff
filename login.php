@@ -16,14 +16,12 @@ function createLoginPage() {
 	global $protect, $settings;
 
 	$fldLogin = '';
-	$fldPassword = '';
 	$error = '';
 
 	if ( $protect->request_positive_number_or_empty('post', 'issubmitted') == '1' ) {
 		// get values
 		$fldLogin = $protect->request('post', 'fldLogin');
 		$fldPassword = $protect->request('post', 'fldPassword');
-		$burl = trim($protect->request('get', 'burl'));
 
 		// quick protect
 		$fldLogin = str_replace(array(';', ':', '!', '<', '>', '(', ')', '%'), ' ', $fldLogin);

@@ -4,7 +4,7 @@
 require_once("./classes/class_view/fieldtypes/class_field.inc.php");
 
 class class_field_string extends class_field {
-	var $project_settings;
+	protected $project_settings;
 
 	// TODOEXPLAIN
 	function class_field_string($settings) {
@@ -40,48 +40,6 @@ class class_field_string extends class_field {
 			if ( $href2otherpage <> "" ) {
 				$retval = $this->get_if_no_value_value($retval);
 
-				$no_href = 0;
-				if ( is_array($this->m_no_href_if) ) {
-					//
-					switch ( $this->m_no_href_if["operator"] ) {
-						case "<>":
-							if ( $row[$this->m_no_href_if["field"]] <> $row[$this->m_no_href_if["value"]] ) {
-								$no_href = 1;
-							}
-							break;
-						case "==":
-							if ( $row[$this->m_no_href_if["field"]] == $row[$this->m_no_href_if["value"]] ) {
-								$no_href = 1;
-							}
-							break;
-						case "=":
-							if ( $row[$this->m_no_href_if["field"]] == $row[$this->m_no_href_if["value"]] ) {
-								$no_href = 1;
-							}
-							break;
-						case ">":
-							if ( $row[$this->m_no_href_if["field"]] > $row[$this->m_no_href_if["value"]] ) {
-								$no_href = 1;
-							}
-							break;
-						case ">=":
-							if ( $row[$this->m_no_href_if["field"]] >= $row[$this->m_no_href_if["value"]] ) {
-								$no_href = 1;
-							}
-							break;
-						case "<":
-							if ( $row[$this->m_no_href_if["field"]] < $row[$this->m_no_href_if["value"]] ) {
-								$no_href = 1;
-							}
-							break;
-						case "<=":
-							if ( $row[$this->m_no_href_if["field"]] <= $row[$this->m_no_href_if["value"]] ) {
-								$no_href = 1;
-							}
-							break;
-					}
-				}
-
 				$href2otherpage = $this->oClassMisc->ReplaceSpecialFieldsWithDatabaseValues($href2otherpage, $row);
 				$href2otherpage = $this->oClassMisc->ReplaceSpecialFieldsWithQuerystringValues($href2otherpage);
 				$url_onclick = $this->oClassMisc->ReplaceSpecialFieldsWithDatabaseValues($url_onclick, $row);
@@ -101,9 +59,7 @@ class class_field_string extends class_field {
 					$alttitle = " alt=\"" . $alttitle . "\" title=\"" . $alttitle . "\" ";
 				}
 
-				if ( $no_href == 0 ) {
-					$retval = "<A HREF=\"" . $href2otherpage . "\" " . $url_onclick . " " . $target . $alttitle . ">" . $retval . "</a>";
-				}
+				$retval = "<A HREF=\"" . $href2otherpage . "\" " . $url_onclick . " " . $target . $alttitle . ">" . $retval . "</a>";
 
 			}
 
@@ -112,27 +68,6 @@ class class_field_string extends class_field {
 				$retval = "<nobr>" . $retval . "</nobr>";
 			}
 
-			if ( is_array($criteriumResult ) ) {
-				$fieldname = $criteriumResult["fieldname"];
-				$fieldname_pointer = $criteriumResult["fieldname_pointer"];
-			} else {
-				$fieldname = $this->get_fieldname();
-				$fieldname_pointer = $this->get_fieldname_pointer();
-			}
-
-			if ( $fieldname_pointer <> "" ) {
-				$fieldname_pointer = $this->oClassMisc->ReplaceSpecialFieldsWithDatabaseValues($fieldname_pointer, $row);
-				$fieldname_pointer = $this->oClassMisc->ReplaceSpecialFieldsWithQuerystringValues($fieldname_pointer);
-			}
-		} else {
-			if ( $href2otherpage <> "" ) {
-				$retval = $this->get_if_no_value_value($retval);
-			}
-
-			// no break - keep together
-			if ( $this->m_nobr === true ) {
-				$retval = "<nobr>" . $retval . "</nobr>";
-			}
 		}
 
 		return $retval;

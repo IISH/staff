@@ -2,10 +2,10 @@
 // version: 2014-01-20
 
 class class_protime_user {
-	var $protime_id = 0;
-	var $project_settings;
-	var $firstname = '';
-	var $lastname = '';
+	protected $protime_id = 0;
+	protected $project_settings;
+	protected $firstname = '';
+	protected $lastname = '';
 
 	// TODOEXPLAIN
 	function class_protime_user($protime_id, $project_settings) {

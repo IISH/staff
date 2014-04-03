@@ -2,7 +2,7 @@
 // version: 2014-01-20
 
 class class_date {
-	private $date;
+	protected $date;
 
 	// TODOEXPLAIN
 	function __construct( $year, $month = 1, $day = 1, $hours = 1, $minutes = 1, $seconds = 1 ) {

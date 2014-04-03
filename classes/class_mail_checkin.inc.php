@@ -2,7 +2,7 @@
 // version: 2014-01-20
 
 class class_mail_checkin {
-	var $project_settings;
+	protected $project_settings;
 
 	// TODOEXPLAIN
 	function class_mail_checkin( $project_settings ) {

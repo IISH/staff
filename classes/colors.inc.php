@@ -10,8 +10,8 @@ $colors["href"]["bijzonder verlof"] = 'color:white;';
 $colors["td"]["brugdag"] = 'background-color:#663300;';
 $colors["href"]["brugdag"] = 'color:white;';
 
-$colors["td"]["feestdag"] = 'background-color:#993300;';
-$colors["href"]["feestdag"] = 'color:white;';
+$colors["td"]["holiday"] = 'background-color:#993300;';
+$colors["href"]["holiday"] = 'color:white;';
 
 $colors["td"]["vakantie"] = 'background-color: #C62431;';
 $colors["href"]["vakantie"] = 'color:white;';

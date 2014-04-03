@@ -65,8 +65,6 @@ function getStatusColor( $persnr, $date ) {
 function getColor( $value, $value2 ) {
 	global $colors;
 
-	$ret = '';
-
 	$value = trim(strtolower($value));
 	$value2 = trim(strtolower($value2));
 
@@ -141,7 +139,7 @@ function cleanUpTelephone($telephone) {
 	}
 	$retval = trim($retval);
 
-	// ad comma between the telephones
+	// add comma between the telephones
 	$retval = str_replace(' ', ', ', $retval);
 
 	return $retval;
@@ -216,19 +214,6 @@ ORDER BY P_ABSENCE.BOOKDATE, P_ABSENCE.REC_NR
 	$num = mssql_num_rows($result);
 	if ( $num ) {
 		while ( $row = mssql_fetch_array($result) ) {
-// 1 Bijzonder verlof
-// 2 Calamiteitenverlof
-// 3 Cursus
-// 4 dienstreis
-// 5 Dokter/Tandarts (uitgefiltered, geen vakantie/afwezigheid)
-// 6 feestdag
-// 12 vakanties
-// 13 Werk buiten IISG
-// 15 Ziekte (uitgefiltered, geen vakantie/afwezigheid)
-// 16 zorgverlof
-// 18 Werk thuis
-// 19 compensatie overuren (uitgefiltered, geen vakantie/afwezigheid)
-// 22 Verlof
 			$ret[] = array( 'date' => $row["BOOKDATE"], 'description' => $row["SHORT_1"] );
 		}
 	}

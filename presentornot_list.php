@@ -10,17 +10,9 @@ $s = getAndProtectSearch();
 
 $retval = '';
 
-//echo $oWebuser->getUser() . ' --<br>';
-//echo $oWebuser->getEmail() . ' --<br>';
-//echo $oWebuser->getProtimeId() . ' --<br>';
-
 $oEmployee = new class_employee($oWebuser->getUser(), $settings);
 $favIds = implode(',', $oEmployee->getFavourites('present'));
 $checkInOutIds = implode(',', $oEmployee->getFavourites('checkinout'));
-
-//echo '<br>+';
-//print_r( $favIds );
-//echo '+<br>';
 
 // CRITERIUM
 $queryCriterium = '';

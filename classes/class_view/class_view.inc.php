@@ -3,15 +3,15 @@ require_once("./classes/class_file.inc.php");
 require_once("./classes/class_misc.inc.php");
 
 class class_view {
-	var $oDb;
-	var $oClassFile;
-	var $oClassMisc;
-	var $m_project_settings;
+	protected $oDb;
+	protected $oClassFile;
+	protected $oClassMisc;
+	protected $m_project_settings;
 
-	var $m_view;
-	var $m_array_of_fields = Array();
+	protected $m_view;
+	protected $m_array_of_fields = Array();
 
-	var $m_order_by;
+	protected $m_order_by;
 
 	// TODOEXPLAIN
 	function class_view($settings, $oDb) {
@@ -119,30 +119,6 @@ class class_view {
 	}
 
 	// TODOEXPLAIN
-	function add_viewfilters_to_query($query) {
-		$filter = '';
-
-		foreach ($this->m_array_of_fields as $one_field_in_array_of_fields) {
-
-			if ( $one_field_in_array_of_fields->m_viewfilter ) {
-
-				foreach ( $one_field_in_array_of_fields->m_viewfilter["filter"] as $field => $value) {
-
-					$tmp_filter = $this->CreateSpecialCriterium($value["fieldname"], $value["type"], $value["fieldname_pointer"], $value["different_query_fieldname"], $value["extra_left_criterium"], $value["extra_right_criterium"]);
-
-					if ( $tmp_filter <> "" ) {
-						$filter .= " AND " . $tmp_filter . " ";
-					}
-				}
-			}
-		}
-
-		$query .= $filter;
-
-		return $query;
-	}
-
-	// TODOEXPLAIN
 	function CreateSpecialCriterium($field, $type, $fieldname_pointer, $different_query_fieldname, $extra_left_criterium="", $extra_right_criterium="") {
 		$retval = '';
 
@@ -153,7 +129,6 @@ class class_view {
 		}
 
 		$separatorAND = '';
-		$separatorOR = '';
 
 		if ( $value <> "" ) {
 
@@ -263,39 +238,6 @@ class class_view {
 		if ( $this->m_view["viewfilter"] === true ) {
 
 			$viewfilter = "
-<script LANGUAGE=JavaScript>
-<!--
-document.onkeydown = onKeyDown;
-document.onkeyup = onKeyUp;
-
-var anyChanges = 0;
-
-// TODOEXPLAIN
-function onKeyUp(e) {
-	var code = (window.event) ? event.keyCode : e.keyCode;
-
-	if (code != 13 && code != 37 && code != 38	&& code != 39 && code != 40) {
-		anyChanges = 1;
-	}
-}
-
-// TODOEXPLAIN
-function onSelectChange() {
-	anyChanges = 1;
-}
-
-// TODOEXPLAIN
-function onKeyDown(e) {
-	var code = (window.event) ? event.keyCode : e.keyCode;
-	if (code == 13) {
-		if (anyChanges == 1) {
-			document.filterform.submit();
-		}
-	}
-}
-// -->
-</script>
-
 <form name=\"filterform\" type=\"get\">
 <input type=\"hidden\" name=\"filter\" value=\"::FILTER::\">
 
@@ -424,32 +366,6 @@ function onKeyDown(e) {
 		// add filters to query
 		$this->m_view["query"] = $this->add_filters_to_query($this->m_view["query"]);
 
-		// add viewfilters to query
-		$this->m_view["query"] = $this->add_viewfilters_to_query($this->m_view["query"]);
-
-		if ( $_POST["form_fld_pressed_button"] == '-delete-' || $_POST["form_fld_pressed_button"] == '-delete-now-' ) {
-			$checked_records = '';
-			$tmp_separator = '';
-
-			if ( $_POST["form_fld_pressed_button"] == '-delete-now-') {
-				$record_list_array = explode(';', $_POST["list_of_records"]);
-			} else {
-				die('error: 541289');
-			}
-
-			if ( is_array($record_list_array) ) {
-				$checked_records .= " AND (";
-				foreach ( $record_list_array as $record_id ) {
-					$checked_records .= $tmp_separator . $this->m_view["anchor_field"] . '=' . $record_id;
-					$tmp_separator = " OR ";
-				}
-				$checked_records .= ") ";
-
-				$this->m_view["query"] .= $checked_records;
-
-			}
-		}
-
 		// calculate order by
 		$this->calculate_order_by();
 		if ( $this->m_order_by <> "" ) {
@@ -457,80 +373,21 @@ function onKeyDown(e) {
 		}
 
 		// execute query
-		$res=mssql_query($this->m_view["query"], $this->oDb->conn) or die( "error 8712378" . "<br>" . mssql_error());
+		$res=mysql_query($this->m_view["query"], $this->oDb->connection()) or die( "error 8712378" . "<br>" . mssql_error());
 
 		if ( $_POST["form_fld_pressed_button"] != '-delete-' && $_POST["form_fld_pressed_button"] != '-delete-now-' ) {
 			// get filter buttons
 			$filter_buttons = $this->get_filter_buttons();
 		}
 
-		// als -delete-now-
-		if ( $_POST["form_fld_pressed_button"] == '-delete-now-' ) {
-			// delete dan de records en toon eind-bericht
-			$tmp_query_delete = $this->m_view["delete_query"];
-
-			if ( trim($_POST["list_of_records"]) != '' ) {
-				$array_of_records = explode(';', $_POST["list_of_records"]);
-				foreach ( $array_of_records as $record_id ) {
-					$query_delete = $tmp_query_delete . $record_id;
-
-					$res_delete=mssql_query($query_delete, $this->oDb->conn) or die( "error 52129398" . "<br>" . mssql_error());
-				}
-			}
-
-			$return_value .= 'Record(s) deleted...';
-			$return_value .= "<br>\n&nbsp;<br>\n&nbsp;<br>\n";
-
-		}
-
 		if($res){
 			// show buttons at top
 			$return_value .= $filter_buttons;
-
-			if ( $_POST["form_fld_pressed_button"] == '-delete-now-' ) {
-
-				// go back button
-				$current_url = $_SERVER["SCRIPT_NAME"];
-				if ( $_SERVER["QUERY_STRING"] != '' ) {
-					$current_url .= "?" . $_SERVER["QUERY_STRING"];
-				}
-				$tmp_button = "<input type=\"button\" onclick=\"window.location.href='" . $current_url . "';return false;\" value=\"::LABEL::\">\n";
-				$tmp_button = str_replace("::LABEL::", 'Go back', $tmp_button);
-				$return_value .= $tmp_button;
-
-				$return_value .= "<br>\n";
-
-			} else if ( $_POST["form_fld_pressed_button"] == '-delete-' ) {
-
-				$return_value .= "<CENTER>\n";
-				$separator = '';
-
-				// go back button
-				$current_url = $_SERVER["SCRIPT_NAME"];
-				if ( $_SERVER["QUERY_STRING"] != '' ) {
-					$current_url .= "?" . $_SERVER["QUERY_STRING"];
-				}
-				$tmp_button = "<input type=\"button\" onclick=\"window.location.href='" . $current_url . "';return false;\" value=\"::LABEL::\">\n";
-				$tmp_button = str_replace("::LABEL::", 'Cancel / Go back', $tmp_button);
-				$return_value .= $separator . $tmp_button;
-
-				$separator = "&nbsp; &nbsp; &nbsp;";
-
-				$return_value .= "</CENTER><br>\n";
-
-			}
 
 			// moet overzicht wel getoond worden
 			// niet tonen als delete bevestigings bericht (-delete-now-)
 			// en ook niet tonen als men niks heeft geselecteerd bij -delete-
 			$show_view_table = true;
-			if ( $_POST["form_fld_pressed_button"] == '-delete-now-' ) {
-				$show_view_table = false;
-			} else {
-				if ( $_POST["form_fld_pressed_button"] == '-delete-' ) {
-					$show_view_table = false;
-				}
-			}
 
 			// show calculate_total
 			if ( is_array($this->m_view["calculate_total"]) ) {
@@ -557,7 +414,7 @@ function onKeyDown(e) {
 				$return_value .= $this->generate_view_header();
 
 				// doorloop gevonden recordset
-				while($row=mssql_fetch_assoc($res)){
+				while($row=mysql_fetch_assoc($res)){
 					$total_data = '';
 					$anchor = '';
 
@@ -570,15 +427,11 @@ function onKeyDown(e) {
 
 						if ( $_POST["form_fld_pressed_button"] != '-delete-' && $_POST["form_fld_pressed_button"] != '-delete-now-' ) {
 
-//							if ( $one_field_in_array_of_fields->m_template != '' ) {
-//								$tmp_data = $this->Get_PreloadedTemplateDesign($preloaded_templates, $one_field_in_array_of_fields->m_template);
-//							} else {
-								$tmp_data = $this->Get_PreloadedTemplateDesign($preloaded_templates, "default");
-//							}
+							$tmp_data = $this->Get_PreloadedTemplateDesign($preloaded_templates, "default");
 
 							// get veld waarde
-							$veldwaarde = $one_field_in_array_of_fields->view_field($row, $criteriumResult);
-							$dbwaarde = $one_field_in_array_of_fields->get_value($row, $criteriumResult);
+							$veldwaarde = $one_field_in_array_of_fields->view_field($row);
+							$dbwaarde = $one_field_in_array_of_fields->get_value($row);
 
 							// add calculate_total
 							if ( is_array($this->m_view["calculate_total"]) ) {
@@ -639,7 +492,7 @@ function onKeyDown(e) {
 		}
 
 		// free result set
-		mssql_free_result($res);
+		mysql_free_result($res);
 
 		// disconnect from database
 		$this->oDb->disconnect();

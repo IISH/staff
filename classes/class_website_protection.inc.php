@@ -1,4 +1,4 @@
-<?
+<?php
 // version: 2014-01-20
 
 class class_website_protection {
@@ -9,9 +9,11 @@ class class_website_protection {
 
 	// TODOEXPLAIN
 	function send_warning_mail($tekst) {
+        global $settings_from_database;
+
 		$message = '';
 
-		$recipients = trim($this->settings["admin_email"]);
+		$recipients = trim($settings_from_database["admin_email"]);
 
 		$recipients = str_replace(array(';', ':', ' '), ',', $recipients);
 
@@ -22,10 +24,8 @@ class class_website_protection {
 
 		if ( $recipients != '' ) {
 
-			// gebruik geen info@, is een alias, het werkt door een of andere reden niet (zegt IT)
-			// gebruik infomail@, is een account, en werkt wel
-			$fromname = 'IISG Web protectie';
-			$fromaddress = 'infomail@iisg.nl';
+			$fromname = trim($settings_from_database["from_name"]);
+			$fromaddress = trim($this->$settings_from_database["from_email"]);
 			$eol = "\n";
 
 			$headers = "From: " . $fromname . " <" . $fromaddress . ">";

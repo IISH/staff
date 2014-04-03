@@ -1,32 +1,21 @@
 <?php 
 // version: 2014-01-20
 
-ini_set("display_errors", 1);
-error_reporting(E_ALL ^ E_NOTICE);
+require_once dirname(__DIR__) . "/sites/default/settings.inc.php";
 
-require_once "settings.inc.php";
-
-class class_feestdag {
-	var $id;
-	var $date;
-	var $description;
+class class_holiday {
+	protected $id = 0;
+	protected $date = '';
+	protected $description = '';
 
 	// TODOEXPLAIN
-	function class_feestdag($id, $settings) {
-		$this->settings = $settings;
-		$this->id = $id;
-		$this->date = '';
-		$this->description = '';
-
-		$this->initValues();
-	}
-
-	// TODOEXPLAIN
-	private function initValues() {
+	function class_holiday($id, $settings) {
 		global $dbhandleTimecard;
 
-		$query = "SELECT * FROM Feestdagen WHERE ID=" . $this->getId();
+		$this->settings = $settings;
+		$this->id = $id;
 
+		$query = "SELECT * FROM Feestdagen WHERE ID=" . $this->getId();
 		$res = mssql_query($query, $dbhandleTimecard);
 		if ($r = mssql_fetch_assoc($res)) {
 			$this->date = $r["datum"];

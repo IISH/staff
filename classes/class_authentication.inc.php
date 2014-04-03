@@ -40,10 +40,6 @@ class class_authentication {
 
 				// never forget to unbind!
 				ldap_unbind($ad);
-
-				if ( trim($contents) == "1" ) {
-					$login_correct = 1;
-				}
 			}
 		}
 

@@ -5,8 +5,8 @@ $oWebuser->checkLoggedIn();
 
 // create webpage
 $oPage = new class_page('design/page.php', $settings);
-$oPage->setTitle('Present or not | National holidays');
-$oPage->setContent(createFeestdagenContent( ));
+$oPage->setTitle('Present or not | Holidays');
+$oPage->setContent(createHolidaysContent( ));
 
 // show page
 echo $oPage->getPage();
@@ -14,10 +14,10 @@ echo $oPage->getPage();
 require_once "classes/_db_disconnect.inc.php";
 
 // TODOEXPLAIN
-function createFeestdagenContent( ) {
+function createHolidaysContent( ) {
 	global $settings;
 
-	$ret = "<h2>National holidays</h2>";
+	$ret = "<h2>Holidays</h2>";
 
 	require_once("./classes/class_db.inc.php");
 	require_once("./classes/class_view/class_view.inc.php");
@@ -33,7 +33,6 @@ function createFeestdagenContent( ) {
 		, 'count_source_type' => 'query'
 		, 'order_by' => 'datum ASC '
 		, 'anchor_field' => 'ID'
-		, 'viewfilter' => true
 		, 'table_parameters' => ' cellspacing="0" cellpadding="0" border="0" '
 		));
 
@@ -51,10 +50,10 @@ function createFeestdagenContent( ) {
 
 	$oView->add_field( new class_field_bit ( array(
 		'fieldname' => 'vooreigenrekening'
-		, 'fieldlabel' => 'For own account'
+		, 'fieldlabel' => 'National holiday'
 		, 'show_different_values' => 1
-		, 'different_true_value' => 'yes'
-		, 'different_false_value' => 'no'
+		, 'different_true_value' => 'no'
+		, 'different_false_value' => 'yes'
 		)));
 
 	// calculate and show view

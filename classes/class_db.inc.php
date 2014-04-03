@@ -2,11 +2,11 @@
 // version: 2014-01-20
 
 class class_db {
-	var $m_server;
-	var $m_user;
-	var $m_password;
-	var $m_database;
-	var $conn;
+	protected $m_server;
+	protected $m_user;
+	protected $m_password;
+	protected $m_database;
+	protected $conn;
 
 	// TODOEXPLAIN
 	function class_db($settings, $prefix) {
@@ -18,20 +18,20 @@ class class_db {
 
 	// TODOEXPLAIN
 	function connect() {
-		$this->conn = mssql_connect($this->m_server, $this->m_user, $this->m_password);
+		$this->conn = mysql_connect($this->m_server, $this->m_user, $this->m_password);
 		if ( !$this->conn ) {
 			die('Error: 100 - Could not connect: ' . mssql_error());
 		}
 
 		// connect to database
-		mssql_select_db($this->m_database, $this->conn);
+		mysql_select_db($this->m_database, $this->conn);
 
 		return 1;
 	}
 
 	// TODOEXPLAIN
 	function disconnect() {
-		mssql_close($this->conn);
+		mysql_close($this->conn);
 	}
 
 	function connection() {

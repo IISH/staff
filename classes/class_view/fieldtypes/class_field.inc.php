@@ -4,27 +4,24 @@
 require_once("./classes/class_misc.inc.php");
 
 class class_field {
-	var $oClassMisc;
-	var $m_fieldname;
-	var $m_fieldname_pointer;
-	var $m_fieldlabel;
-	var $m_fieldlabel_alttitle;
-	var $m_href;
-	var $m_nobr;
-	var $m_onclick;
-	var $m_view_max_length;
-	var $m_view_max_length_extension;
-	var $m_if_no_value_value;
-	var $m_target;
-	var $m_viewfilter;
-	var $m_table_cell_width;
-//	var $m_template = '';
-	var $m_show_different_value = '';
-	var $m_no_href_if = '';
-	var $m_alttitle = '';
-	var $m_class = '';
-	var $m_style = '';
-	var $m_noheader;
+	protected $oClassMisc;
+	protected $m_fieldname;
+	protected $m_fieldname_pointer;
+	protected $m_fieldlabel;
+	protected $m_fieldlabel_alttitle;
+	protected $m_href;
+	protected $m_nobr;
+	protected $m_onclick;
+	protected $m_view_max_length;
+	protected $m_view_max_length_extension;
+	protected $m_if_no_value_value;
+	protected $m_target;
+	protected $m_table_cell_width;
+	protected $m_show_different_value = '';
+	protected $m_alttitle = '';
+	protected $m_class = '';
+	protected $m_style = '';
+	protected $m_noheader;
 
 	// TODOEXPLAIN
 	function class_field($settings) {
@@ -40,11 +37,8 @@ class class_field {
 		$this->m_view_max_length_extension = '..';
 		$this->m_if_no_value_value = '';
 		$this->m_target = '';
-		$this->m_viewfilter = '';
 		$this->m_table_cell_width = '';
-//		$this->m_template = '';
 		$this->m_show_different_value = '';
-		$this->m_no_href_if = '';
 		$this->m_alttitle = '';
 		$this->m_class = '';
 		$this->m_style = '';
@@ -89,17 +83,8 @@ class class_field {
 					case "target":
 						$this->m_target = $settings["target"];
 						break;
-					case "viewfilter":
-						$this->m_viewfilter = $settings["viewfilter"];
-						break;
-//					case "template":
-//						$this->m_template = $settings["template"];
-//						break;
 					case "show_different_value":
 						$this->m_show_different_value = $settings["show_different_value"];
-						break;
-					case "no_href_if":
-						$this->m_no_href_if = $settings["no_href_if"];
 						break;
 					case "href_alttitle":
 						$this->m_alttitle = $settings["href_alttitle"];
@@ -223,9 +208,6 @@ class class_field {
 			}
 
 		}
-
-		// remember the value (before we do some calculations on it)
-		$long_value = $retval;
 
 		if ( $this->m_view_max_length != 0 ) {
 			if ( strlen($retval) > $this->m_view_max_length ) {

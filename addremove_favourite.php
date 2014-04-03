@@ -12,7 +12,7 @@ if ( !in_array($dowhat, array('a', 'r') ) ) {
 }
 
 $fav = substr(trim($protect->request_only_characters_or_numbers_or_empty('get', "fav")), 0, 10);
-if ( !in_array($fav, array('', 'vakantie', 'present', 'checkinout') ) ) {
+if ( !in_array($fav, array('', 'vakantie', 'present', 'checkinout', 'absences') ) ) {
 	die('Error 421794532 Unknown favourite: ' . $fav);
 }
 
