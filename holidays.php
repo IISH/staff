@@ -15,6 +15,12 @@ require_once "classes/_db_disconnect.inc.php";
 
 // TODOEXPLAIN
 function createHolidaysContent( ) {
+    global $settings;
+
+    if ( $settings["timecard_connection_successful"] == 0 ) {
+        return "Cannot load National holidays.";
+    }
+
 	global $settings;
 
 	$ret = "<h2>Holidays</h2>";

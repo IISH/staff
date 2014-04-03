@@ -16,12 +16,12 @@ class class_holiday {
 		$this->id = $id;
 
 		$query = "SELECT * FROM Feestdagen WHERE ID=" . $this->getId();
-		$res = mssql_query($query, $dbhandleTimecard);
-		if ($r = mssql_fetch_assoc($res)) {
+		$res = mysql_query($query, $dbhandleTimecard);
+		if ($r = mysql_fetch_assoc($res)) {
 			$this->date = $r["datum"];
 			$this->description = $r["omschrijving"];
 		}
-		mssql_free_result($res);
+		mysql_free_result($res);
 	}
 
 	public function getId() {

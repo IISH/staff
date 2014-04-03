@@ -248,12 +248,16 @@ function getNationalHolidays($year, $month) {
 
 	$arr = array();
 
-	$query = "SELECT * FROM Feestdagen WHERE datum LIKE '" . $year . substr("0" . $month,-2) . "%' AND isdeleted=0 ";
-	$result = mssql_query($query, $dbhandleTimecard);
-	while ($row = mssql_fetch_assoc($result)) {
-		$arr[] = new class_holiday($row["ID"], $settings);
-	}
-	mssql_free_result($result);
+    if ( $settings["timecard_connection_successful"] == 1 ) {
+	    $query = "SELECT * FROM Feestdagen WHERE datum LIKE '" . $year . substr("0" . $month,-2) . "%' AND isdeleted=0 ";
+    	$result = mysql_query($query, $dbhandleTimecard);
+	    while ($row = mysql_fetch_assoc($result)) {
+    		$arr[] = new class_holiday($row["ID"], $settings);
+	    }
+    	mysql_free_result($result);
+    } else {
+        echo 'Cannot load National holidays.';
+    }
 
 	return $arr;
 }

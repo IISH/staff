@@ -16,20 +16,22 @@ class class_employee {
 
 		$this->user = $user;
 		$this->project_settings = $project_settings;
-echo "TMPTMP";
+
+        $this->firstname = $user; // TMP TODO
+
 /*
         // get protime_id and email
         $query_project = 'SELECT * FROM Employees WHERE LongCode=\'' . $this->getUser() . '\' ';
 //echo $query_project . ' +<br>';
-        $resultReset = mssql_query($query_project, $dbhandleTimecard);
-        if ($row_project = mssql_fetch_assoc($resultReset)) {
+        $resultReset = mysql_query($query_project, $dbhandleTimecard);
+        if ($row_project = mysql_fetch_assoc($resultReset)) {
             $this->email = $row_project["Email"];
             $this->protime_id = $row_project["ProtimePersNr"];
             $this->lastname = $row_project["LastName"];
             $this->firstname = $row_project["FirstName"];
         }
-        mssql_free_result($resultReset);
-
+        mysql_free_result($resultReset);
+*/
         // get authorisation
         $queryAuthorisation = 'SELECT * FROM Users WHERE user=\'' . $this->getUser() . '\' ';
         $resultAuthorisation = mysql_query($queryAuthorisation, $dbhandlePresentornot);
@@ -39,7 +41,7 @@ echo "TMPTMP";
             }
         }
         mysql_free_result($resultAuthorisation);
-*/
+
 	}
 
 	// TODOEXPLAIN

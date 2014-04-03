@@ -7,7 +7,7 @@ class class_settings {
 	function getSettings( $handle ) {
 		$arr = array();
 
-		$result = mysql_query("SELECT * FROM settings ", $handle);
+		$result = mysql_query("SELECT * FROM `Settings` ", $handle);
 		if ( mysql_num_rows($result) > 0 ) {
 
 			while ($row = mysql_fetch_assoc($result)) {
