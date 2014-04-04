@@ -154,7 +154,7 @@ if ( $to_short != 1 ) {
 	<TD width=180><font size=-1><b>Name</b></font></TD>
 	<TD width=90 align=\"center\"><font size=-1><b>Today</b></font></TD>
 	<TD width=18 align=\"center\"></TD>
-	<TD style=\"width:" . $vakantieWidth . "px;\" align=\"center\"><font size=-1><b>Vakanties/afwezigheden " . date("F Y", mktime(0,0,0,$selectedMonth, 1, $selectedYear)) . "</b></font></TD>
+	<TD style=\"width:" . $vakantieWidth . "px;\" align=\"center\"><font size=-1><b>Holidays/absences " . date("F Y", mktime(0,0,0,$selectedMonth, 1, $selectedYear)) . "</b></font></TD>
 </TR>
 <TR>
 	<TD></TD>
@@ -190,7 +190,7 @@ function getColors($selectedYear, $selectedMonth, $day, $absences = array(), $ho
 	//
 	if ( $tdStyle == '' && $dayOfWeek != 0 && $dayOfWeek != 6 ) {
 		for ($i = 0; $i < count($holidays); $i++) {
-			if ( $datum == $holidays[$i]->getDate() ) {
+			if ( $datum == str_replace('-', '', $holidays[$i]->getDate()) ) {
 				if ( strtolower($holidays[$i]->getDescription()) == 'brugdag' ) {
 					$tdStyle = getColor("td", "brugdag");
 					$hrefStyle = getColor("href", "brugdag");
@@ -249,7 +249,7 @@ function getNationalHolidays($year, $month) {
 	$arr = array();
 
     if ( $settings["timecard_connection_successful"] == 1 ) {
-	    $query = "SELECT * FROM Feestdagen WHERE datum LIKE '" . $year . substr("0" . $month,-2) . "%' AND isdeleted=0 ";
+	    $query = "SELECT * FROM Feestdagen WHERE datum LIKE '" . $year . '-' . substr("0" . $month,-2) . "-%' AND isdeleted=0 ";
     	$result = mysql_query($query, $dbhandleTimecard);
 	    while ($row = mysql_fetch_assoc($result)) {
     		$arr[] = new class_holiday($row["ID"], $settings);
