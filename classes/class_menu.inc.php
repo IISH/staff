@@ -22,4 +22,3 @@ class class_menuitem {
 		return $this->url;
 	}
 }
-?>

@@ -1,8 +1,8 @@
 <?php 
-// version: 2014-01-20
-
+// TODOEXPLAIN
 function getStatusColor( $persnr, $date ) {
-	global $dbhandleProtime;
+	global $settings;
+
 	$retval = array();
 
 	//
@@ -10,9 +10,12 @@ function getStatusColor( $persnr, $date ) {
 	$status_text = '';
 	$status_alt = '';
 
+	$oProtime = new class_mssql($settings, 'protime');
+	$oProtime->connect();
+
 	// achterhaal 'present' status
 	$query = "SELECT REC_NR, PERSNR, BOOKDATE, BOOKTIME FROM BOOKINGS WHERE PERSNR=" . $persnr . " AND BOOKDATE='" . $date . "' AND BOOKTIME<>9999 ORDER BY REC_NR ";
-	$result = mssql_query($query, $dbhandleProtime);
+	$result = mssql_query($query, $oProtime->getConnection());
 	$status = 0;
 	$found = 0;
 	$aanwezig = 0;
@@ -43,8 +46,11 @@ function getStatusColor( $persnr, $date ) {
 	// dan betekent dat dat de persoon vandaag nog niet ingeklokt heeft
 	// misschien omdat de persoon op vakantie is
 	if ( $status_text == '' && $found == 0 ) {
+//		$oProtime = new class_mssql($settings, 'protime');
+		$oProtime->connect();
+
 		$query = "SELECT ABSENCE.SHORT_1 FROM P_ABSENCE INNER JOIN ABSENCE ON P_ABSENCE.ABSENCE = ABSENCE.ABSENCE WHERE (P_ABSENCE.PERSNR = " . $persnr . ") AND (P_ABSENCE.BOOKDATE = '" . $date . "') ";
-		$result = mssql_query($query, $dbhandleProtime);
+		$result = mssql_query($query, $oProtime->getConnection());
 		$status_separator = '';
 		while ( $row = mssql_fetch_array($result) ) {
 			$status_text .= $status_separator . $row["SHORT_1"];
@@ -88,15 +94,18 @@ function fillTemplate($template, $data) {
 
 // TODOEXPLAIN
 function getAndProtectSearch($field = 's') {
-	$s = $_GET[$field];
-	$s = str_replace(array('?', "~", "`", "#", "$", "%", "^", "'", "\"", "(", ")", "<", ">", ":", ";", "*", "\n"), ' ', $s);
+	$s = '';
 
-	while ( strpos($s, '  ') !== false ) {
-		$s = str_replace('  ',' ', $s);
+	if ( isset($_GET[$field]) ) {
+		$s = $_GET[$field];
+		$s = str_replace(array('?', "~", "`", "#", "$", "%", "^", "'", "\"", "(", ")", "<", ">", ":", ";", "*", "\n"), ' ', $s);
+		while ( strpos($s, '  ') !== false ) {
+			$s = str_replace('  ',' ', $s);
+		}
+
+		$s = trim($s);
+		$s = substr($s, 0, 20);
 	}
-
-	$s = trim($s);
-	$s = substr($s, 0, 20);
 
 	return $s;
 }
@@ -153,11 +162,15 @@ function addslashes_mssql($text) {
 
 // TODOEXPLAIN
 function getAbsences($eid) {
-	global $dbhandleProtime;
+	global $settings;
+
 	$ret = '';
 
+	$oProtime = new class_mssql($settings, 'protime');
+	$oProtime->connect();
+
 	$query = "SELECT TOP 2000 P_ABSENCE.REC_NR, P_ABSENCE.PERSNR, P_ABSENCE.BOOKDATE, P_ABSENCE.ABSENCE_VALUE, P_ABSENCE.ABSENCE_STATUS, ABSENCE.SHORT_1, ABSENCE.ABSENCE FROM P_ABSENCE LEFT OUTER JOIN ABSENCE ON P_ABSENCE.ABSENCE = ABSENCE.ABSENCE WHERE P_ABSENCE.PERSNR=" . $eid . " AND P_ABSENCE.BOOKDATE>='" . date("Ymd") . "' AND ( ABSENCE_VALUE>0 OR SHORT_1 <> 'Vakantie' ) AND P_ABSENCE.ABSENCE NOT IN (6) ORDER BY P_ABSENCE.BOOKDATE, P_ABSENCE.REC_NR ";
-	$result = mssql_query($query, $dbhandleProtime);
+	$result = mssql_query($query, $oProtime->getConnection());
 	$num = mssql_num_rows($result);
 	if ( $num ) {
 		$ret .= "
@@ -195,7 +208,7 @@ function getAbsences($eid) {
 
 // TODOEXPLAIN
 function getAbsencesAndHolidays($eid, $year, $month, $min_minutes = 0) {
-	global $dbhandleProtime;
+	global $settings;
 
 	$ret = array();
 
@@ -210,7 +223,10 @@ AND ( P_ABSENCE.ABSENCE_VALUE>=" . $min_minutes . " OR P_ABSENCE.ABSENCE_VALUE=0
 ORDER BY P_ABSENCE.BOOKDATE, P_ABSENCE.REC_NR 
 ";
 
-	$result = mssql_query($query, $dbhandleProtime);
+	$oProtime = new class_mssql($settings, 'protime');
+	$oProtime->connect();
+
+	$result = mssql_query($query, $oProtime->getConnection());
 	$num = mssql_num_rows($result);
 	if ( $num ) {
 		while ( $row = mssql_fetch_array($result) ) {
@@ -246,6 +262,7 @@ function Generate_Query($arrField, $arrSearch) {
 	return $retval;
 }
 
+// TODOEXPLAIN
 function createDateAsString($year, $month, $day = '') {
 	$ret = $year;
 
@@ -258,6 +275,7 @@ function createDateAsString($year, $month, $day = '') {
 	return $ret;
 }
 
+// TODOEXPLAIN
 function getBackUrl() {
 	global $protect;
 
@@ -291,4 +309,16 @@ function getBackUrl() {
 
 	return $ret;
 }
-?>
+
+// TODOEXPLAIN
+function debug($text = "", $extra = '') {
+	echo "<font color=red>";
+	if ( is_array($text) ) {
+		echo "<pre>" . date("H:i:s ") . $extra;
+		print_r($text);
+		echo " +</pre><br>";
+	} else {
+		echo date("H:i:s ") . $extra . $text . " +<br>";
+	}
+	echo "</font>";
+}

@@ -5,9 +5,6 @@
 	<title>{title}</title>
 	<meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
 	<meta name="Robots" content="noindex,nofollow">
-	<link rel="stylesheet" href="xxxjquery/jquery-ui.css" />
-	<script src="xxxjquery/jquery-1.8.2.js"></script>
-	<script src="xxxjquery/jquery-ui.js"></script>
 	<style type="text/css" media="all">@import url("/design/presentornot.css.php?c={color}");</style>
 </head>
 <body>
@@ -22,7 +19,7 @@
 
 	<div class="content">{content}</div>
 
-	<div class="footer">{url} - {lastmodified}</div>
+	<div class="footer">{url} - Last modified: {lastmodified}</div>
 
 </div>
 

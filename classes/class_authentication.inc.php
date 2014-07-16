@@ -1,6 +1,6 @@
-<?php 
-// version: 2014-01-20
+<?php
 
+// TODOEXPLAIN
 class class_authentication {
 
 	// TODOEXPLAIN
@@ -46,4 +46,3 @@ class class_authentication {
 		return $login_correct;
 	}
 }
-?>

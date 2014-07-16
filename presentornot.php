@@ -13,8 +13,6 @@ $oPage->setContent(createPresentContent( ));
 // show page
 echo $oPage->getPage();
 
-require_once "classes/_db_disconnect.inc.php";
-
 // TODOEXPLAIN
 function createPresentContent( ) {
 	$refreshAfterXSeconds = 60;
@@ -143,4 +141,3 @@ tcRefreshSearchStart();
 
 	return $ret;
 }
-?>

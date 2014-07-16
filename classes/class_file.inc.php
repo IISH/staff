@@ -1,11 +1,7 @@
-<?php 
-// version: 2014-01-20
+<?php
 
+// TODOEXPLAIN
 class class_file {
-
-	// TODOEXPLAIN
-	function class_file() {
-	}
 
 	// TODOEXPLAIN
 	function getFileSource($bestandsnaam) {
@@ -14,4 +10,3 @@ class class_file {
 		return $return_value;
 	}
 }
-?>

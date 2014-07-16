@@ -1,6 +1,6 @@
 <?php
-// version: 2014-01-20
 
+// TODOEXPLAIN
 class class_website_protection {
 	// construct
 	function class_website_protection($settings = '') {
@@ -9,11 +9,9 @@ class class_website_protection {
 
 	// TODOEXPLAIN
 	function send_warning_mail($tekst) {
-        global $settings_from_database;
-
 		$message = '';
 
-		$recipients = trim($settings_from_database["admin_email"]);
+		$recipients = trim(class_settings::getSetting("admin_email"));
 
 		$recipients = str_replace(array(';', ':', ' '), ',', $recipients);
 
@@ -24,8 +22,8 @@ class class_website_protection {
 
 		if ( $recipients != '' ) {
 
-			$fromname = trim($settings_from_database["from_name"]);
-			$fromaddress = trim($this->$settings_from_database["from_email"]);
+			$fromname = trim(class_settings::getSetting("from_name"));
+			$fromaddress = trim(class_settings::getSetting("from_email"));
 			$eol = "\n";
 
 			$headers = "From: " . $fromname . " <" . $fromaddress . ">";
@@ -34,13 +32,12 @@ class class_website_protection {
 
 			$iplocator = "http://www.aboutmyip.com/AboutMyXApp/IP2Location.jsp?ip=";
 
-			$message = $message . "Date: " . date("Y-m-d") . $eol;
-			$message = $message . "Time: " . date("H:i:s") . $eol;
-			$message = $message . "URL: " . $this->getLongUrl() . $eol;
-			$message = $message . "IP address: " . $this->get_remote_addr() . $eol;
-			$message = $message . "IP Location: " . $iplocator . $this->get_remote_addr() . $eol;
-			$message = $message . $eol;
-			$message = $message . "Warning: " . $tekst;
+			$message .= "Date: " . date("Y-m-d") . $eol;
+			$message .= "Time: " . date("H:i:s") . $eol;
+			$message .= "URL: " . $this->getLongUrl() . $eol;
+			$message .= "IP address: " . $this->get_remote_addr() . $eol;
+			$message .= "IP Location: " . $iplocator . $this->get_remote_addr() . $eol . $eol;
+			$message .= "Warning: " . $tekst;
 
 			// send email
 			mail($recipients, $subject, $message, $headers);
@@ -76,9 +73,9 @@ class class_website_protection {
 	// TODOEXPLAIN
 	function send_error_to_browser($tekst) {
 		$val = $tekst;
-		$val = $val . "<br>Please contact the webmaster/IT department.";
-		$val = $val . "<br>We have logged your IP address.";
-		$val = $val . "<br>";
+		$val .= "<br>Please contact the webmaster/IT department.";
+		$val .= "<br>We have logged your IP address.";
+		$val .= "<br>";
 
 		$val = "<font color=red><b>" . $val . "</b></font>";
 
@@ -86,7 +83,7 @@ class class_website_protection {
 	}
 
 	// TODOEXPLAIN
-	function check_for_xss_code($tekst, $tekst_is_integer) {
+	function check_for_xss_code($tekst) {
 		$foundxss = 0;
 
 		$test = $tekst;
@@ -108,17 +105,6 @@ class class_website_protection {
 			$test = str_replace(";;", ';', $test);
 
 			$test = trim($test);
-
-			// start controle op XSS values
-			if ( $tekst_is_integer == 1 ) {
-				// deze teksten zijn niet toegestaan in cijfer velden, maar in andere velden wel
-				$foundxss = $this->check_instr_xss($foundxss, $test, ".php");
-				$foundxss = $this->check_instr_xss($foundxss, $test, ".asp");
-				$foundxss = $this->check_instr_xss($foundxss, $test, "index.");
-				$foundxss = $this->check_instr_xss($foundxss, $test, "http://");
-				$foundxss = $this->check_instr_xss($foundxss, $test, "https://");
-				$foundxss = $this->check_instr_xss($foundxss, $test, "ftp://");
-			}
 
 			// deze teksten zijn niet toegestaan in alle soorten velden (die gecontroleerd worden)
 			$foundxss = $this->check_instr_xss($foundxss, $test, "%0d%0a");
@@ -161,7 +147,6 @@ class class_website_protection {
 			$foundxss = $this->check_instr_xss($foundxss, $test, "(select top ");
 			$foundxss = $this->check_instr_xss($foundxss, $test, "thread/classes/core/");
 			$foundxss = $this->check_instr_xss($foundxss, $test, "thread/administrator/components/");
-			$foundxss = $this->check_instr_xss($foundxss, $test, "http://cotine.net/");
 			$foundxss = $this->check_instr_xss($foundxss, $test, "?webappcfg[APPPATH]");
 			$foundxss = $this->check_instr_xss($foundxss, $test, "/themes/runcms/");
 			$foundxss = $this->check_instr_xss($foundxss, $test, " union all select ");
@@ -267,7 +252,7 @@ class class_website_protection {
 
 		if ($retval != '') {
 			// check for xss code
-			$this->check_for_xss_code($retval, 0);
+			$this->check_for_xss_code($retval);
 
 			if ($pattern != '') {
 				if ( preg_match($pattern, $retval) == 0) {
@@ -289,10 +274,6 @@ class class_website_protection {
 		$retval = trim($retval);
 
 		if ($retval != '') {
-
-			// check for xss code
-			$this->check_for_xss_code($retval, 1);
-
 			// check if only numbers
 			$pattern = "/^[0-9]+$/";
 
@@ -308,63 +289,12 @@ class class_website_protection {
 	}
 
 	// TODOEXPLAIN
-	function request_negative_or_positive_number_or_empty($type = '', $field = '') {
-		$retval = $this->get_value($type, $field);
-
-		$retval = trim($retval);
-
-		if ($retval != '') {
-			// check for xss code
-			$this->check_for_xss_code($retval, 1);
-
-			// check if only numbers
-			$pattern = "/^\-?[0-9]+$/";
-
-			if ( preg_match($pattern, $retval) == 0) {
-				// niet goed
-				$this->send_error_to_browser("ERROR 6521456");
-				$this->send_warning_mail("ERROR 6521456 - command: " . $type . " - value: " . $retval);
-				die('');
-			}
-		}
-
-		return $retval;
-	}
-
-	// TODOEXPLAIN
-	function request_only_characters_or_empty($type = '', $field = '') {
-		$retval = $this->get_value($type, $field);
-
-		$retval = trim($retval);
-
-		if ($retval != '') {
-			// check for xss code
-			$this->check_for_xss_code($retval, 0);
-
-			// check if only numbers
-			$pattern = "/^[a-zA-Z]+$/";
-
-			if ( preg_match($pattern, $retval) == 0) {
-				// niet goed
-				$this->send_error_to_browser("ERROR 9856325");
-				$this->send_warning_mail("ERROR 9856325 - command: " . $type . " - value: " . $retval);
-				die('');
-			}
-		}
-
-		return $retval;
-	}
-
-	// TODOEXPLAIN
 	function request_only_characters_or_numbers_or_empty($type = '', $field = '') {
 		$retval = $this->get_value($type, $field);
 
 		$retval = trim($retval);
 
 		if ($retval != '') {
-			// check for xss code
-			$this->check_for_xss_code($retval, 0);
-
 			// check if only numbers
 			$pattern = "/^[0-9a-zA-Z]+$/";
 
@@ -391,27 +321,17 @@ class class_website_protection {
 
 	// TODOEXPLAIN
 	function send_email( $recipients, $subject, $message ) {
-		// check recipients
-		$recipients = trim($recipients);
-		$recipients = str_replace(array(';', ':', ' '), ',', $recipients);
-		// fix multiple commas
-		while ( strpos($recipients, ',,') !== false ) {
-			$recipients = str_replace(',,', ',', $recipients);
+		// check recipients value
+		$recipients = str_replace(array(',', ' '), ';', trim($recipients));
+		while ( strpos($recipients, ';;') !== false ) {
+			$recipients = str_replace(';;', ';', $recipients);
 		}
 
 		if ( $recipients != '' ) {
-
-			// gebruik geen info@, is een alias, het werkt door een of andere reden niet (zegt IT)
-			// gebruik infomail@, is een account, en werkt wel
-			$fromname = 'IISG Timecard';
-			$fromaddress = 'infomail@iisg.nl';
-
-			$headers = "From: " . $fromname . " <" . $fromaddress . ">";
+			$headers = "From: " . class_settings::getSetting("from_name") . " <" . class_settings::getSetting("from_email") . ">";
 
 			// send email
 			mail($recipients, $subject, $message, $headers);
-
 		}
 	}
 }
-?>

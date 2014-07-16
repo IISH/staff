@@ -5,4 +5,3 @@ $_SESSION["presentornot"]["name"] = '';
 
 Header("Location: login.php");
 die();
-?>

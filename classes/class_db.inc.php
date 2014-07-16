@@ -1,6 +1,6 @@
-<?php 
-// version: 2014-01-20
+<?php
 
+// TODOEXPLAIN
 class class_db {
 	protected $m_server;
 	protected $m_user;
@@ -38,4 +38,3 @@ class class_db {
 		return $this->conn;
 	}
 }
-?>

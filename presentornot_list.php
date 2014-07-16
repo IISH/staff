@@ -1,7 +1,6 @@
 <?php 
 //
 require_once "classes/start.inc.php";
-require_once "classes/_db_connect_protime.inc.php";
 
 $oWebuser->checkLoggedIn();
 
@@ -31,9 +30,12 @@ if ( $s == '-a-' ) {
 	$queryCriterium = Generate_Query(array("NAME", "FIRSTNAME", "EMAIL", "USER02"), explode(' ', $s));
 }
 
-// 
+$oProtime = new class_mssql($settings, 'protime');
+$oProtime->connect();
+
+//
 $querySelect = "SELECT * FROM CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) " . $queryCriterium . " ORDER BY NAME, FIRSTNAME ";
-$resultSelect = mssql_query($querySelect, $dbhandleProtime);
+$resultSelect = mssql_query($querySelect, $oProtime->getConnection());
 
 $totaal["aanwezig"] = 0;
 $totaal["afwezig"] = 0;
@@ -136,6 +138,3 @@ if ( $retval != '' ) {
 }
 
 echo $retval;
-
-require_once "classes/_db_disconnect.inc.php";
-?>

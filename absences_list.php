@@ -1,7 +1,6 @@
 <?php 
 //
 require_once "classes/start.inc.php";
-require_once "classes/_db_connect_protime.inc.php";
 
 $oWebuser->checkLoggedIn();
 
@@ -58,9 +57,12 @@ $arrHolidays = getNationalHolidays($selectedYear, $selectedMonth );
 
 if ( $to_short != 1 ) {
 
+	$oProtime = new class_mssql($settings, 'protime');
+	$oProtime->connect();
+
 	// loop employees
 	$querySelect = "SELECT * FROM CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) " . $queryCriterium . " ORDER BY NAME, FIRSTNAME ";
-	$resultSelect = mssql_query($querySelect, $dbhandleProtime);
+	$resultSelect = mssql_query($querySelect, $oProtime->getConnection());
 
 	while ( $rowSelect = mssql_fetch_array($resultSelect) ) {
 		$tmp = "
@@ -173,8 +175,6 @@ if ( $to_short != 1 ) {
 }
 echo $retval;
 
-require_once "classes/_db_disconnect.inc.php";
-
 function calculateNrOfDaysForMonth($year, $month) {
 	return cal_days_in_month(CAL_GREGORIAN, $month, $year);
 }
@@ -244,21 +244,19 @@ function isHoliday($datum, $holidays) {
 }
 
 function getNationalHolidays($year, $month) {
-	global $dbhandleTimecard, $settings;
+	global $settings;
+
+	$oConn = new class_mysql($settings, 'presentornot');
+	$oConn->connect();
 
 	$arr = array();
 
-    if ( $settings["timecard_connection_successful"] == 1 ) {
-	    $query = "SELECT * FROM Feestdagen WHERE datum LIKE '" . $year . '-' . substr("0" . $month,-2) . "-%' AND isdeleted=0 ";
-    	$result = mysql_query($query, $dbhandleTimecard);
-	    while ($row = mysql_fetch_assoc($result)) {
-    		$arr[] = new class_holiday($row["ID"], $settings);
-	    }
-    	mysql_free_result($result);
-    } else {
-        echo 'Cannot load National holidays.';
+    $query = "SELECT * FROM Feestdagen WHERE datum LIKE '" . $year . '-' . substr("0" . $month,-2) . "-%' AND isdeleted=0 ";
+   	$result = mysql_query($query, $oConn->getConnection());
+    while ($row = mysql_fetch_assoc($result)) {
+   		$arr[] = new class_holiday($row["ID"], $settings);
     }
+   	mysql_free_result($result);
 
 	return $arr;
 }
-?>

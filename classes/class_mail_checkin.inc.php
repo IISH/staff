@@ -1,6 +1,6 @@
 <?php 
-// version: 2014-01-20
 
+// TODOEXPLAIN
 class class_mail_checkin {
 	protected $project_settings;
 
@@ -11,14 +11,15 @@ class class_mail_checkin {
 
 	// TODOEXPLAIN
 	function getListOfNotifications() {
-        global $dbhandlePresentornot;
+		$oConn = new class_mysql($this->project_settings, 'presentornot');
+		$oConn->connect();
 
 		$arr = array();
 		$arr[] = 0;
 
 		$query = "SELECT ProtimeID FROM Favourites WHERE type='checkinout' GROUP BY ProtimeID ";
 
-		$result = mysql_query($query, $dbhandlePresentornot);
+		$result = mysql_query($query, $oConn->getConnection());
 
 		while ($row = mysql_fetch_assoc($result)) {
 			$arr[] = $row["ProtimeID"];
@@ -30,8 +31,6 @@ class class_mail_checkin {
 
 	// TODOEXPLAIN
 	function getListOfCheckedProtimeUserNotifications( $date = '' ) {
-		global $dbhandleProtime;
-
 		if ( $date == '' ) {
 			$date = date("Ymd");
 		}
@@ -40,9 +39,12 @@ class class_mail_checkin {
 
 		$ids = implode(',', $this->getListOfNotifications());
 
-		// 
+		$oProtime = new class_mssql($this->project_settings, 'protime');
+		$oProtime->connect();
+
+		//
 		$query = "SELECT PERSNR, MAX(BOOKTIME) AS CHECKTIME, COUNT(*) AS AANTAL FROM BOOKINGS WHERE PERSNR IN ( " . $ids . " ) AND BOOKDATE='" . $date . "' AND BOOKTIME<>9999 GROUP BY PERSNR HAVING COUNT(*) % 2 = 1 ";
-		$result = mssql_query($query, $dbhandleProtime);
+		$result = mssql_query($query, $oProtime->getConnection());
 
 		while ( $row = mssql_fetch_array($result) ) {
 			$user = array();
@@ -58,11 +60,13 @@ class class_mail_checkin {
 
 	// TODOEXPLAIN
 	function getListOfTimecardUsersForProtimeUserNotification( $protime_id ) {
-		global $dbhandlePresentornot;
+		$oConn = new class_mysql($this->project_settings, 'presentornot');
+		$oConn->connect();
+
 		$arr = array();
 
 		$query = "SELECT * FROM Favourites WHERE ProtimeID=" . $protime_id . " AND type='checkinout' ";
-		$result = mysql_query($query, $dbhandlePresentornot);
+		$result = mysql_query($query, $oConn->getConnection());
 
 		while ( $row = mysql_fetch_array($result) ) {
             $arr[] = new class_employee( $row["user"], $this->project_settings );
@@ -73,10 +77,10 @@ class class_mail_checkin {
 
 	// TODOEXPLAIN
 	function deleteNotification( $user, $protime_id ) {
-		global $dbhandlePresentornot;
+		$oConn = new class_mysql($this->project_settings, 'presentornot');
+		$oConn->connect();
 
 		$query = 'DELETE FROM Favourites WHERE user=\'' . $user . '\' AND ProtimeID=' . $protime_id . ' AND type=\'checkinout\' ';
-		$result = mysql_query($query, $dbhandlePresentornot);
+		mysql_query($query, $oConn->getConnection());
 	}
 }
-?>

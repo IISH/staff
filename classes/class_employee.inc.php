@@ -1,47 +1,37 @@
 <?php 
-// version: 2014-01-20
 
+// TODOEXPLAIN
 class class_employee {
 	protected $user = '';
 	protected $project_settings;
-	protected $protime_id = 0;
-	protected $email = '';
-	protected $authorisation = array();
+	protected $protime_id;
+    protected $firstname = '';
 	protected $lastname = '';
-	protected $firstname = '';
+    protected $email = '';
+    protected $authorisation = array();
 
 	// TODOEXPLAIN
 	function class_employee($user, $project_settings) {
-        global $dbhandlePresentornot, $dbhandleTimecard;
-
 		$this->user = $user;
 		$this->project_settings = $project_settings;
 
-        $this->firstname = $user; // TMP TODO
+		$oConn = new class_mysql($this->project_settings, 'presentornot');
+		$oConn->connect();
 
-/*
-        // get protime_id and email
-        $query_project = 'SELECT * FROM Employees WHERE LongCode=\'' . $this->getUser() . '\' ';
-//echo $query_project . ' +<br>';
-        $resultReset = mysql_query($query_project, $dbhandleTimecard);
-        if ($row_project = mysql_fetch_assoc($resultReset)) {
-            $this->email = $row_project["Email"];
-            $this->protime_id = $row_project["ProtimePersNr"];
-            $this->lastname = $row_project["LastName"];
-            $this->firstname = $row_project["FirstName"];
-        }
-        mysql_free_result($resultReset);
-*/
-        // get authorisation
-        $queryAuthorisation = 'SELECT * FROM Users WHERE user=\'' . $this->getUser() . '\' ';
-        $resultAuthorisation = mysql_query($queryAuthorisation, $dbhandlePresentornot);
-        while ($rowAuthorisation = mysql_fetch_assoc($resultAuthorisation)) {
-            if ( $rowAuthorisation["inouttime"] == 1 ) {
+        $query = 'SELECT * FROM Users WHERE user=\'' . $this->getUser() . '\' ';
+        $result = mysql_query($query, $oConn->getConnection());
+        if ($row = mysql_fetch_assoc($result)) {
+
+            $this->firstname = $row["firstname"];
+            $this->lastname = $row["lastname"];
+            $this->email = $row["email"];
+			$this->protime_id = $row["ProtimeID"];
+
+            if ( $row["inouttime"] == 1 ) {
                 $this->authorisation[] = 'inouttime';
             }
         }
-        mysql_free_result($resultAuthorisation);
-
+        mysql_free_result($result);
 	}
 
 	// TODOEXPLAIN
@@ -100,15 +90,16 @@ class class_employee {
 		return $this->email;
 	}
 
+	// TODOEXPLAIN
 	function getFavourites( $type ) {
-		global $dbhandlePresentornot;
+		$oConn = new class_mysql($this->project_settings, 'presentornot');
+		$oConn->connect();
 
 		$ids = array();
 		$ids[] = '0';
 
 		$query = 'SELECT * FROM Favourites WHERE user=\'' . $this->getUser() . '\' AND type=\'' . $type . '\' ';
-//echo $query . ' +<br>';
-		$result = mysql_query($query, $dbhandlePresentornot);
+		$result = mysql_query($query, $oConn->getConnection());
 		while ( $row = mysql_fetch_array($result) ) {
 			$ids[] = $row["ProtimeID"];
 		}
@@ -117,4 +108,3 @@ class class_employee {
 		return $ids;
 	}
 }
-?>

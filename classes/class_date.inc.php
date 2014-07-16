@@ -1,6 +1,6 @@
-<?php 
-// version: 2014-01-20
+<?php
 
+// TODOEXPLAIN
 class class_date {
 	protected $date;
 
@@ -92,4 +92,3 @@ class class_date {
 		return $lastMonthInQuarter;
 	}
 }
-?>

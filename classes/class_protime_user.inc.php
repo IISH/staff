@@ -1,6 +1,6 @@
-<?php 
-// version: 2014-01-20
+<?php
 
+// TODOEXPLAIN
 class class_protime_user {
 	protected $protime_id = 0;
 	protected $project_settings;
@@ -23,11 +23,12 @@ class class_protime_user {
 
 	// TODOEXPLAIN
 	function getProtimeValues() {
-		global $dbhandleProtime;
+		$oProtime = new class_mssql($this->project_settings, 'protime');
+		$oProtime->connect();
 
 		// reset values
 		$query = "SELECT * FROM CURRIC WHERE PERSNR=" . $this->protime_id;
-		$resultReset = mssql_query($query, $dbhandleProtime);
+		$resultReset = mssql_query($query, $oProtime->getConnection());
 		if ($row = mssql_fetch_assoc($resultReset)) {
 
 			$this->lastname = $row["NAME"];
@@ -49,4 +50,3 @@ class class_protime_user {
 		return $this->lastname;
 	}
 }
-?>

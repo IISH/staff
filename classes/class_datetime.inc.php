@@ -1,6 +1,6 @@
 <?php 
-// version: 2014-01-20
 
+// TODOEXPLAIN
 class class_datetime {
 
 	// TODOEXPLAIN
@@ -10,7 +10,12 @@ class class_datetime {
 	// TODOEXPLAIN
 	// todo protectie
 	function getQueryDate() {
-		$d = $_GET["d"];
+		if ( isset($_GET["d"]) ) {
+			$d = $_GET["d"];
+		} else {
+			$d = '';
+		}
+
 		if ( $d == '' ) {
 			$d = date("Ymd");
 		}
@@ -200,4 +205,3 @@ class class_datetime {
 		return $retval;
 	}
 }
-?>

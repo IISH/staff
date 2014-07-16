@@ -1,9 +1,9 @@
 <?php 
-// version: 2014-01-20
 
-require_once "classes/class_file.inc.php";
-require_once "classes/class_misc.inc.php";
+require_once dirname(__FILE__) . "/class_file.inc.php";
+require_once dirname(__FILE__) . "/class_misc.inc.php";
 
+// TODOEXPLAIN
 class class_page {
 	protected $page_template;
 	protected $project_settings;
@@ -54,6 +54,7 @@ class class_page {
 		return $page;
 	}
 
+	// TODOEXPLAIN
 	function createMenu() {
 		global $menu;
 
@@ -75,9 +76,8 @@ class class_page {
 	}
 
 	// TODOEXPLAIN
-	function getLastModified() {
-        global $settings_from_database;
-		return 'Last modified: ' . $settings_from_database["last_modified"];
+	function getLastModified( $dateformat = "j F Y") {
+		return date($dateformat, strtotime(class_settings::getSetting("last_modified")));
 	}
 
 	// TODOEXPLAIN
@@ -110,4 +110,3 @@ class class_page {
 		return $this->color;
 	}
 }
-?>

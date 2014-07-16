@@ -42,13 +42,13 @@ if ( $dowhat == 'a' ) {
 	}
 }
 
+$oConn = new class_mysql($settings, 'presentornot');
+$oConn->connect();
+
 if ( $query != '' ) {
-	$resultSelect = mysql_query($query, $dbhandlePresentornot);
+	$resultSelect = mysql_query($query, $oConn->getConnection());
 
 	echo $div;
 } else {
 	echo 'Error';
 }
-
-require_once "classes/_db_disconnect.inc.php";
-?>

@@ -1,12 +1,13 @@
 <?php 
 require_once "classes/start.inc.php";
 
-if ( !isset( $_GET["cron_key"] ) || $settings_from_database["cron_key"] == '' || $_GET["cron_key"] != $settings_from_database["cron_key"] ) {
+if ( !isset( $_GET["cron_key"] ) || class_settings::getSetting("cron_key") == '' || $_GET["cron_key"] != class_settings::getSetting("cron_key") ) {
 	die('Blocked due to incorrect security code');
 }
 
-require_once "classes/_db_connect_protime.inc.php";
 require_once "classes/class_mail_checkin.inc.php";
+
+// TODOTODO EXPLAIN SCRIPT
 
 $oMail = new class_mail_checkin( $settings );
 
@@ -15,10 +16,11 @@ foreach ( $protimeUsers as $protimeUser ) {
 
 	echo $protimeUser["user"]->getFirstname() . " has checked in.<br>";
 
-	$headers = "From: " . $settings_from_database["from_email"] . "\r\nReply-To: " . $settings_from_database["from_email"];
+	$headers = "From: " . class_settings::getSetting("from_email") . "\r\nReply-To: " . class_settings::getSetting("from_email");
 	$subject = trim( $protimeUser["user"]->getFirstname() . ' ' . $protimeUser["user"]->getLastname() ) . ' has checked in.';
 
 	$timecardUsers = $oMail->getListOfTimecardUsersForProtimeUserNotification( $protimeUser["user"]->getId() );
+
 	foreach ( $timecardUsers as $timecardUser ) {
 
 		if ( $timecardUser->hasInOutTimeAuthorisation() ) {

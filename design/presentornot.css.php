@@ -213,8 +213,6 @@ a.checkinouttime {
 }
 
 #menu {
-	xxxwidth: 843px;
-	xxxborder: 1px solid #AAAAAA;
 	margin-top: 9px;
 	margin-bottom: 0px;
 	padding-top: 8px;

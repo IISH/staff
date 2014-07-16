@@ -1,10 +1,7 @@
-<?php 
-// version: 2014-01-20
+<?php
 
+// TODOEXPLAIN
 class class_misc {
-
-	function class_misc() {
-	}
 
 	// TODOEXPLAIN
 	function multiplyTag($tag, $code, $start, $end) {
@@ -17,42 +14,6 @@ class class_misc {
 		}
 
 		return $ret;
-	}
-
-	// TODOEXPLAIN
-	function PlaceURLParametersInQuery($query, $change_back_url) {
-		$return_value = $query;
-
-		// vervang in de url, de FLD: door waardes
-		$pattern = '/\[FLD\:[a-zA-Z0-9_]*\]/';
-		preg_match($pattern, $return_value, $matches);
-		while ( count($matches) > 0 ) { 
-
-			if ( "[FLD:" . $this->m_form["primarykey"] . "]" == $matches[0] ) {
-				$return_value = str_replace($matches[0], $this->m_doc_id, $return_value);
-			} else {
-				$return_value = str_replace($matches[0], addslashes_mssql($_GET[str_replace("]", "", str_replace("[FLD:", "", $matches[0]))]), $return_value);
-			}
-
-			$matches = null;
-			preg_match($pattern, $return_value, $matches);
-		}
-
-		if ( $change_back_url <> "no" ) {
-			// 
-			$backurl = $_SERVER["QUERY_STRING"];
-			if ( $backurl <> "" ) {
-				$backurl = "?" . $backurl;
-			}
-			$backurl = urlencode($_SERVER["SCRIPT_NAME"] . $backurl);
-		} else {
-			$backurl = getBackUrl();
-
-			$backurl = urlencode($backurl);
-		}
-		$return_value = str_replace("[BACKURL]", $backurl, $return_value);
-
-		return $return_value;;
 	}
 
 	// TODOEXPLAIN
@@ -103,4 +64,3 @@ class class_misc {
 		return $return_value;
 	}
 }
-?>

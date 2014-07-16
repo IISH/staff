@@ -13,8 +13,6 @@ $oPage->setContent(createPresentContent( ));
 // show page
 echo $oPage->getPage();
 
-require_once "classes/_db_disconnect.inc.php";
-
 // TODOEXPLAIN
 function createPresentContent( ) {
 	global $colors;
@@ -165,4 +163,3 @@ tcRefreshSearchStart();
 
 	return $ret;
 }
-?>

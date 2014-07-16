@@ -9,8 +9,6 @@ $oPage->setContent(createLoginPage());
 // show page
 echo $oPage->getPage();
 
-require_once "classes/_db_disconnect.inc.php";
-
 // TODOEXPLAIN
 function createLoginPage() {
 	global $protect, $settings;
@@ -98,4 +96,3 @@ document.frmA.fldLogin.focus();
 
 	return $ret;
 }
-?>

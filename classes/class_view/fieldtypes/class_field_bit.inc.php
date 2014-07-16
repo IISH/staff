@@ -1,8 +1,8 @@
 <?php 
-// version: 2014-01-20
 
 require_once("./classes/class_view/fieldtypes/class_field.inc.php");
 
+// TODOEXPLAIN
 class class_field_bit extends class_field {
 	protected $m_show_different_values;
 	protected $m_different_true_value;
@@ -37,18 +37,14 @@ class class_field_bit extends class_field {
 	}
 
 	// TODOEXPLAIN
-	function view_field($row, $criteriumResult = 0) {
-		$retval = parent::view_field($row, $criteriumResult);
+	function get_value($row) {
+		$retval = parent::get_value($row);
 
-		if ( $criteriumResult["fieldname"] == "-novalue-" ) {
-			$retval = '';
-		} else {
-			if ( $this->get_show_different_values() == true || $this->get_show_different_values() == 1 ) {
-				if ( $retval == "1" || $retval == true || $retval == "on" ) {
-					$retval = $this->get_different_true_value();
-				} else {
-					$retval = $this->get_different_false_value();
-				}
+		if ( $this->get_show_different_values() == true || $this->get_show_different_values() == 1 ) {
+			if ( $retval == "1" || $retval == true || $retval == "on" ) {
+				$retval = $this->get_different_true_value();
+			} else {
+				$retval = $this->get_different_false_value();
 			}
 		}
 
@@ -71,4 +67,3 @@ class class_field_bit extends class_field {
 	}
 
 }
-?>
