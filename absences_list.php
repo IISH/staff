@@ -57,6 +57,7 @@ $arrHolidays = getNationalHolidays($selectedYear, $selectedMonth );
 
 if ( $to_short != 1 ) {
 
+	// TODOXXX
 	$oProtime = new class_mssql($settings, 'protime');
 	$oProtime->connect();
 

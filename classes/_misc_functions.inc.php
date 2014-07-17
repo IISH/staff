@@ -10,6 +10,7 @@ function getStatusColor( $persnr, $date ) {
 	$status_text = '';
 	$status_alt = '';
 
+	// TODOXXX
 	$oProtime = new class_mssql($settings, 'protime');
 	$oProtime->connect();
 
@@ -46,10 +47,10 @@ function getStatusColor( $persnr, $date ) {
 	// dan betekent dat dat de persoon vandaag nog niet ingeklokt heeft
 	// misschien omdat de persoon op vakantie is
 	if ( $status_text == '' && $found == 0 ) {
-//		$oProtime = new class_mssql($settings, 'protime');
 		$oProtime->connect();
 
 		$query = "SELECT ABSENCE.SHORT_1 FROM P_ABSENCE INNER JOIN ABSENCE ON P_ABSENCE.ABSENCE = ABSENCE.ABSENCE WHERE (P_ABSENCE.PERSNR = " . $persnr . ") AND (P_ABSENCE.BOOKDATE = '" . $date . "') ";
+		// TODOXXX
 		$result = mssql_query($query, $oProtime->getConnection());
 		$status_separator = '';
 		while ( $row = mssql_fetch_array($result) ) {
@@ -166,11 +167,14 @@ function getAbsences($eid) {
 
 	$ret = '';
 
+	// TODOXXX
 	$oProtime = new class_mssql($settings, 'protime');
 	$oProtime->connect();
 
 	$query = "SELECT TOP 2000 P_ABSENCE.REC_NR, P_ABSENCE.PERSNR, P_ABSENCE.BOOKDATE, P_ABSENCE.ABSENCE_VALUE, P_ABSENCE.ABSENCE_STATUS, ABSENCE.SHORT_1, ABSENCE.ABSENCE FROM P_ABSENCE LEFT OUTER JOIN ABSENCE ON P_ABSENCE.ABSENCE = ABSENCE.ABSENCE WHERE P_ABSENCE.PERSNR=" . $eid . " AND P_ABSENCE.BOOKDATE>='" . date("Ymd") . "' AND ( ABSENCE_VALUE>0 OR SHORT_1 <> 'Vakantie' ) AND P_ABSENCE.ABSENCE NOT IN (6) ORDER BY P_ABSENCE.BOOKDATE, P_ABSENCE.REC_NR ";
+	// TODOXXX
 	$result = mssql_query($query, $oProtime->getConnection());
+	// TODOXXX
 	$num = mssql_num_rows($result);
 	if ( $num ) {
 		$ret .= "
@@ -223,12 +227,15 @@ AND ( P_ABSENCE.ABSENCE_VALUE>=" . $min_minutes . " OR P_ABSENCE.ABSENCE_VALUE=0
 ORDER BY P_ABSENCE.BOOKDATE, P_ABSENCE.REC_NR 
 ";
 
+	// TODOXXX
 	$oProtime = new class_mssql($settings, 'protime');
 	$oProtime->connect();
 
+	// TODOXXX
 	$result = mssql_query($query, $oProtime->getConnection());
 	$num = mssql_num_rows($result);
 	if ( $num ) {
+		// TODOXXX
 		while ( $row = mssql_fetch_array($result) ) {
 			$ret[] = array( 'date' => $row["BOOKDATE"], 'description' => $row["SHORT_1"] );
 		}

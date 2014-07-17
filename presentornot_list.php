@@ -30,6 +30,7 @@ if ( $s == '-a-' ) {
 	$queryCriterium = Generate_Query(array("NAME", "FIRSTNAME", "EMAIL", "USER02"), explode(' ', $s));
 }
 
+// TODOXXX
 $oProtime = new class_mssql($settings, 'protime');
 $oProtime->connect();
 
