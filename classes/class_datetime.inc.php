@@ -63,7 +63,7 @@ class class_datetime {
 	}
 
 	// TODOEXPLAIN
-	function get_date($protect, $field = 'd') {
+	public static function get_date($protect, $field = 'd') {
 		if ( $field == '' ) {
 			$field = 'd';
 		}

@@ -1,6 +1,11 @@
 <?php
 require_once "classes/start.inc.php";
 
+//
+if ( !isset($settings) ) {
+	$settings = array();
+}
+
 $oWebuser->checkLoggedIn();
 
 $date = class_datetime::get_date($protect);

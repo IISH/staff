@@ -1,6 +1,12 @@
 <?php 
 require_once "classes/start.inc.php";
 
+//
+if ( !isset($settings) ) {
+	$settings = array();
+}
+
+//
 if ( !isset( $_GET["cron_key"] ) || class_settings::getSetting("cron_key") == '' || $_GET["cron_key"] != class_settings::getSetting("cron_key") ) {
 	die('Blocked due to incorrect security code');
 }
