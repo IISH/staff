@@ -17,23 +17,16 @@ echo "Start time: " . date("Y-m-d H:i:s") . "<br>\n";
 
 // sync
 $sync = new class_syncProtimeMysql();
-$sync->setSourceTable("BOOKINGS");
-$sync->setSourceCriterium(" `BOOKDATE` >= '" . date("Ymd") . "' ");
-$sync->setTargetTable("SPEC_PROTIME_BOOKINGS_CURRENTDAY");
-$sync->setPrimaryKey("REC_NR");
-$sync->addFields( array("REC_NR", "PERSNR", "BOOKDATE", "BOOK_ORIG", "BOOKTIME", "BOOKTYPE", "CCABS", "TERMINAL", "USER_ID", "COMMENTS", "REQUEST", "CALCBOOKTIME") );
+$sync->setSourceTable("PR_MONTH");
+$sync->setSourceCriterium(" BOOKDATE>='" . date("Ymd", mktime(0, 0, 0, date("m")-3, 1, date("Y"))) . "' ");
+$sync->setTargetTable("PROTIME_PR_MONTH");
+$sync->setPrimaryKey("PR_KEY");
+$sync->addFields( array("PR_KEY", "PERSNR", "BOOKDATE", "CYC_DP", "DAYPROG", "NORM", "WORKED", "PREST", "RPREST", "EXTRA", "WEEKPRES1", "WEEKPRES2", "WEEKPRES3", "PAYPERIO_PRES", "BALANCE", "TERMINAL", "FLAGS1", "FLAGS2", "FLAGS3", "FLAGS4", "FLAGS5", "FLAGS6", "FLAGS7", "ABS_CORE", "NROFBREAKS", "BREAKTIME", "CALCULATED", "ACCESSGROUP", "SHIFT", "CYCLIQ", "COSTCENTERGROUP", "COSTBLOCKING", "PP_FUNCTION", "COMMENTS", "CUSTOMER" ) );
 class_settings::saveSetting('cron_' . $sync->getTargetTable() . '_start', date("Y-m-d H:i:s"), $sync->getTargetTable() . "_syncinfo");
 $sync->doSync();
 
 //
 echo "<br>Rows inserted/updated: " . $sync->getCounter() . "<br>";
-
-// remove old records
-$query = "DELETE FROM `" . $sync->getTargetTable() . "` WHERE `BOOKDATE`<'" . date("Ymd") . "' ";
-debug($query);
-$oConn = new class_mysql($this->settings, 'presentornot');
-$oConn->connect();
-$result = mysql_query($query, $oConn->getConnection());
 
 // save sync last run
 class_settings::saveSetting('cron_' . $sync->getTargetTable() . '_end', date("Y-m-d H:i:s"), $sync->getTargetTable() . "_syncinfo");

@@ -17,23 +17,16 @@ echo "Start time: " . date("Y-m-d H:i:s") . "<br>\n";
 
 // sync
 $sync = new class_syncProtimeMysql();
-$sync->setSourceTable("BOOKINGS");
-$sync->setSourceCriterium(" `BOOKDATE` >= '" . date("Ymd") . "' ");
-$sync->setTargetTable("SPEC_PROTIME_BOOKINGS_CURRENTDAY");
+$sync->setSourceTable("P_ABSENCE");
+$sync->setSourceCriterium(" BOOKDATE>='" . date("Ymd", mktime(0, 0, 0, date("m")-3, 1, date("Y"))) . "' ");
+$sync->setTargetTable("PROTIME_P_ABSENCE");
 $sync->setPrimaryKey("REC_NR");
-$sync->addFields( array("REC_NR", "PERSNR", "BOOKDATE", "BOOK_ORIG", "BOOKTIME", "BOOKTYPE", "CCABS", "TERMINAL", "USER_ID", "COMMENTS", "REQUEST", "CALCBOOKTIME") );
+$sync->addFields( array("REC_NR", "PERSNR", "BOOKDATE", "PERIODETYPE", "ABSENCE", "ABSENCE_VALUE", "ABSENCE_STATUS", "SHIFT", "PAINTABSENCE", "PAINTTIME", "AUTHORISED", "COMMENTS", "REQUEST", "CALCTIME", "FROMTIME") );
 class_settings::saveSetting('cron_' . $sync->getTargetTable() . '_start', date("Y-m-d H:i:s"), $sync->getTargetTable() . "_syncinfo");
 $sync->doSync();
 
 //
 echo "<br>Rows inserted/updated: " . $sync->getCounter() . "<br>";
-
-// remove old records
-$query = "DELETE FROM `" . $sync->getTargetTable() . "` WHERE `BOOKDATE`<'" . date("Ymd") . "' ";
-debug($query);
-$oConn = new class_mysql($this->settings, 'presentornot');
-$oConn->connect();
-$result = mysql_query($query, $oConn->getConnection());
 
 // save sync last run
 class_settings::saveSetting('cron_' . $sync->getTargetTable() . '_end', date("Y-m-d H:i:s"), $sync->getTargetTable() . "_syncinfo");
