@@ -10,17 +10,16 @@ function getStatusColor( $persnr, $date ) {
 	$status_text = '';
 	$status_alt = '';
 
-	// TODOXXX
-	$oProtime = new class_mssql($settings, 'protime');
+	$oProtime = new class_mysql($settings, 'presentornot');
 	$oProtime->connect();
 
 	// achterhaal 'present' status
-	$query = "SELECT REC_NR, PERSNR, BOOKDATE, BOOKTIME FROM BOOKINGS WHERE PERSNR=" . $persnr . " AND BOOKDATE='" . $date . "' AND BOOKTIME<>9999 ORDER BY REC_NR ";
-	$result = mssql_query($query, $oProtime->getConnection());
+	$query = "SELECT REC_NR, PERSNR, BOOKDATE, BOOKTIME FROM PROTIME_BOOKINGS WHERE PERSNR=" . $persnr . " AND BOOKDATE='" . $date . "' AND BOOKTIME<>9999 ORDER BY REC_NR ";
+	$result = mysql_query($query, $oProtime->getConnection());
 	$status = 0;
 	$found = 0;
 	$aanwezig = 0;
-	while ( $row = mssql_fetch_array($result) ) {
+	while ( $row = mysql_fetch_assoc($result) ) {
 		$found = 1;
 		$status++;
 
@@ -39,7 +38,7 @@ function getStatusColor( $persnr, $date ) {
 
 		$status = $status % 2;
 	}
-	mssql_free_result($result);
+	mysql_free_result($result);
 
 	$status_alt = trim($status_alt);
 
@@ -49,15 +48,19 @@ function getStatusColor( $persnr, $date ) {
 	if ( $status_text == '' && $found == 0 ) {
 		$oProtime->connect();
 
-		$query = "SELECT ABSENCE.SHORT_1 FROM P_ABSENCE INNER JOIN ABSENCE ON P_ABSENCE.ABSENCE = ABSENCE.ABSENCE WHERE (P_ABSENCE.PERSNR = " . $persnr . ") AND (P_ABSENCE.BOOKDATE = '" . $date . "') ";
-		// TODOXXX
-		$result = mssql_query($query, $oProtime->getConnection());
+		$query = "
+SELECT PROTIME_ABSENCE.SHORT_1
+FROM PROTIME_P_ABSENCE
+	INNER JOIN PROTIME_ABSENCE ON PROTIME_P_ABSENCE.ABSENCE = PROTIME_ABSENCE.ABSENCE
+WHERE PROTIME_P_ABSENCE.PERSNR = " . $persnr . " AND PROTIME_P_ABSENCE.BOOKDATE = '" . $date . "'
+";
+		$result = mysql_query($query, $oProtime->getConnection());
 		$status_separator = '';
-		while ( $row = mssql_fetch_array($result) ) {
+		while ( $row = mysql_fetch_assoc($result) ) {
 			$status_text .= $status_separator . $row["SHORT_1"];
 			$status_separator = ', ';
 		}
-		mssql_free_result($result);
+		mysql_free_result($result);
 	}
 
 	$retval["aanwezig"] = $aanwezig;
@@ -156,61 +159,6 @@ function cleanUpTelephone($telephone) {
 }
 
 // TODOEXPLAIN
-function addslashes_mssql($text) {
-	$text = str_replace('\'', '\'\'', $text);
-	return $text;
-}
-
-// TODOEXPLAIN
-function getAbsences($eid) {
-	global $settings;
-
-	$ret = '';
-
-	// TODOXXX
-	$oProtime = new class_mssql($settings, 'protime');
-	$oProtime->connect();
-
-	$query = "SELECT TOP 2000 P_ABSENCE.REC_NR, P_ABSENCE.PERSNR, P_ABSENCE.BOOKDATE, P_ABSENCE.ABSENCE_VALUE, P_ABSENCE.ABSENCE_STATUS, ABSENCE.SHORT_1, ABSENCE.ABSENCE FROM P_ABSENCE LEFT OUTER JOIN ABSENCE ON P_ABSENCE.ABSENCE = ABSENCE.ABSENCE WHERE P_ABSENCE.PERSNR=" . $eid . " AND P_ABSENCE.BOOKDATE>='" . date("Ymd") . "' AND ( ABSENCE_VALUE>0 OR SHORT_1 <> 'Vakantie' ) AND P_ABSENCE.ABSENCE NOT IN (6) ORDER BY P_ABSENCE.BOOKDATE, P_ABSENCE.REC_NR ";
-	// TODOXXX
-	$result = mssql_query($query, $oProtime->getConnection());
-	// TODOXXX
-	$num = mssql_num_rows($result);
-	if ( $num ) {
-		$ret .= "
-<table>
-<tr><td>&nbsp;</td></tr>
-<tr>
-	<td colspan=2><b>Protime/Reception absences</b></td>
-</tr>
-<tr>
-	<td><b>Date</b></td>
-	<td><b>Absence</b></td>
-	<td><b>Hours</b></td>
-</tr>
-";
-
-		while ( $row = mssql_fetch_array($result) ) {
-
-			$ret .= "
-<tr>
-	<td>" . class_datetime::formatDatePresentOrNot($row["BOOKDATE"]) . "&nbsp;</td>
-	<td>" . $row["SHORT_1"] . "&nbsp;</td>
-	<td>" . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes($row["ABSENCE_VALUE"]) . "</td>
-</tr>
-";
-
-		}
-
-		$ret .= "</table>";
-	}
-
-	mssql_free_result($result);
-
-	return $ret;
-}
-
-// TODOEXPLAIN
 function getAbsencesAndHolidays($eid, $year, $month, $min_minutes = 0) {
 	global $settings;
 
@@ -219,29 +167,26 @@ function getAbsencesAndHolidays($eid, $year, $month, $min_minutes = 0) {
 	$yearMonth = createDateAsString($year, $month);
 
 	$query = "
-SELECT P_ABSENCE.REC_NR, P_ABSENCE.PERSNR, P_ABSENCE.BOOKDATE, P_ABSENCE.ABSENCE_VALUE, P_ABSENCE.ABSENCE_STATUS, ABSENCE.SHORT_1, P_ABSENCE.ABSENCE 
-FROM P_ABSENCE 
-	LEFT OUTER JOIN ABSENCE ON P_ABSENCE.ABSENCE = ABSENCE.ABSENCE 
-WHERE P_ABSENCE.PERSNR=" . $eid . " AND P_ABSENCE.BOOKDATE LIKE '" . $yearMonth . "%' AND P_ABSENCE.ABSENCE NOT IN (5, 19) 
-AND ( P_ABSENCE.ABSENCE_VALUE>=" . $min_minutes . " OR P_ABSENCE.ABSENCE_VALUE=0 ) 
-ORDER BY P_ABSENCE.BOOKDATE, P_ABSENCE.REC_NR 
+SELECT PROTIME_P_ABSENCE.REC_NR, PROTIME_P_ABSENCE.PERSNR, PROTIME_P_ABSENCE.BOOKDATE, PROTIME_P_ABSENCE.ABSENCE_VALUE, PROTIME_P_ABSENCE.ABSENCE_STATUS, PROTIME_ABSENCE.SHORT_1, PROTIME_P_ABSENCE.ABSENCE
+FROM PROTIME_P_ABSENCE
+	LEFT OUTER JOIN PROTIME_ABSENCE ON PROTIME_P_ABSENCE.ABSENCE = PROTIME_ABSENCE.ABSENCE
+WHERE PROTIME_P_ABSENCE.PERSNR=" . $eid . " AND PROTIME_P_ABSENCE.BOOKDATE LIKE '" . $yearMonth . "%' AND PROTIME_P_ABSENCE.ABSENCE NOT IN (5, 19)
+AND ( PROTIME_P_ABSENCE.ABSENCE_VALUE>=" . $min_minutes . " OR PROTIME_P_ABSENCE.ABSENCE_VALUE=0 )
+ORDER BY PROTIME_P_ABSENCE.BOOKDATE, PROTIME_P_ABSENCE.REC_NR
 ";
 
-	// TODOXXX
-	$oProtime = new class_mssql($settings, 'protime');
+	$oProtime = new class_mysql($settings, 'presentornot');
 	$oProtime->connect();
 
-	// TODOXXX
-	$result = mssql_query($query, $oProtime->getConnection());
-	$num = mssql_num_rows($result);
+	$result = mysql_query($query, $oProtime->getConnection());
+	$num = mysql_num_rows($result);
 	if ( $num ) {
-		// TODOXXX
-		while ( $row = mssql_fetch_array($result) ) {
+		while ( $row = mysql_fetch_assoc($result) ) {
 			$ret[] = array( 'date' => $row["BOOKDATE"], 'description' => $row["SHORT_1"] );
 		}
 	}
 
-	mssql_free_result($result);
+	mysql_free_result($result);
 
 	return $ret;
 }

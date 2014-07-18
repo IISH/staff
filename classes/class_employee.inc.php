@@ -100,7 +100,7 @@ class class_employee {
 
 		$query = 'SELECT * FROM Favourites WHERE user=\'' . $this->getUser() . '\' AND type=\'' . $type . '\' ';
 		$result = mysql_query($query, $oConn->getConnection());
-		while ( $row = mysql_fetch_array($result) ) {
+		while ( $row = mysql_fetch_assoc($result) ) {
 			$ids[] = $row["ProtimeID"];
 		}
 		mysql_free_result($result);

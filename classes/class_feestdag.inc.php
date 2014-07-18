@@ -126,7 +126,7 @@ class class_feestdag {
 		$oConn = new class_mysql($this->project_settings, 'presentornot');
 		$oConn->connect();
 
-		$query = "INSERT INTO `Feestdagen` (`ID`, `datum`, `omschrijving`, `vooreigenrekening`, `isdeleted`, `last_refresh`) VALUES (
+		$query = "INSERT INTO Feestdagen (ID, datum, omschrijving, vooreigenrekening, isdeleted, last_refresh) VALUES (
 			" . $this->id . "
 			, '" . addslashes($this->date) . "'
 			, '" . addslashes($this->description) . "'
@@ -142,13 +142,13 @@ class class_feestdag {
 		$oConn = new class_mysql($this->project_settings, 'presentornot');
 		$oConn->connect();
 
-		$query = "UPDATE `Feestdagen`
-			SET `datum` = '" . addslashes($this->date) . "'
-				, `omschrijving` = '" . addslashes($this->description) . "'
-				, `vooreigenrekening` = " . $this->vooreigenrekening . "
-				, `isdeleted` = " . $this->isdeleted . "
-				, `last_refresh` = '" . addslashes($this->last_refresh) . "'
-			WHERE `ID`=" . $this->id;
+		$query = "UPDATE Feestdagen
+			SET datum = '" . addslashes($this->date) . "'
+				, omschrijving = '" . addslashes($this->description) . "'
+				, vooreigenrekening = " . $this->vooreigenrekening . "
+				, isdeleted = " . $this->isdeleted . "
+				, last_refresh = '" . addslashes($this->last_refresh) . "'
+			WHERE ID=" . $this->id;
 		$result = mysql_query($query, $oConn->getConnection());
 	}
 }

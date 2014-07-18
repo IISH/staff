@@ -9,7 +9,7 @@ class class_datetime {
 
 	// TODOEXPLAIN
 	// todo protectie
-	function getQueryDate() {
+	public static function getQueryDate() {
 		if ( isset($_GET["d"]) ) {
 			$d = $_GET["d"];
 		} else {
@@ -24,7 +24,7 @@ class class_datetime {
 	}
 
 	// TODOEXPLAIN
-	function ConvertTimeInMinutesToTimeInHoursAndMinutes($time) {
+	public static function ConvertTimeInMinutesToTimeInHoursAndMinutes($time) {
 		if ( $time == '' ) {
 			$time = 0;
 		}

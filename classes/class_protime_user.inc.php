@@ -23,23 +23,19 @@ class class_protime_user {
 
 	// TODOEXPLAIN
 	function getProtimeValues() {
-		// TODOXXX
-		$oProtime = new class_mssql($this->project_settings, 'protime');
+		$oProtime = new class_mysql($this->project_settings, 'presentornot');
 		$oProtime->connect();
 
 		// reset values
-		$query = "SELECT * FROM CURRIC WHERE PERSNR=" . $this->protime_id;
-		// TODOXXX
-		$resultReset = mssql_query($query, $oProtime->getConnection());
-		// TODOXXX
-		if ($row = mssql_fetch_assoc($resultReset)) {
+		$query = "SELECT * FROM PROTIME_CURRIC WHERE PERSNR=" . $this->protime_id;
+		$resultReset = mysql_query($query, $oProtime->getConnection());
+		if ($row = mysql_fetch_assoc($resultReset)) {
 
 			$this->lastname = $row["NAME"];
 			$this->firstname = $row["FIRSTNAME"];
 
 		}
-		// TODOXXX
-		mssql_free_result($resultReset);
+		mysql_free_result($resultReset);
 	}
 
 	function getId() {

@@ -61,15 +61,14 @@ $arrHolidays = getNationalHolidays($selectedYear, $selectedMonth );
 
 if ( $to_short != 1 ) {
 
-	// TODOXXX
-	$oProtime = new class_mssql($settings, 'protime');
+	$oProtime = new class_mysql($settings, 'presentornot');
 	$oProtime->connect();
 
 	// loop employees
-	$querySelect = "SELECT * FROM CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) " . $queryCriterium . " ORDER BY NAME, FIRSTNAME ";
-	$resultSelect = mssql_query($querySelect, $oProtime->getConnection());
+	$querySelect = "SELECT * FROM PROTIME_CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) " . $queryCriterium . " ORDER BY NAME, FIRSTNAME ";
+	$resultSelect = mysql_query($querySelect, $oProtime->getConnection());
 
-	while ( $rowSelect = mssql_fetch_array($resultSelect) ) {
+	while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
 		$tmp = "
 <TR>
 	<TD><div id=\"divAddRemove" . $rowSelect["PERSNR"] . "\">::ADDREMOVE::</div></TD>
@@ -131,7 +130,7 @@ if ( $to_short != 1 ) {
 		// 
 		$retval .= $tmp;
 	}
-	mssql_free_result($resultSelect);
+	mysql_free_result($resultSelect);
 
 	// HEADERS
 	$headerDays = '';

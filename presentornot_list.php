@@ -35,18 +35,17 @@ if ( $s == '-a-' ) {
 	$queryCriterium = Generate_Query(array("NAME", "FIRSTNAME", "EMAIL", "USER02"), explode(' ', $s));
 }
 
-// TODOXXX
-$oProtime = new class_mssql($settings, 'protime');
+$oProtime = new class_mysql($settings, 'presentornot');
 $oProtime->connect();
 
 //
-$querySelect = "SELECT * FROM CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) " . $queryCriterium . " ORDER BY NAME, FIRSTNAME ";
-$resultSelect = mssql_query($querySelect, $oProtime->getConnection());
+$querySelect = "SELECT * FROM PROTIME_CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) " . $queryCriterium . " ORDER BY NAME, FIRSTNAME ";
+$resultSelect = mysql_query($querySelect, $oProtime->getConnection());
 
 $totaal["aanwezig"] = 0;
 $totaal["afwezig"] = 0;
 
-while ( $rowSelect = mssql_fetch_array($resultSelect) ) {
+while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
 	$tmp = "
 <tr>
 	<td><div id=\"divAddRemove" . $rowSelect["PERSNR"] . "\">::ADDREMOVE::</div></td>
@@ -127,7 +126,7 @@ while ( $rowSelect = mssql_fetch_array($resultSelect) ) {
 		$retval .= $tmp;
 	}
 }
-mssql_free_result($resultSelect);
+mysql_free_result($resultSelect);
 
 if ( $retval != '' ) {
 	$retval = "

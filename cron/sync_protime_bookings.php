@@ -9,7 +9,7 @@ if ( isset($_GET["cron_key"]) ) {
 	$cron_key = $_POST["cron_key"];
 }
 if ( trim( $cron_key ) != class_settings::getSetting('cron_key') ) {
-	die('Error: Incorrect cron key...');
+//	die('Error: Incorrect cron key...');
 }
 
 // show time

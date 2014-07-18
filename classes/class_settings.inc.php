@@ -63,14 +63,14 @@ class class_settings {
 			$oConn = new class_mysql($settings, 'presentornot');
 			$oConn->connect();
 
-			$result = mysql_query("SELECT * FROM `$settingsTable` WHERE `property`='" . $setting_name . "' ");
+			$result = mysql_query("SELECT * FROM $settingsTable WHERE property='" . $setting_name . "' ");
 			$num_rows = mysql_num_rows($result);
 
 			if ($num_rows > 0) {
-				$result = mysql_query("UPDATE `$settingsTable` SET `value`='" . addslashes($value) . "' WHERE `property`='" . $setting_name . "' ", $oConn->getConnection());
+				$result = mysql_query("UPDATE $settingsTable SET value='" . addslashes($value) . "' WHERE property='" . $setting_name . "' ", $oConn->getConnection());
 			}
 			else {
-				$result = mysql_query("INSERT INTO `$settingsTable` (`value`, `property`) VALUES ( '" . addslashes($value) . "', '" . $setting_name . "' ) ", $oConn->getConnection());
+				$result = mysql_query("INSERT INTO $settingsTable (value, property) VALUES ( '" . addslashes($value) . "', '" . $setting_name . "' ) ", $oConn->getConnection());
 			}
 		}
 	}

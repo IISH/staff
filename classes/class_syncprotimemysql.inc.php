@@ -6,7 +6,7 @@ require_once "class_mysql.inc.php";
 require_once "class_mssql.inc.php";
 
 class class_syncProtimeMysql {
-	protected static $settings = null;
+	protected $settings = null;
 	protected $sourceTable = '';
 	protected $targetTable = '';
 	protected $primaryKeyField = '';
@@ -119,7 +119,7 @@ class class_syncProtimeMysql {
 	// TODOEXPLAIN
 	protected function insertUpdateMysqlRecord($protimeRowData, $oConn) {
 
-		$result = mysql_query("SELECT * FROM `" . $this->getTargetTable() . "` WHERE `" . $this->getPrimaryKey() . "`='" . $protimeRowData[$this->getPrimaryKey()] . "' ", $oConn->getConnection());
+		$result = mysql_query("SELECT * FROM " . $this->getTargetTable() . " WHERE " . $this->getPrimaryKey() . "='" . $protimeRowData[$this->getPrimaryKey()] . "' ", $oConn->getConnection());
 		$num_rows = mysql_num_rows($result);
 
 		$this->lastInsertId = $protimeRowData[$this->getPrimaryKey()];
@@ -128,30 +128,30 @@ class class_syncProtimeMysql {
 		if ($num_rows > 0) {
 			// create update query
 			$separator = '';
-			$query = "UPDATE `" . $this->getTargetTable() . "` SET ";
+			$query = "UPDATE " . $this->getTargetTable() . " SET ";
 			foreach ( $this->fields as $field ) {
-				$query .= $separator. "`" . $field . "` = '" . addslashes($protimeRowData[$field]) . "' ";
+				$query .= $separator. $field . "='" . addslashes($protimeRowData[$field]) . "' ";
 				$separator = ', ';
 			}
 
-			$query .= $separator . " `last_refresh`='" . date("Y-m-d H:i:s") . "'";
+			$query .= $separator . " last_refresh='" . date("Y-m-d H:i:s") . "'";
 
-			$query .= " WHERE `" . $this->getPrimaryKey() . "`='" . $protimeRowData[$this->getPrimaryKey()] . "' ";
+			$query .= " WHERE " . $this->getPrimaryKey() . "='" . $protimeRowData[$this->getPrimaryKey()] . "' ";
 		} else {
 			// create insert query
 			$separator = '';
 			$fields = '';
 			$values = '';
 			foreach ( $this->fields as $field ) {
-				$fields .= $separator. "`" . $field . "`";
+				$fields .= $separator. $field;
 				$values .= $separator. "'" . addslashes($protimeRowData[$field]) . "'";
 				$separator = ', ';
 			}
 
-			$fields .= $separator. "`last_refresh`";
+			$fields .= $separator. "last_refresh";
 			$values .= $separator. "'" . date("Y-m-d H:i:s") . "'";
 
-			$query = "INSERT INTO `" . $this->getTargetTable() . "` ( $fields ) VALUES ( $values ) ";
+			$query = "INSERT INTO " . $this->getTargetTable() . " ( $fields ) VALUES ( $values ) ";
 		}
 
 		if ( $this->counter % 10 === 0 ) {
@@ -167,6 +167,7 @@ class class_syncProtimeMysql {
 		}
 
 		// execute query
+//debug($query);
 		$result = mysql_query($query, $oConn->getConnection());
 	}
 }

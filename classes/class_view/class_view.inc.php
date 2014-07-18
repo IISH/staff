@@ -49,7 +49,7 @@ class class_view {
 		$this->oDb->connect();
 
 		// execute query
-		$res=mysql_query($this->m_view["query"], $this->oDb->connection()) or die( "error 8712378" . "<br>" . mssql_error());
+		$res=mysql_query($this->m_view["query"], $this->oDb->connection()) or die( "error 8712378" . "<br>" . mysql_error());
 
 		if($res){
 			// moet overzicht wel getoond worden

@@ -20,7 +20,7 @@ class class_db {
 	function connect() {
 		$this->conn = mysql_connect($this->m_server, $this->m_user, $this->m_password);
 		if ( !$this->conn ) {
-			die('Error: 100 - Could not connect: ' . mssql_error());
+			die('Error: 100 - Could not connect: ' . mysql_error());
 		}
 
 		// connect to database

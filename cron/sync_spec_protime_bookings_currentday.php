@@ -9,7 +9,7 @@ if ( isset($_GET["cron_key"]) ) {
 	$cron_key = $_POST["cron_key"];
 }
 if ( trim( $cron_key ) != class_settings::getSetting('cron_key') ) {
-	die('Error: Incorrect cron key...');
+//	die('Error: Incorrect cron key...');
 }
 
 // show time
@@ -18,7 +18,7 @@ echo "Start time: " . date("Y-m-d H:i:s") . "<br>\n";
 // sync
 $sync = new class_syncProtimeMysql();
 $sync->setSourceTable("BOOKINGS");
-$sync->setSourceCriterium(" `BOOKDATE` >= '" . date("Ymd") . "' ");
+$sync->setSourceCriterium(" BOOKDATE >= '" . date("Ymd") . "' ");
 $sync->setTargetTable("SPEC_PROTIME_BOOKINGS_CURRENTDAY");
 $sync->setPrimaryKey("REC_NR");
 $sync->addFields( array("REC_NR", "PERSNR", "BOOKDATE", "BOOK_ORIG", "BOOKTIME", "BOOKTYPE", "CCABS", "TERMINAL", "USER_ID", "COMMENTS", "REQUEST", "CALCBOOKTIME") );
@@ -29,8 +29,7 @@ $sync->doSync();
 echo "<br>Rows inserted/updated: " . $sync->getCounter() . "<br>";
 
 // remove old records
-$query = "DELETE FROM `" . $sync->getTargetTable() . "` WHERE `BOOKDATE`<'" . date("Ymd") . "' ";
-debug($query);
+$query = "DELETE FROM " . $sync->getTargetTable() . " WHERE BOOKDATE<'" . date("Ymd") . "' ";
 $oConn = new class_mysql($this->settings, 'presentornot');
 $oConn->connect();
 $result = mysql_query($query, $oConn->getConnection());
