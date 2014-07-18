@@ -52,25 +52,12 @@ while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
 	<td><div id=\"divCheckInOut" . $rowSelect["PERSNR"] . "\">::CHECKINOUT::</div></td>
 	<td>" . trim($rowSelect["NAME"]) . ", " . trim($rowSelect["FIRSTNAME"]) . "</td>
 	<td class=\"presentornot_absence\" style=\"::STATUS_STYLE::\"><A class=\"checkinouttime\" TITLE=\"::STATUS_ALT::\">::STATUS_TEXT::</A></td>
-	<td align=\"center\">::TELEPHONE::</td>
+	<td align=\"center\">" . cleanUpTelephone($rowSelect["USER02"]) . "</td>
 </a></td>
 </tr>
 ";
-	$arrTel = array();
 
-	$arrTel = createTelephoneArray($arrTel, $rowSelect["USER02"]);
-
-	// make unique
-	$arrTel = array_unique($arrTel);
-
-	if ( count( $arrTel ) > 0 ) {
-		$arrTel = implode(', ', $arrTel);
-	} else {
-		$arrTel = '';
-	}
-	$tmp = str_replace('::TELEPHONE::', $arrTel, $tmp);
-
-	// 
+	//
 	if ( strpos(',' . $favIds . ',', ',' . $rowSelect["PERSNR"] . ',') !== false ) {
 		$alttitle = "Click to remove the person from your favourites";
 		$tmp = str_replace('::ADDREMOVE::', '<a href="#" onClick="addRemove(' . $rowSelect["PERSNR"] . ', \'r\');" alt="' . $alttitle . '" title="' . $alttitle . '" class="nolink"><img src="images/minus-sign.png" border=0></a>', $tmp);

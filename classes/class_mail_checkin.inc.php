@@ -43,7 +43,7 @@ class class_mail_checkin {
 		$oProtime->connect();
 
 		//
-		$query = "SELECT PERSNR, MAX(BOOKTIME) AS CHECKTIME, COUNT(*) AS AANTAL FROM PROTIME_BOOKINGS WHERE PERSNR IN ( " . $ids . " ) AND BOOKDATE='" . $date . "' AND BOOKTIME<>9999 GROUP BY PERSNR HAVING COUNT(*) % 2 = 1 ";
+		$query = "SELECT PERSNR, MAX(BOOKTIME) AS CHECKTIME, COUNT(*) AS AANTAL FROM SPEC_PROTIME_BOOKINGS_CURRENTDAY WHERE PERSNR IN ( " . $ids . " ) AND BOOKDATE='" . $date . "' AND BOOKTIME<>9999 GROUP BY PERSNR HAVING COUNT(*) % 2 = 1 ";
 		$result = mysql_query($query, $oProtime->getConnection());
 		while ( $row = mysql_fetch_assoc($result) ) {
 			$user = array();

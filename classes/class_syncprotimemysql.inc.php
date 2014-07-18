@@ -167,7 +167,6 @@ class class_syncProtimeMysql {
 		}
 
 		// execute query
-//debug($query);
 		$result = mysql_query($query, $oConn->getConnection());
 	}
 }

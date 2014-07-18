@@ -13,7 +13,7 @@ if ( !isset( $_GET["cron_key"] ) || class_settings::getSetting("cron_key") == ''
 
 require_once "classes/class_mail_checkin.inc.php";
 
-// TODOTODO EXPLAIN SCRIPT
+// TODOEXPLAIN
 
 $oMail = new class_mail_checkin( $settings );
 

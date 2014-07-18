@@ -108,7 +108,6 @@ function tcRefreshSearch() {
 function tcRefreshSearchStart() {
 	tcRefreshSearch();
 
-	// TODOTODO kan niet bij popup wijzigingen
 	// refresh automatically after X seconds
 	var t = setTimeout(\"tcRefreshSearchStart()\", " . $refreshAfterXSeconds . " * 1000);
 }

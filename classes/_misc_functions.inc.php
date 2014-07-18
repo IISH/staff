@@ -14,7 +14,7 @@ function getStatusColor( $persnr, $date ) {
 	$oProtime->connect();
 
 	// achterhaal 'present' status
-	$query = "SELECT REC_NR, PERSNR, BOOKDATE, BOOKTIME FROM PROTIME_BOOKINGS WHERE PERSNR=" . $persnr . " AND BOOKDATE='" . $date . "' AND BOOKTIME<>9999 ORDER BY REC_NR ";
+	$query = "SELECT REC_NR, PERSNR, BOOKDATE, BOOKTIME FROM SPEC_PROTIME_BOOKINGS_CURRENTDAY WHERE PERSNR=" . $persnr . " AND BOOKDATE='" . $date . "' AND BOOKTIME<>9999 ORDER BY REC_NR ";
 	$result = mysql_query($query, $oProtime->getConnection());
 	$status = 0;
 	$found = 0;
@@ -112,50 +112,6 @@ function getAndProtectSearch($field = 's') {
 	}
 
 	return $s;
-}
-
-// TODOEXPLAIN
-function createTelephoneArray($arrTel, $tel, $explode = 1) {
-	if ( $explode == 1 ) {
-		$tel = cleanUpTelephone($tel);
-	} else {
-		if ( strlen($tel) >= 3 ) {
-			if ( substr($tel, 0, 3) == '06 ' ) {
-				$tel = '06-' . substr($tel, -strlen($tel)+3);
-			}
-		}
-	}
-
-	if ( $tel != '' ) {
-		$arr = explode(',', $tel);
-
-		foreach ( $arr as $a ) {
-			if ( trim($a) != '' ) {
-				array_push($arrTel, trim($a));
-			}
-		}
-	}
-
-	return $arrTel;
-}
-
-// TODOEXPLAIN
-function cleanUpTelephone($telephone) {
-	$retval = $telephone;
-
-	// remove some dirty data from telephone
-	$retval = str_replace(array('.', ',', '/', "(", ")", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"), ' ', $retval);
-
-	// 
-	while ( strpos($retval, '  ') !== false ) {
-		$retval = str_replace('  ',' ', $retval);
-	}
-	$retval = trim($retval);
-
-	// add comma between the telephones
-	$retval = str_replace(' ', ', ', $retval);
-
-	return $retval;
 }
 
 // TODOEXPLAIN
@@ -273,4 +229,22 @@ function debug($text = "", $extra = '') {
 		echo date("H:i:s ") . $extra . $text . " +<br>";
 	}
 	echo "</font>";
+}
+
+// TODOEXPLAIN
+function cleanUpTelephone($telephone) {
+	$retval = $telephone;
+
+	// remove some dirty data from telephone
+	$retval = str_replace(array("(", ")", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"), ' ', $retval);
+
+	//
+	while ( strpos($retval, '  ') !== false ) {
+		$retval = str_replace('  ',' ', $retval);
+	}
+
+	//
+	$retval = trim($retval);
+
+	return $retval;
 }
