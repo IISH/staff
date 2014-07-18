@@ -9,7 +9,7 @@ if ( isset($_GET["cron_key"]) ) {
 	$cron_key = $_POST["cron_key"];
 }
 if ( trim( $cron_key ) != class_settings::getSetting('cron_key') ) {
-//	die('Error: Incorrect cron key...');
+	die('Error: Incorrect cron key...');
 }
 
 // show time
@@ -30,7 +30,7 @@ echo "<br>Rows inserted/updated: " . $sync->getCounter() . "<br>";
 
 // remove old records
 $query = "DELETE FROM " . $sync->getTargetTable() . " WHERE BOOKDATE<'" . date("Ymd") . "' ";
-$oConn = new class_mysql($this->settings, 'presentornot');
+$oConn = new class_mysql($settings, 'presentornot');
 $oConn->connect();
 $result = mysql_query($query, $oConn->getConnection());
 
