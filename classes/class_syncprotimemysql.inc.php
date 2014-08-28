@@ -93,6 +93,17 @@ class class_syncProtimeMysql {
 		$oPt = new class_mssql($this->settings, 'protime');
 		$oPt->connect();
 
+		// set records as being updated
+		if ( $this->sourceCriterium != '' ) {
+			// subset of records
+			$query = "UPDATE " . $this->targetTable . " SET sync_state=2 WHERE " . $this->sourceCriterium;
+		} else {
+			// all records
+			$query = "UPDATE " . $this->targetTable . " SET sync_state=2 ";
+		}
+		$resultData = mysql_query($query, $oConn->getConnection());
+
+		//
 		$query = "SELECT * FROM " . $this->sourceTable;
 		if ( $this->sourceCriterium != '' ) {
 			$query .= ' WHERE ' . $this->sourceCriterium . ' ';
@@ -102,6 +113,7 @@ class class_syncProtimeMysql {
 		// save counter in table
 		class_settings::saveSetting('cron_counter_' . $this->getTargetTable(), $this->counter, $this->getTargetTable() . "_syncinfo");
 
+		//
 		$resultData = mssql_query($query, $oPt->getConnection());
 		while ( $rowData = mssql_fetch_array($resultData) ) {
 			$this->insertUpdateMysqlRecord($rowData, $oConn);
@@ -109,6 +121,10 @@ class class_syncProtimeMysql {
 
 		//
 		mssql_free_result($resultData);
+
+		// remove deleted records
+		$query = "DELETE FROM " . $this->targetTable . " WHERE sync_state=2 ";
+		$resultData = mysql_query($query, $oConn->getConnection());
 	}
 
 	// TODOEXPLAIN
@@ -135,6 +151,7 @@ class class_syncProtimeMysql {
 			}
 
 			$query .= $separator . " last_refresh='" . date("Y-m-d H:i:s") . "'";
+			$query .= $separator . " sync_state=1";
 
 			$query .= " WHERE " . $this->getPrimaryKey() . "='" . $protimeRowData[$this->getPrimaryKey()] . "' ";
 		} else {
@@ -149,7 +166,9 @@ class class_syncProtimeMysql {
 			}
 
 			$fields .= $separator. "last_refresh";
+			$fields .= $separator. "sync_state";
 			$values .= $separator. "'" . date("Y-m-d H:i:s") . "'";
+			$values .= $separator. "1";
 
 			$query = "INSERT INTO " . $this->getTargetTable() . " ( $fields ) VALUES ( $values ) ";
 		}

@@ -60,10 +60,10 @@ while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
 	//
 	if ( strpos(',' . $favIds . ',', ',' . $rowSelect["PERSNR"] . ',') !== false ) {
 		$alttitle = "Click to remove the person from your favourites";
-		$tmp = str_replace('::ADDREMOVE::', '<a href="#" onClick="addRemove(' . $rowSelect["PERSNR"] . ', \'r\');" alt="' . $alttitle . '" title="' . $alttitle . '" class="nolink"><img src="images/minus-sign.png" border=0></a>', $tmp);
+		$tmp = str_replace('::ADDREMOVE::', '<a href="#" onClick="addRemove(' . $rowSelect["PERSNR"] . ', \'r\');" alt="' . $alttitle . '" title="' . $alttitle . '" class="nolink"><img src="images/favourites-on.png" border=0></a>', $tmp);
 	} else {
 		$alttitle = "Click to add the person from your favourites";
-		$tmp = str_replace('::ADDREMOVE::', '<a href="#" onClick="addRemove(' . $rowSelect["PERSNR"] . ', \'a\');" alt="' . $alttitle . '" title="' . $alttitle . '" class="nolink"><img src="images/plus-sign.png" border=0></a>', $tmp);
+		$tmp = str_replace('::ADDREMOVE::', '<a href="#" onClick="addRemove(' . $rowSelect["PERSNR"] . ', \'a\');" alt="' . $alttitle . '" title="' . $alttitle . '" class="nolink"><img src="images/favourites-off.png" border=0></a>', $tmp);
 	}
 
 	// 

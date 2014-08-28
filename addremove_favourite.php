@@ -31,7 +31,7 @@ if ( $dowhat == 'a' ) {
 		$div = '<a href="#" onClick="checkInOut(' . $id . ', \'r\');" alt="' . $alttitle . '" title="' . $alttitle . '" class="nolink"><img src="images/clock-red.png" border=0></a>';
 	} else {
 		$alttitle = "Click to remove the person from your favourites";
-		$div = '<a href="#" onClick="addRemove(' . $id . ', \'r\');" alt="' . $alttitle . '" title="' . $alttitle . '"><img src="images/minus-sign.png" border=0></a>';
+		$div = '<a href="#" onClick="addRemove(' . $id . ', \'r\');" alt="' . $alttitle . '" title="' . $alttitle . '"><img src="images/favourites-on.png" border=0></a>';
 	}
 } elseif ( $dowhat == 'r' ) {
 	// remove from database
@@ -42,7 +42,7 @@ if ( $dowhat == 'a' ) {
 		$div = '<a href="#" onClick="checkInOut(' . $id . ', \'a\');" alt="' . $alttitle . '" title="' . $alttitle . '" class="nolink"><img src="images/clock-black.png" border=0></a>';
 	} else {
 		$alttitle = "Click to add the person from your favourites";
-		$div = '<a href="#" onClick="addRemove(' . $id . ', \'a\');" alt="' . $alttitle . '" title="' . $alttitle . '"><img src="images/plus-sign.png" border=0></a>';
+		$div = '<a href="#" onClick="addRemove(' . $id . ', \'a\');" alt="' . $alttitle . '" title="' . $alttitle . '"><img src="images/favourites-off.png" border=0></a>';
 	}
 }
 

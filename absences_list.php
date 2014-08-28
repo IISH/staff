@@ -95,9 +95,9 @@ if ( $to_short != 1 ) {
 
 		//
 		if ( strpos(',' . $favIds . ',', ',' . $rowSelect["PERSNR"] . ',') !== false ) {
-			$tmp = str_replace('::ADDREMOVE::', '<a href="#" onClick="addRemove(' . $rowSelect["PERSNR"] . ', \'r\');" alt="Stop following this person" title="Stop following this person" class="nolink"><img src="images/minus-sign.png" border=0></a>', $tmp);
+			$tmp = str_replace('::ADDREMOVE::', '<a href="#" onClick="addRemove(' . $rowSelect["PERSNR"] . ', \'r\');" alt="Stop following this person" title="Stop following this person" class="nolink"><img src="images/favourites-on.png" border=0></a>', $tmp);
 		} else {
-			$tmp = str_replace('::ADDREMOVE::', '<a href="#" onClick="addRemove(' . $rowSelect["PERSNR"] . ', \'a\');" alt="Start following this person" title="Start following this person" class="nolink"><img src="images/plus-sign.png" border=0></a>', $tmp);
+			$tmp = str_replace('::ADDREMOVE::', '<a href="#" onClick="addRemove(' . $rowSelect["PERSNR"] . ', \'a\');" alt="Start following this person" title="Start following this person" class="nolink"><img src="images/favourites-off.png" border=0></a>', $tmp);
 		}
 
 		$arrVakantie = getAbsencesAndHolidays($rowSelect["PERSNR"], $selectedYear, $selectedMonth, 120 );
