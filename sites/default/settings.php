@@ -1,6 +1,7 @@
 <?php
 // ToDo: Copy this file to settings.php and set the rdbms settings
 
+
 // Presentornot database settings
 $settings["presentornot_server"] = 'website-db0.iisg.nl';
 $settings["presentornot_user"] = 'presentornot';
