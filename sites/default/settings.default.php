@@ -12,3 +12,44 @@ $settings["protime_server"] = '';
 $settings["protime_user"] = '';
 $settings["protime_password"] = '';
 $settings["protime_database"] = '';
+
+$databases = array (
+	'default' =>
+		array (
+			'database' => '',
+			'username' => '',
+			'password' => '',
+			'host' => '',
+			'port' => '',
+			'driver' => 'mysql',
+			'prefix' => '',
+		),
+	'protime_cache' =>
+		array (
+			'database' => '',
+			'username' => '',
+			'password' => '',
+			'host' => '',
+			'port' => '',
+			'driver' => 'mysql',
+			'prefix' => '',
+		),
+	'protime_live' =>
+		array (
+			'database' => '',
+			'username' => '',
+			'password' => '',
+			'host' => '',
+			'port' => '',
+			'driver' => 'mssql',
+			'prefix' => '',
+		),
+);
+
+$domain_controllers = array(
+	array(
+		'server' => '',
+		'loginname_prefix' => '',
+		'loginname_postfix' => '',
+	)
+);

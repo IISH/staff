@@ -16,13 +16,13 @@ class class_authentication {
 	function check_ldap($user, $pw, $servers) {
 		$login_correct = 0;
 
-		// LDAP AUTHENTICATIE VIA PHP-LDAP
-		// php-ldap moet geinstalleerd zijn op de server
+		// LDAP AUTHENTICATION VIA PHP-LDAP
+		// php-ldap must be installed on the server
 
 		foreach ( $servers as $server ) {
 			if ( $login_correct == 0 ) {
 
-				// connect
+				// try to connect to ldap server
 				$ad = ldap_connect($server);
 
 				// set some variables
@@ -30,10 +30,9 @@ class class_authentication {
 				ldap_set_option($ad, LDAP_OPT_REFERRALS, 0);
 
 				// bind to the ldap directory
-				//$bd = ldap_bind($ad, $user, $pw);
 				$bd = @ldap_bind($ad, $user, $pw);
 
-				// verify binding
+				// verify binding, if binding succeeds then login is correct
 				if ($bd) {
 					$login_correct = 1;
 				}
