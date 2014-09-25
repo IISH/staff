@@ -72,7 +72,7 @@ if ( $to_short != 1 ) {
 		$tmp = "
 <TR>
 	<TD><div id=\"divAddRemove" . $rowSelect["PERSNR"] . "\">::ADDREMOVE::</div></TD>
-	<TD>" . trim($rowSelect["NAME"]) . ", " . trim($rowSelect["FIRSTNAME"]) . "</TD>
+	<TD>" . fixBrokenChars(trim($rowSelect["NAME"]) . ", " . trim($rowSelect["FIRSTNAME"])) . "</TD>
 	<td class=\"presentornot_absence\" style=\"::STATUS_STYLE::\"><A class=\"checkinouttime\" TITLE=\"::STATUS_ALT::\">::STATUS_TEXT::</A></td>
 	<TD></TD>
 	<TD align=\"center\">::VAKANTIE::</TD>
@@ -95,9 +95,9 @@ if ( $to_short != 1 ) {
 
 		//
 		if ( strpos(',' . $favIds . ',', ',' . $rowSelect["PERSNR"] . ',') !== false ) {
-			$tmp = str_replace('::ADDREMOVE::', '<a href="#" onClick="addRemove(' . $rowSelect["PERSNR"] . ', \'r\');" alt="Stop following this person" title="Stop following this person" class="nolink"><img src="images/favourites-on.png" border=0></a>', $tmp);
+			$tmp = str_replace('::ADDREMOVE::', '<a href="#" onClick="addRemove(' . $rowSelect["PERSNR"] . ', \'r\');" title="Click to remove the person to your favourites" class="nolink favourites_on">&#9733;</a>', $tmp);
 		} else {
-			$tmp = str_replace('::ADDREMOVE::', '<a href="#" onClick="addRemove(' . $rowSelect["PERSNR"] . ', \'a\');" alt="Start following this person" title="Start following this person" class="nolink"><img src="images/favourites-off.png" border=0></a>', $tmp);
+			$tmp = str_replace('::ADDREMOVE::', '<a href="#" onClick="addRemove(' . $rowSelect["PERSNR"] . ', \'a\');" title="Click to add the person to your favourites" class="nolink favourites_off">&#9733;</a>', $tmp);
 		}
 
 		$arrVakantie = getAbsencesAndHolidays($rowSelect["PERSNR"], $selectedYear, $selectedMonth, 120 );

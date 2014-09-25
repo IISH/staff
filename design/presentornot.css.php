@@ -237,3 +237,13 @@ a.checkinouttime {
 	display: inline;
 	padding-right: 20px;
 }
+
+a.favourites_on:link, a.favourites_on:visited {
+	color: #FFD700;
+	font-size: 120%;
+}
+
+a.favourites_off:link, a.favourites_off:visited {
+	color: lightgrey;
+	font-size: 120%;
+}

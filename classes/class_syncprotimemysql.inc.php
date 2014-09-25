@@ -185,6 +185,9 @@ class class_syncProtimeMysql {
 			flush();
 		}
 
+		// save counter in table
+		class_settings::saveSetting('cron_counter_' . $this->getTargetTable(), $this->counter, $this->getTargetTable() . "_syncinfo");
+
 		// execute query
 		$result = mysql_query($query, $oConn->getConnection());
 	}

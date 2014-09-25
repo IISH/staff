@@ -248,3 +248,8 @@ function cleanUpTelephone($telephone) {
 
 	return $retval;
 }
+
+// TODOEXPLAIN
+function fixBrokenChars($text) {
+	return htmlentities($text, ENT_COMPAT | ENT_XHTML, 'ISO-8859-1', true);
+}
