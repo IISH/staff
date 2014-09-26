@@ -39,7 +39,7 @@ $oProtime = new class_mysql($settings, 'presentornot');
 $oProtime->connect();
 
 //
-$querySelect = "SELECT * FROM PROTIME_CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) " . $queryCriterium . " ORDER BY NAME, FIRSTNAME ";
+$querySelect = "SELECT * FROM PROTIME_CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) " . $queryCriterium . " ORDER BY FIRSTNAME, NAME ";
 $resultSelect = mysql_query($querySelect, $oProtime->getConnection());
 
 $totaal["aanwezig"] = 0;
@@ -50,7 +50,7 @@ while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
 <tr>
 	<td><div id=\"divAddRemove" . $rowSelect["PERSNR"] . "\">::ADDREMOVE::</div></td>
 	<td><div id=\"divCheckInOut" . $rowSelect["PERSNR"] . "\">::CHECKINOUT::</div></td>
-	<td>" . fixBrokenChars(trim($rowSelect["NAME"]) . ", " . trim($rowSelect["FIRSTNAME"])) . "</td>
+	<td>" . fixBrokenChars(trim($rowSelect["FIRSTNAME"]) . " " . verplaatsTussenvoegselNaarBegin(trim($rowSelect["NAME"]))) . "</td>
 	<td class=\"presentornot_absence\" style=\"::STATUS_STYLE::\"><A class=\"checkinouttime\" TITLE=\"::STATUS_ALT::\">::STATUS_TEXT::</A></td>
 	<td align=\"center\">" . cleanUpTelephone($rowSelect["USER02"]) . "</td>
 </a></td>

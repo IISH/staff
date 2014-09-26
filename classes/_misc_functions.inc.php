@@ -253,3 +253,16 @@ function cleanUpTelephone($telephone) {
 function fixBrokenChars($text) {
 	return htmlentities($text, ENT_COMPAT | ENT_XHTML, 'ISO-8859-1', true);
 }
+
+// TODOEXPLAIN
+function verplaatsTussenvoegselNaarBegin( $text ) {
+	$array = array( ' van den', ' van der', ' van', ' de', ' el' );
+
+	foreach ( $array as $t ) {
+		if ( strtolower(substr($text, -strlen($t))) == strtolower($t) ) {
+			$text = trim($t . ' ' . substr($text, 0, strlen($text)-strlen($t)));
+		}
+	}
+
+	return $text;
+}

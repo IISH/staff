@@ -65,14 +65,14 @@ if ( $to_short != 1 ) {
 	$oProtime->connect();
 
 	// loop employees
-	$querySelect = "SELECT * FROM PROTIME_CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) " . $queryCriterium . " ORDER BY NAME, FIRSTNAME ";
+	$querySelect = "SELECT * FROM PROTIME_CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) " . $queryCriterium . " ORDER BY FIRSTNAME, NAME ";
 	$resultSelect = mysql_query($querySelect, $oProtime->getConnection());
 
 	while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
 		$tmp = "
 <TR>
 	<TD><div id=\"divAddRemove" . $rowSelect["PERSNR"] . "\">::ADDREMOVE::</div></TD>
-	<TD>" . fixBrokenChars(trim($rowSelect["NAME"]) . ", " . trim($rowSelect["FIRSTNAME"])) . "</TD>
+	<TD>" . fixBrokenChars(trim($rowSelect["FIRSTNAME"]) . " " . verplaatsTussenvoegselNaarBegin(trim($rowSelect["NAME"]))) . "</TD>
 	<td class=\"presentornot_absence\" style=\"::STATUS_STYLE::\"><A class=\"checkinouttime\" TITLE=\"::STATUS_ALT::\">::STATUS_TEXT::</A></td>
 	<TD></TD>
 	<TD align=\"center\">::VAKANTIE::</TD>

@@ -21,7 +21,7 @@ $oProtime->connect();
 $never_show_persnr = '0,' . preg_replace('/[^0-9]/', ',', trim(class_settings::getSetting("never_show_persnr")));
 $never_show_persnr = preg_replace('/,{2,}/', ',', $never_show_persnr);
 
-$querySelect = "SELECT * FROM PROTIME_CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) AND USER03 LIKE '%B%' AND PERSNR NOT IN ($never_show_persnr) ORDER BY NAME, FIRSTNAME ";
+$querySelect = "SELECT * FROM PROTIME_CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) AND USER03 LIKE '%B%' AND PERSNR NOT IN ($never_show_persnr) ORDER BY FIRSTNAME, NAME ";
 $resultSelect = mysql_query($querySelect, $oProtime->getConnection());
 
 $totaal["aanwezig"] = 0;
@@ -31,7 +31,7 @@ while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
 	$tmp = "
 <tr>
 	<td><div id=\"divCheckInOut" . $rowSelect["PERSNR"] . "\">::CHECKINOUT::</div></td>
-	<td>" . fixBrokenChars(trim($rowSelect["NAME"]) . ", " . trim($rowSelect["FIRSTNAME"])) . "</td>
+	<td>" . fixBrokenChars(trim($rowSelect["FIRSTNAME"]) . " " . verplaatsTussenvoegselNaarBegin(trim($rowSelect["NAME"]))) . "</td>
 	<td class=\"presentornot_absence\" style=\"::STATUS_STYLE::\"><A class=\"checkinouttime\" TITLE=\"::STATUS_ALT::\">::STATUS_TEXT::</A></td>
 	<td align=\"center\">" . cleanUpTelephone($rowSelect["USER02"]) . "</td>
 </a></td>
