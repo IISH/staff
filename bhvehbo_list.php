@@ -3,43 +3,30 @@
 require_once "classes/start.inc.php";
 
 //
+if ( !isset($bhv_or_ehbo)  ) {
+	$bhv_or_ehbo = "bhv";
+}
+
+//
 if ( !isset($settings) ) {
 	$settings = array();
 }
 
 $oWebuser->checkLoggedIn();
 
-//
-$s = getAndProtectSearch();
-
 $retval = '';
 
 $oEmployee = new class_employee($oWebuser->getUser(), $settings);
-$favIds = implode(',', $oEmployee->getFavourites('present'));
 $checkInOutIds = implode(',', $oEmployee->getFavourites('checkinout'));
-
-// CRITERIUM
-$queryCriterium = '';
-if ( $s == '-a-' ) {
-	//
-} elseif ( $s == '-r-' ) {
-	//
-} elseif ( $s == '-g-' ) {
-	//
-} elseif ( $s == '' ) {
-	// no search
-	// use favourites
-	$queryCriterium = 'AND PERSNR IN (' . $favIds . ') ';
-} else {
-	// search
-	$queryCriterium = Generate_Query(array("NAME", "FIRSTNAME", "EMAIL", "USER02"), explode(' ', $s));
-}
 
 $oProtime = new class_mysql($databases['default']);
 $oProtime->connect();
 
 //
-$querySelect = "SELECT * FROM PROTIME_CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) " . $queryCriterium . " ORDER BY FIRSTNAME, NAME ";
+$never_show_persnr = '0,' . preg_replace('/[^0-9]/', ',', trim(class_settings::getSetting("never_show_persnr")));
+$never_show_persnr = preg_replace('/,{2,}/', ',', $never_show_persnr);
+
+$querySelect = "SELECT * FROM PROTIME_CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) AND USER03 LIKE '%" . strtoupper($bhv_or_ehbo) . "%' AND PERSNR NOT IN ($never_show_persnr) ORDER BY FIRSTNAME, NAME ";
 $resultSelect = mysql_query($querySelect, $oProtime->getConnection());
 
 $totaal["aanwezig"] = 0;
@@ -48,7 +35,6 @@ $totaal["afwezig"] = 0;
 while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
 	$tmp = "
 <tr>
-	<td><div id=\"divAddRemove" . $rowSelect["PERSNR"] . "\">::ADDREMOVE::</div></td>
 	<td><div id=\"divCheckInOut" . $rowSelect["PERSNR"] . "\">::CHECKINOUT::</div></td>
 	<td>" . fixBrokenChars(trim($rowSelect["FIRSTNAME"]) . " " . verplaatsTussenvoegselNaarBegin(trim($rowSelect["NAME"]))) . "</td>
 	<td class=\"presentornot_absence\" style=\"::STATUS_STYLE::\"><A class=\"checkinouttime\" TITLE=\"::STATUS_ALT::\">::STATUS_TEXT::</A></td>
@@ -58,15 +44,6 @@ while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
 ";
 
 	//
-	if ( strpos(',' . $favIds . ',', ',' . $rowSelect["PERSNR"] . ',') !== false ) {
-		$alttitle = "Click to remove the person from your favourites";
-		$tmp = str_replace('::ADDREMOVE::', '<a href="#" onClick="addRemove(' . $rowSelect["PERSNR"] . ', \'r\');" title="' . $alttitle . '" class="nolink favourites_on">&#9733;</a>', $tmp);
-	} else {
-		$alttitle = "Click to add the person to your favourites";
-		$tmp = str_replace('::ADDREMOVE::', '<a href="#" onClick="addRemove(' . $rowSelect["PERSNR"] . ', \'a\');" title="' . $alttitle . '" class="nolink favourites_off">&#9733;</a>', $tmp);
-	}
-
-	// 
 	if ( strpos(',' . $checkInOutIds . ',', ',' . $rowSelect["PERSNR"] . ',') !== false ) {
 		$alttitle = "Click to remove the 'checked in' email notification";
 		$tmp = str_replace('::CHECKINOUT::', '<a href="#" onClick="checkInOut(' . $rowSelect["PERSNR"] . ', \'r\');" title="' . $alttitle . '" class="nolink"><img src="images/clock-red.png" border=0></a>', $tmp);
@@ -95,23 +72,23 @@ while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
 		$tmp = str_replace('::STATUS_ALT::', '', $tmp);
 	}
 
-	// moet regel getoond worden?
-	if ( $s == '-r-' ) {
-		// als rood, dan alleen tonen als persoon niet aanwezig is
-		if ( $status["aanwezig"] == 0 ) {
-			//
-			$retval .= $tmp;
-		}
-	} elseif ( $s == '-g-' ) {
-		// als groen, dan alleen tonen als persoon aanwezig is
-		if ( $status["aanwezig"] == 1 ) {
-			//
-			$retval .= $tmp;
-		}
-	} else {
+//	// moet regel getoond worden?
+//	if ( $s == '-r-' ) {
+//		// als rood, dan alleen tonen als persoon niet aanwezig is
+//		if ( $status["aanwezig"] == 0 ) {
+//			//
+//			$retval .= $tmp;
+//		}
+//	} elseif ( $s == '-g-' ) {
+//		// als groen, dan alleen tonen als persoon aanwezig is
+//		if ( $status["aanwezig"] == 1 ) {
+//			//
+//			$retval .= $tmp;
+//		}
+//	} else {
 		// als niet rood en ook niet groen dan altijd tonen
 		$retval .= $tmp;
-	}
+//	}
 }
 mysql_free_result($resultSelect);
 
@@ -119,7 +96,6 @@ if ( $retval != '' ) {
 	$retval = "
 <table border=0 cellspacing=1 cellpadding=1>
 <TR>
-	<TD width=25></TD>
 	<TD width=25></TD>
 	<TD width=250><font size=-1><b>Name</b></font></TD>
 	<td width=100 align=\"center\"><font size=-1><b>Check in/out</b></font></td>

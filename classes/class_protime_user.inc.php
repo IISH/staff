@@ -3,18 +3,20 @@
 // TODOEXPLAIN
 class class_protime_user {
 	protected $protime_id = 0;
-	protected $project_settings;
+	protected $databases;
 	protected $firstname = '';
 	protected $lastname = '';
 
 	// TODOEXPLAIN
-	function class_protime_user($protime_id, $project_settings) {
+	function __construct($protime_id) {
+		global $databases;
+		$this->databases = $databases;
+
 		if ( $protime_id == '' || $protime_id < -1 ) {
 			$protime_id = 0;
 		}
 
 		$this->protime_id = $protime_id;
-		$this->project_settings = $project_settings;
 
 		if ( $protime_id > 0 ) {
 			$this->getProtimeValues();
@@ -23,7 +25,7 @@ class class_protime_user {
 
 	// TODOEXPLAIN
 	function getProtimeValues() {
-		$oProtime = new class_mysql($this->project_settings, 'presentornot');
+		$oProtime = new class_mysql($this->databases['default']);
 		$oProtime->connect();
 
 		// reset values

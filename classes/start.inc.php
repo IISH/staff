@@ -33,7 +33,6 @@ require_once dirname(__FILE__) . "/class_syncprotimemysql.inc.php";
 
 //
 $protect = new class_website_protection();
-$protect->class_website_protection($settings);
 
 //
 $oWebuser = new class_employee($_SESSION["presentornot"]["name"], $settings);
@@ -42,4 +41,8 @@ $oWebuser = new class_employee($_SESSION["presentornot"]["name"], $settings);
 $menu[] = new class_menuitem('protime.presentornot', 'Present or not', 'presentornot.php');
 $menu[] = new class_menuitem('protime.vakantie', 'Absences', 'absences.php');
 $menu[] = new class_menuitem('protime.bhv', 'BHV', 'bhv.php');
+$menu[] = new class_menuitem('protime.ehbo', 'EHBO', 'ehbo.php');
 $menu[] = new class_menuitem('protime.holidays', 'National holidays', 'nationalholidays.php');
+
+//
+define('ENT_XHTML', 32);

@@ -4,7 +4,7 @@ class class_menuitem {
 	protected $label = '';
 	protected $url = '';
 
-	function class_menuitem($code, $label, $url ) {
+	function __construct($code, $label, $url ) {
 		$this->code = $code;
 		$this->label = $label;
 		$this->url = $url;

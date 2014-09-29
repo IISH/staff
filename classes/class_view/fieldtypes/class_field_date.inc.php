@@ -4,25 +4,21 @@ require_once("./classes/class_view/fieldtypes/class_field.inc.php");
 
 // TODOEXPLAIN
 class class_field_date extends class_field {
-	protected $project_settings;
-
 	protected $m_format;
 
 	// TODOEXPLAIN
-	function class_field_date($settings) {
-		parent::class_field($settings);
-
-		$this->project_settings = $settings;
+	function __construct($fieldSettings) {
+		parent::__construct($fieldSettings);
 
 		$this->m_format = '';
 
-		if ( is_array( $settings ) ) {
-			foreach ( $settings as $field => $value ) {
+		if ( is_array( $fieldSettings ) ) {
+			foreach ( $fieldSettings as $field => $setting ) {
 				switch ($field) {
 					// only string specific parameters
 
 					case "format":
-						$this->m_format = $settings["format"];
+						$this->m_format = $setting;
 						break;
 
 				}

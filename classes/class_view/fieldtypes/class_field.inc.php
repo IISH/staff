@@ -9,19 +9,19 @@ class class_field {
 	protected $m_fieldlabel;
 
 	// TODOEXPLAIN
-	function class_field($settings) {
+	function __construct($fieldSettings) {
 		$this->oClassMisc = new class_misc();
 		$this->m_fieldname = '';
 		$this->m_fieldlabel = '';
 
-		if ( is_array( $settings ) ) {
-			foreach ( $settings as $field => $value ) {
+		if ( is_array( $fieldSettings ) ) {
+			foreach ( $fieldSettings as $field => $setting ) {
 				switch ($field) {
 					case "fieldname":
-						$this->m_fieldname = $settings["fieldname"];
+						$this->m_fieldname = $setting;
 						break;
 					case "fieldlabel":
-						$this->m_fieldlabel = $settings["fieldlabel"];
+						$this->m_fieldlabel = $setting;
 						break;
 				}
 			}

@@ -9,11 +9,11 @@ class class_mysql {
 	private $conn;
 
 	// TODOEXPLAIN
-	function class_mysql($settings, $prefix) {
-		$this->server = $settings[$prefix . "_server"];
-		$this->user = $settings[$prefix . "_user"];
-		$this->password = $settings[$prefix . "_password"];
-		$this->database = $settings[$prefix . "_database"];
+	function __construct($database) {
+		$this->server = $database["host"];
+		$this->user = $database["username"];
+		$this->password = $database["password"];
+		$this->database = $database["database"];
 	}
 
 	// TODOEXPLAIN

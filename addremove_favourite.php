@@ -46,7 +46,7 @@ if ( $dowhat == 'a' ) {
 	}
 }
 
-$oConn = new class_mysql($settings, 'presentornot');
+$oConn = new class_mysql($databases['default']);
 $oConn->connect();
 
 if ( $query != '' ) {

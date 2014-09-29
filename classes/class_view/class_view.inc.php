@@ -6,15 +6,12 @@ class class_view {
 	protected $oDb;
 	protected $oClassFile;
 	protected $oClassMisc;
-	protected $m_project_settings;
 
 	protected $m_view;
 	protected $m_array_of_fields = Array();
 
 	// TODOEXPLAIN
-	function class_view($settings, $oDb) {
-		$this->m_project_settings = $settings;
-
+	function __construct($oDb) {
 		$this->oDb = $oDb;
 		$this->oClassFile = new class_file();
 		$this->oClassMisc = new class_misc();
@@ -49,7 +46,7 @@ class class_view {
 		$this->oDb->connect();
 
 		// execute query
-		$res=mysql_query($this->m_view["query"], $this->oDb->connection()) or die( "error 8712378" . "<br>" . mysql_error());
+		$res=mysql_query($this->m_view["query"], $this->oDb->getConnection()) or die( "error 8712378" . "<br>" . mysql_error());
 
 		if($res){
 			// moet overzicht wel getoond worden
@@ -97,7 +94,7 @@ class class_view {
 		mysql_free_result($res);
 
 		// disconnect from database
-		$this->oDb->disconnect();
+		$this->oDb->close();
 
 		// return result
 		return $return_value;

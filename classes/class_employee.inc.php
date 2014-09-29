@@ -3,7 +3,6 @@
 // TODOEXPLAIN
 class class_employee {
 	protected $user = '';
-	protected $project_settings;
 	protected $protime_id;
     protected $firstname = '';
 	protected $lastname = '';
@@ -11,11 +10,12 @@ class class_employee {
     protected $authorisation = array();
 
 	// TODOEXPLAIN
-	function class_employee($user, $project_settings) {
-		$this->user = $user;
-		$this->project_settings = $project_settings;
+	function __construct($user) {
+		global $databases;
 
-		$oConn = new class_mysql($this->project_settings, 'presentornot');
+		$this->user = $user;
+
+		$oConn = new class_mysql($databases['default']);
 		$oConn->connect();
 
         $query = 'SELECT * FROM Users WHERE user=\'' . $this->getUser() . '\' ';
@@ -92,7 +92,9 @@ class class_employee {
 
 	// TODOEXPLAIN
 	function getFavourites( $type ) {
-		$oConn = new class_mysql($this->project_settings, 'presentornot');
+		global $databases;
+
+		$oConn = new class_mysql($databases['default']);
 		$oConn->connect();
 
 		$ids = array();

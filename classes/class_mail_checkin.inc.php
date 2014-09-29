@@ -2,16 +2,17 @@
 
 // TODOEXPLAIN
 class class_mail_checkin {
-	protected $project_settings;
+	protected $databases;
 
 	// TODOEXPLAIN
-	function class_mail_checkin( $project_settings ) {
-		$this->project_settings = $project_settings;
+	function __construct() {
+		global $databases;
+		$this->databases = $databases;
 	}
 
 	// TODOEXPLAIN
 	function getListOfNotifications() {
-		$oConn = new class_mysql($this->project_settings, 'presentornot');
+		$oConn = new class_mysql($this->databases['default']);
 		$oConn->connect();
 
 		$arr = array();
@@ -39,7 +40,7 @@ class class_mail_checkin {
 
 		$ids = implode(',', $this->getListOfNotifications());
 
-		$oProtime = new class_mysql($this->project_settings, 'presentornot');
+		$oProtime = new class_mysql($this->databases['default']);
 		$oProtime->connect();
 
 		//
@@ -47,7 +48,7 @@ class class_mail_checkin {
 		$result = mysql_query($query, $oProtime->getConnection());
 		while ( $row = mysql_fetch_assoc($result) ) {
 			$user = array();
-			$user["user"] = new class_protime_user( $row["PERSNR"], $this->project_settings );
+			$user["user"] = new class_protime_user( $row["PERSNR"] );
 			$user["time"] = $row["CHECKTIME"];
 			$user["date"] = $date;
 
@@ -59,7 +60,7 @@ class class_mail_checkin {
 
 	// TODOEXPLAIN
 	function getListOfTimecardUsersForProtimeUserNotification( $protime_id ) {
-		$oConn = new class_mysql($this->project_settings, 'presentornot');
+		$oConn = new class_mysql($this->databases['default']);
 		$oConn->connect();
 
 		$arr = array();
@@ -68,7 +69,7 @@ class class_mail_checkin {
 		$result = mysql_query($query, $oConn->getConnection());
 
 		while ( $row = mysql_fetch_assoc($result) ) {
-            $arr[] = new class_employee( $row["user"], $this->project_settings );
+            $arr[] = new class_employee( $row["user"] );
 		}
 
 		return $arr;
@@ -76,7 +77,7 @@ class class_mail_checkin {
 
 	// TODOEXPLAIN
 	function deleteNotification( $user, $protime_id ) {
-		$oConn = new class_mysql($this->project_settings, 'presentornot');
+		$oConn = new class_mysql($this->databases['default']);
 		$oConn->connect();
 
 		$query = 'DELETE FROM Favourites WHERE user=\'' . $user . '\' AND ProtimeID=' . $protime_id . ' AND type=\'checkinout\' ';
