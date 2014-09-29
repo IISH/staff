@@ -4,7 +4,7 @@
 class class_authentication {
 
 	// TODOEXPLAIN
-	function class_authentication() {
+	public function __construct() {
 	}
 
 	// TODOEXPLAIN

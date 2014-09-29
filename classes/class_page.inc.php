@@ -6,16 +6,14 @@ require_once dirname(__FILE__) . "/class_misc.inc.php";
 // TODOEXPLAIN
 class class_page {
 	protected $page_template;
-	protected $project_settings;
 	protected $content;
 	protected $tab;
 	protected $title;
 	protected $color;
 
 	// TODOEXPLAIN
-	function class_page($page_template, $project_settings) {
+	function __construct($page_template) {
 		$this->page_template = $page_template;
-		$this->project_settings = $project_settings;
 		$this->content = '';
 		$this->tab = 0;
 		$this->title = '';

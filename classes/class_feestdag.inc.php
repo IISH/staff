@@ -10,12 +10,12 @@ class class_feestdag {
 	private $isdeleted;
 	private $last_refresh;
 	private $is_new;
-	private $project_settings;
+	private $databases;
 
 	// TODOEXPLAIN
-	function class_feestdag($id) {
-		global $settings;
-		$this->project_settings = $settings;
+	function __construct($id) {
+		global $databases;
+		$this->databases = $databases;
 
 		$this->id = $id;
 		$this->date = '';
@@ -30,7 +30,7 @@ class class_feestdag {
 
 	// TODOEXPLAIN
 	private function initValues() {
-		$oConn = new class_mysql($this->project_settings, 'presentornot');
+		$oConn = new class_mysql($this->databases['default']);
 		$oConn->connect();
 
 		$query = "SELECT * FROM Feestdagen WHERE ID=" . $this->getId();
@@ -123,7 +123,7 @@ class class_feestdag {
 
 	// TODOEXPLAIN
 	protected function insert() {
-		$oConn = new class_mysql($this->project_settings, 'presentornot');
+		$oConn = new class_mysql($this->databases['default']);
 		$oConn->connect();
 
 		$query = "INSERT INTO Feestdagen (ID, datum, omschrijving, vooreigenrekening, isdeleted, last_refresh) VALUES (
@@ -139,7 +139,7 @@ class class_feestdag {
 
 	// TODOEXPLAIN
 	protected function update() {
-		$oConn = new class_mysql($this->project_settings, 'presentornot');
+		$oConn = new class_mysql($this->databases['default']);
 		$oConn->connect();
 
 		$query = "UPDATE Feestdagen

@@ -4,7 +4,7 @@
 class class_datetime {
 
 	// TODOEXPLAIN
-	function class_datetime() {
+	public function __construct() {
 	}
 
 	// TODOEXPLAIN

@@ -9,11 +9,13 @@ class class_holiday {
 	protected $description = '';
 
 	// TODOEXPLAIN
-	function class_holiday($id, $settings) {
-		$oConn = new class_mysql($settings, 'presentornot');
+	function __construct($id) {
+		global $databases;
+		$this->databases = $databases;
+
+		$oConn = new class_mysql($this->databases['default']);
 		$oConn->connect();
 
-		$this->settings = $settings;
 		$this->id = $id;
 
 		$query = "SELECT * FROM Feestdagen WHERE ID=" . $this->getId();

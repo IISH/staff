@@ -18,18 +18,18 @@ echo $oPage->getPage();
 
 // TODOEXPLAIN
 function createNationalHolidaysContent( ) {
-    global $settings;
+    global $settings, $databases;
 
 	$ret = "<h2>National holidays</h2><br>";
 
-	require_once("./classes/class_db.inc.php");
+	require_once("./classes/class_mysql.inc.php");
 	require_once("./classes/class_view/class_view.inc.php");
 	require_once("./classes/class_view/fieldtypes/class_field_date.inc.php");
 	require_once("./classes/class_view/fieldtypes/class_field.inc.php");
 	require_once("./classes/class_view/fieldtypes/class_field_bit.inc.php");
 
-	$oDbSettings = new class_db($settings, 'presentornot');
-	$oView = new class_view($settings, $oDbSettings);
+	$oDb = new class_mysql($databases['default']);
+	$oView = new class_view($oDb);
 
 	$oView->set_view( array(
 		'query' => 'SELECT * FROM Feestdagen WHERE 1=1 AND isdeleted=0 AND datum >= \'' . date('Y') . '\' ORDER BY datum ASC '

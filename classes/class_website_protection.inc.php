@@ -3,8 +3,7 @@
 // TODOEXPLAIN
 class class_website_protection {
 	// construct
-	function class_website_protection($settings = '') {
-		$this->settings = $settings;
+	public function __construct() {
 	}
 
 	// TODOEXPLAIN

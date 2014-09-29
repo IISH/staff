@@ -1,7 +1,7 @@
 <?php 
 // TODOEXPLAIN
 function getStatusColor( $persnr, $date ) {
-	global $settings;
+	global $databases;
 
 	$retval = array();
 
@@ -10,7 +10,7 @@ function getStatusColor( $persnr, $date ) {
 	$status_text = '';
 	$status_alt = '';
 
-	$oProtime = new class_mysql($settings, 'presentornot');
+	$oProtime = new class_mysql($databases['default']);
 	$oProtime->connect();
 
 	// achterhaal 'present' status
@@ -116,7 +116,7 @@ function getAndProtectSearch($field = 's') {
 
 // TODOEXPLAIN
 function getAbsencesAndHolidays($eid, $year, $month, $min_minutes = 0) {
-	global $settings;
+	global $databases;
 
 	$ret = array();
 
@@ -131,7 +131,7 @@ AND ( PROTIME_P_ABSENCE.ABSENCE_VALUE>=" . $min_minutes . " OR PROTIME_P_ABSENCE
 ORDER BY PROTIME_P_ABSENCE.BOOKDATE, PROTIME_P_ABSENCE.REC_NR
 ";
 
-	$oProtime = new class_mysql($settings, 'presentornot');
+	$oProtime = new class_mysql($databases['default']);
 	$oProtime->connect();
 
 	$result = mysql_query($query, $oProtime->getConnection());

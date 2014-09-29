@@ -9,26 +9,26 @@ class class_field_bit extends class_field {
 	protected $m_different_false_value;
 
 	// TODOEXPLAIN
-	function class_field_bit($settings) {
-		parent::class_field($settings);
+	function __construct($fieldSettings) {
+		parent::__construct($fieldSettings);
 
 		$this->m_show_different_values = false;
 		$this->m_different_true_value = '';
 		$this->m_different_false_value = '';
 
-		if ( is_array( $settings ) ) {
-			foreach ( $settings as $field => $value ) {
+		if ( is_array( $fieldSettings ) ) {
+			foreach ( $fieldSettings as $field => $setting ) {
 				switch ($field) {
 					// only bit specific parameters
 
 					case "show_different_values":
-						$this->m_show_different_values = $settings["show_different_values"];
+						$this->m_show_different_values = $setting;
 						break;
 					case "different_true_value":
-						$this->m_different_true_value = $settings["different_true_value"];
+						$this->m_different_true_value = $setting;
 						break;
 					case "different_false_value":
-						$this->m_different_false_value = $settings["different_false_value"];
+						$this->m_different_false_value = $setting;
 						break;
 
 				}

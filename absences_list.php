@@ -61,7 +61,7 @@ $arrHolidays = getNationalHolidays($selectedYear, $selectedMonth );
 
 if ( $to_short != 1 ) {
 
-	$oProtime = new class_mysql($settings, 'presentornot');
+	$oProtime = new class_mysql($databases['default']);
 	$oProtime->connect();
 
 	// loop employees
@@ -248,9 +248,9 @@ function isHoliday($datum, $holidays) {
 }
 
 function getNationalHolidays($year, $month) {
-	global $settings;
+	global $databases;
 
-	$oConn = new class_mysql($settings, 'presentornot');
+	$oConn = new class_mysql($databases['default']);
 	$oConn->connect();
 
 	$arr = array();
@@ -258,7 +258,7 @@ function getNationalHolidays($year, $month) {
     $query = "SELECT * FROM Feestdagen WHERE datum LIKE '" . $year . '-' . substr("0" . $month,-2) . "-%' AND isdeleted=0 ";
    	$result = mysql_query($query, $oConn->getConnection());
     while ($row = mysql_fetch_assoc($result)) {
-   		$arr[] = new class_holiday($row["ID"], $settings);
+   		$arr[] = new class_holiday($row["ID"]);
     }
    	mysql_free_result($result);
 
