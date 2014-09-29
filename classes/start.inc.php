@@ -39,7 +39,7 @@ $protect->class_website_protection($settings);
 $oWebuser = new class_employee($_SESSION["presentornot"]["name"], $settings);
 
 //
-$menu[] = new class_menuitem('protime.presentornot', 'Present or not', 'present_or_not.php');
+$menu[] = new class_menuitem('protime.presentornot', 'Present or not', 'presentornot.php');
 $menu[] = new class_menuitem('protime.vakantie', 'Absences', 'absences.php');
 $menu[] = new class_menuitem('protime.bhv', 'BHV', 'bhv.php');
 $menu[] = new class_menuitem('protime.holidays', 'National holidays', 'nationalholidays.php');

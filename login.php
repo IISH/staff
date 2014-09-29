@@ -49,7 +49,7 @@ function createLoginPage() {
 				$_SESSION["presentornot"]["name"] = $fldLogin;
 
 				// 
-				$burl = 'present_or_not.php';
+				$burl = 'presentornot.php';
 				Header("Location: " . $burl);
 				die("Go to <a href=\"" . $burl . "\">next</a>");
 			} else {
