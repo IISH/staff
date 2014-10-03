@@ -3,8 +3,8 @@
 require_once "classes/start.inc.php";
 
 //
-if ( !isset($bhv_or_ehbo)  ) {
-	$bhv_or_ehbo = "bhv";
+if ( !isset($type_of_beo) ) {
+	$type_of_beo = "BHV";
 }
 
 //
@@ -26,20 +26,34 @@ $oProtime->connect();
 $never_show_persnr = '0,' . preg_replace('/[^0-9]/', ',', trim(class_settings::getSetting("never_show_persnr")));
 $never_show_persnr = preg_replace('/,{2,}/', ',', $never_show_persnr);
 
-$querySelect = "SELECT * FROM PROTIME_CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) AND USER03 LIKE '%" . strtoupper($bhv_or_ehbo) . "%' AND PERSNR NOT IN ($never_show_persnr) ORDER BY FIRSTNAME, NAME ";
+if ( strtoupper($type_of_beo) == 'BHV' || strtoupper($type_of_beo) == 'EHBO' ) {
+	$user03Criterium = " USER03 LIKE '%" . strtoupper($type_of_beo) . "%' ";
+} else {
+	$user03Criterium = " ( USER03 LIKE '%O0%' OR USER03 LIKE '%O1%' OR USER03 LIKE '%O2%' OR USER03 LIKE '%O3%' OR USER03 LIKE '%O4%' OR USER03 LIKE '%O5%' ) ";
+}
+
+$querySelect = "SELECT * FROM PROTIME_CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) AND $user03Criterium AND PERSNR NOT IN ($never_show_persnr) ORDER BY FIRSTNAME, NAME ";
 $resultSelect = mysql_query($querySelect, $oProtime->getConnection());
 
 $totaal["aanwezig"] = 0;
 $totaal["afwezig"] = 0;
 
+$ontruimersAanwezigOpVerdieping = array();
+
 while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
+	$verdieping = '';
+
+	if ( strtoupper($type_of_beo) != 'BHV' && strtoupper($type_of_beo) != 'EHBO' ) {
+		$verdieping = "<td align=\"center\">" . cleanUpVerdieping($rowSelect["USER03"]) . "</td>";
+	}
+
 	$tmp = "
 <tr>
 	<td><div id=\"divCheckInOut" . $rowSelect["PERSNR"] . "\">::CHECKINOUT::</div></td>
 	<td>" . fixBrokenChars(trim($rowSelect["FIRSTNAME"]) . " " . verplaatsTussenvoegselNaarBegin(trim($rowSelect["NAME"]))) . "</td>
 	<td class=\"presentornot_absence\" style=\"::STATUS_STYLE::\"><A class=\"checkinouttime\" TITLE=\"::STATUS_ALT::\">::STATUS_TEXT::</A></td>
 	<td align=\"center\">" . cleanUpTelephone($rowSelect["USER02"]) . "</td>
-</a></td>
+	$verdieping
 </tr>
 ";
 
@@ -57,6 +71,7 @@ while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
 
 	if ( $status["aanwezig"] == 1 ) {
 		$totaal["aanwezig"]++;
+		$ontruimersAanwezigOpVerdieping[cleanUpVerdieping($rowSelect["USER03"])] = 1;
 	} else {
 		$totaal["afwezig"]++;
 	}
@@ -72,27 +87,17 @@ while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
 		$tmp = str_replace('::STATUS_ALT::', '', $tmp);
 	}
 
-//	// moet regel getoond worden?
-//	if ( $s == '-r-' ) {
-//		// als rood, dan alleen tonen als persoon niet aanwezig is
-//		if ( $status["aanwezig"] == 0 ) {
-//			//
-//			$retval .= $tmp;
-//		}
-//	} elseif ( $s == '-g-' ) {
-//		// als groen, dan alleen tonen als persoon aanwezig is
-//		if ( $status["aanwezig"] == 1 ) {
-//			//
-//			$retval .= $tmp;
-//		}
-//	} else {
-		// als niet rood en ook niet groen dan altijd tonen
-		$retval .= $tmp;
-//	}
+	// als niet rood en ook niet groen dan altijd tonen
+	$retval .= $tmp;
 }
 mysql_free_result($resultSelect);
 
 if ( $retval != '' ) {
+	$verdieping = '';
+	if ( strtoupper($type_of_beo) != 'BHV' && strtoupper($type_of_beo) != 'EHBO' ) {
+		$verdieping = "<td width=100 align=\"center\"><font size=-1><b>Verdieping</b></font></td>";
+	}
+
 	$retval = "
 <table border=0 cellspacing=1 cellpadding=1>
 <TR>
@@ -100,9 +105,36 @@ if ( $retval != '' ) {
 	<TD width=250><font size=-1><b>Name</b></font></TD>
 	<td width=100 align=\"center\"><font size=-1><b>Check in/out</b></font></td>
 	<td width=100 align=\"center\"><font size=-1><b>Telephone</b></font></td>
+	$verdieping
 </TR>
 " . $retval . "
-</table><br><font size=-1><i>Present: " . $totaal["aanwezig"] . "<br>Not present: " . $totaal["afwezig"] . "<br><br>Page refreshed every minute, last refresh at: " . date("H:i:s") . "</i></font>";
+</table>";
 }
+
+if ( strtoupper($type_of_beo) != 'BHV' && strtoupper($type_of_beo) != 'EHBO' ) {
+	//
+	$retval .= "<br>
+	<table>
+	<tr>
+		<td><font size=-1><b>Verdieping: </b></font></td>
+	";
+
+		for( $i =0 ; $i <= 5; $i++ ) {
+			if ( $ontruimersAanwezigOpVerdieping[$i] == 1 ) {
+				$style = " background-color:green;color:white; ";
+			} else {
+				$style = " background-color:#C62431;color:white; ";
+			}
+			$retval .= "<td align=\"center\" style=\"" .  $style . "width:22px;\">" . $i. "</td>";
+		}
+
+		$retval .= "
+		</tr>
+		</table>
+	";
+}
+
+//
+$retval .= "<br><font size=-1><i>Present: " . $totaal["aanwezig"] . "<br>Not present: " . $totaal["afwezig"] . "<br><br>Page refreshed every minute, last refresh at: " . date("H:i:s") . "</i></font>";
 
 echo $retval;

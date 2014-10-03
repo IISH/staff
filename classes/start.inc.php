@@ -42,6 +42,7 @@ $menu[] = new class_menuitem('protime.presentornot', 'Present or not', 'presento
 $menu[] = new class_menuitem('protime.vakantie', 'Absences', 'absences.php');
 $menu[] = new class_menuitem('protime.bhv', 'BHV', 'bhv.php');
 $menu[] = new class_menuitem('protime.ehbo', 'EHBO', 'ehbo.php');
+$menu[] = new class_menuitem('protime.ontruimer', 'Ontruimer', 'ontruimer.php');
 $menu[] = new class_menuitem('protime.holidays', 'National holidays', 'nationalholidays.php');
 
 //
