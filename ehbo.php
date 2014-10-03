@@ -1,3 +1,3 @@
 <?php
-$bhv_or_ehbo = "ehbo";
-require_once "bhvehbo.php";
+$type_of_beo = "EHBO";
+require_once "beo.php";
