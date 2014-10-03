@@ -111,10 +111,18 @@ if ( $to_short != 1 ) {
 
 			$cellStyle = getColors($selectedYear, $selectedMonth, $i, $arrVakantie, $arrHolidays);
 			$style .= $cellStyle["tdStyle"];
-
 			if ( $cellStyle["alt"] != '' ) {
+				$cellStyleAlt = $cellStyle["alt"];
+				$cellStyleHrefStyle = $cellStyle["hrefStyle"];
+
+				// if person has no in/out time authorisation, then show only 'absent'
+				if ( !$oWebuser->hasInOutTimeAuthorisation() ) {
+					$cellStyleAlt = '';
+					$cellStyleHrefStyle = 'color:white;';
+				}
+
 				//
-				$celValue = '<a title="' . $cellStyle["alt"] . '" style="' . $cellStyle["hrefStyle"] . '">' . $i . '</a>';
+				$celValue = '<a title="' . $cellStyleAlt . '" style="' . $cellStyleHrefStyle . '">' . $i . '</a>';
 			}
 
 			// width
@@ -184,6 +192,8 @@ function calculateNrOfDaysForMonth($year, $month) {
 }
 
 function getColors($selectedYear, $selectedMonth, $day, $absences = array(), $holidays = array()) {
+	global $oWebuser;
+
 	$tdStyle = '';
 	$hrefStyle = '';
 	$alt = '';
@@ -211,9 +221,17 @@ function getColors($selectedYear, $selectedMonth, $day, $absences = array(), $ho
 	if ( $tdStyle == '' && $dayOfWeek != 0 && $dayOfWeek != 6 ) {
 		for ($i = 0; $i < count($absences); $i++) {
 			if ( $datum == $absences[$i]["date"] ) {
-				$tdStyle = getColor("td", strtolower($absences[$i]["description"]));
-				$hrefStyle = getColor("href", strtolower($absences[$i]["description"]));
-				$alt = $absences[$i]["description"];
+				if ( !$oWebuser->hasInOutTimeAuthorisation() ) {
+					$tdStyle = 'background-color: #C62431;';
+					$hrefStyle = 'color:white';
+					$alt = 'Absent';
+				} else {
+					$tdStyle = getColor("td", strtolower($absences[$i]["description"]));
+					$hrefStyle = getColor("href", strtolower($absences[$i]["description"]));
+					$alt = $absences[$i]["description"];
+				}
+//				echo $tdStyle . ' ++<br>';
+//				echo $hrefStyle . ' --<br>';
 			}
 		}
 	}
