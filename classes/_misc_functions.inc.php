@@ -236,7 +236,7 @@ function cleanUpTelephone($telephone) {
 	$retval = $telephone;
 
 	// remove some dirty data from telephone
-	$retval = str_replace(array("(", ")", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"), ' ', $retval);
+	$retval = str_replace(array("/", "(", ")", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"), ' ', $retval);
 
 	//
 	while ( strpos($retval, '  ') !== false ) {

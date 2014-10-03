@@ -20,7 +20,7 @@ echo $oPage->getPage();
 
 // TODOEXPLAIN
 function createPresentContent( ) {
-	global $colors;
+	global $colors, $oWebuser;
 
 	$refreshAfterXSeconds = 60;
 
@@ -160,10 +160,15 @@ tcRefreshSearchStart();
 </script>
 ";
 
-	$ret .= "<br>Legenda:<br>";
-	foreach ( $colors["td"] as $a => $b ) {
-		$ret .= "<span align=\"center\" style=\"" . $b . "display:inline-block;margin-bottom:5px;margin-right:5px;\">&nbsp;" . $a . "&nbsp;</span>";
-	}
+		$ret .= "<br>Legenda:<br>";
+		foreach ( $colors["td"] as $a => $b ) {
+			if ( $oWebuser->hasInOutTimeAuthorisation() || in_array($a, array('vandaag', 'brugdag', 'holiday', 'vakantie', 'weekend')) ) {
+				if ( $a == 'vakantie' ) {
+					$a = 'afwezig';
+				}
+				$ret .= "<span align=\"center\" style=\"" . $b . "display:inline-block;margin-bottom:5px;margin-right:5px;\">&nbsp;" . $a . "&nbsp;</span>";
+			}
+		}
 
 	return $ret;
 }
