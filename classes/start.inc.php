@@ -14,7 +14,7 @@ if ( !isset($_SESSION["presentornot"]["name"]) ) {
 }
 
 //
-require_once dirname(__FILE__) . "/../sites/default/settings.php";
+require_once dirname(__FILE__) . "/../sites/default/presentornot.settings.php";
 require_once dirname(__FILE__) . "/colors.inc.php";
 require_once dirname(__FILE__) . "/class_authentication.inc.php";
 require_once dirname(__FILE__) . "/class_date.inc.php";

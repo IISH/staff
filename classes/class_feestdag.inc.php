@@ -1,5 +1,5 @@
 <?php
-require_once dirname(__FILE__) . "/../sites/default/settings.php";
+require_once dirname(__FILE__) . "/../sites/default/presentornot.settings.php";
 require_once "class_mysql.inc.php";
 
 class class_feestdag {

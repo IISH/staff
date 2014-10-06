@@ -135,6 +135,6 @@ if ( strtoupper($type_of_beo) != 'BHV' && strtoupper($type_of_beo) != 'EHBO' ) {
 }
 
 //
-$retval .= "<br><font size=-1><i>Present: " . $totaal["aanwezig"] . "<br>Not present: " . $totaal["afwezig"] . "<br><br>Page refreshed every minute, last refresh at: " . date("H:i:s") . "</i></font>";
+$retval .= "<br><font size=-1><i>Present: " . $totaal["aanwezig"] . "<br>Not present: " . $totaal["afwezig"] . "<br><br>Page refreshes every minute, last refresh at: " . date("H:i:s") . "</i></font>";
 
 echo $retval;
