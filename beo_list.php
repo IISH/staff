@@ -1,11 +1,10 @@
 <?php 
 //
 require_once "classes/start.inc.php";
+require_once "classes/class_beo.inc.php";
 
 //
-if ( !isset($type_of_beo) ) {
-	$type_of_beo = "BHV";
-}
+$oBeo = new class_beo( isset($type_of_beo) ? $type_of_beo : '' );
 
 //
 if ( !isset($settings) ) {
@@ -14,7 +13,7 @@ if ( !isset($settings) ) {
 
 $oWebuser->checkLoggedIn();
 
-$retval = '';
+$retval = "<h2>" . $oBeo->getLabel() . "</h2>";
 
 $oEmployee = new class_employee($oWebuser->getUser(), $settings);
 $checkInOutIds = implode(',', $oEmployee->getFavourites('checkinout'));
@@ -26,13 +25,7 @@ $oProtime->connect();
 $never_show_persnr = '0,' . preg_replace('/[^0-9]/', ',', trim(class_settings::getSetting("never_show_persnr")));
 $never_show_persnr = preg_replace('/,{2,}/', ',', $never_show_persnr);
 
-if ( strtoupper($type_of_beo) == 'BHV' || strtoupper($type_of_beo) == 'EHBO' ) {
-	$user03Criterium = " USER03 LIKE '%" . strtoupper($type_of_beo) . "%' ";
-} else {
-	$user03Criterium = " ( USER03 LIKE '%O0%' OR USER03 LIKE '%O1%' OR USER03 LIKE '%O2%' OR USER03 LIKE '%O3%' OR USER03 LIKE '%O4%' OR USER03 LIKE '%O5%' ) ";
-}
-
-$querySelect = "SELECT * FROM PROTIME_CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) AND $user03Criterium AND PERSNR NOT IN ($never_show_persnr) ORDER BY FIRSTNAME, NAME ";
+$querySelect = "SELECT * FROM PROTIME_CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) AND " . $oBeo->getQuery() . " AND PERSNR NOT IN ($never_show_persnr) ORDER BY FIRSTNAME, NAME ";
 $resultSelect = mysql_query($querySelect, $oProtime->getConnection());
 
 $totaal["aanwezig"] = 0;
@@ -43,7 +36,7 @@ $ontruimersAanwezigOpVerdieping = array();
 while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
 	$verdieping = '';
 
-	if ( strtoupper($type_of_beo) != 'BHV' && strtoupper($type_of_beo) != 'EHBO' ) {
+	if ( $oBeo->showLevel() ) {
 		$verdieping = "<td align=\"center\">" . cleanUpVerdieping($rowSelect["USER03"]) . "</td>";
 	}
 
@@ -94,7 +87,7 @@ mysql_free_result($resultSelect);
 
 if ( $retval != '' ) {
 	$verdieping = '';
-	if ( strtoupper($type_of_beo) != 'BHV' && strtoupper($type_of_beo) != 'EHBO' ) {
+	if ( $oBeo->showLevel() ) {
 		$verdieping = "<td width=100 align=\"center\"><font size=-1><b>Verdieping</b></font></td>";
 	}
 
@@ -111,7 +104,7 @@ if ( $retval != '' ) {
 </table>";
 }
 
-if ( strtoupper($type_of_beo) != 'BHV' && strtoupper($type_of_beo) != 'EHBO' ) {
+if ( $oBeo->showLevel() ) {
 	//
 	$retval .= "<br>
 	<table>

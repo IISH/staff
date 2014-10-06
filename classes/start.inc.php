@@ -46,4 +46,6 @@ $menu[] = new class_menuitem('protime.ontruimer', 'Ontruimer', 'ontruimer.php');
 $menu[] = new class_menuitem('protime.holidays', 'National holidays', 'nationalholidays.php');
 
 //
-define('ENT_XHTML', 32);
+if ( !defined('ENT_XHTML') ) {
+	define('ENT_XHTML', 32);
+}

@@ -1,10 +1,9 @@
 <?php
 require_once "classes/start.inc.php";
+require_once "classes/class_beo.inc.php";
 
 //
-if ( !isset($type_of_beo)  ) {
-	$type_of_beo = "BHV";
-}
+$oBeo = new class_beo( isset($type_of_beo) ? $type_of_beo : '' );
 
 //
 if ( !isset($settings) ) {
@@ -17,19 +16,17 @@ $date = class_datetime::get_date($protect);
 
 // create webpage
 $oPage = new class_page('design/page.php', $settings);
-$oPage->setTitle('Present or not | ' . $type_of_beo);
-$oPage->setContent(createBhvEhboContent( $type_of_beo ));
+$oPage->setTitle('Present or not | ' . $oBeo->getLabel());
+$oPage->setContent(createBhvEhboContent( $oBeo ));
 
 // show page
 echo $oPage->getPage();
 
 // TODOEXPLAIN
-function createBhvEhboContent( $type_of_beo ) {
+function createBhvEhboContent( $oBeo ) {
 	$refreshAfterXSeconds = 60;
 
 	$ret = "
-<h2>" . $type_of_beo . "</h2>
-
 <script type=\"text/javascript\">
 <!--
 var xmlhttpSearch=false;
@@ -67,7 +64,7 @@ if (!xmlhttpCheckInOut && window.createRequest) {
 
 // TODOEXPLAIN
 function tcRefreshSearch() {
-	xmlhttpSearch.open(\"GET\", \"" . strtolower($type_of_beo) . "_list.php\", true);
+	xmlhttpSearch.open(\"GET\", \"" . $oBeo->getType() . "_list.php\", true);
 	xmlhttpSearch.onreadystatechange=function() {
 		if (xmlhttpSearch.readyState==4) {
 			document.getElementById('tcContentSearch').innerHTML = xmlhttpSearch.responseText;
