@@ -6,16 +6,19 @@ class class_beo {
 					'label' => 'BHV'
 					, 'query' => " USER03 LIKE '%BHV%' "
 					, 'show_level' => false
+					, 'scriptname' => 'bhv'
 				)
 			, 'e' => array(
 					'label' => 'EHBO'
 					, 'query' => " USER03 LIKE '%EHBO%' "
 					, 'show_level' => false
+					, 'scriptname' => 'ehbo'
 				)
 			, 'o' => array(
 					'label' => 'Ontruimer'
 					, 'query' => " ( USER03 LIKE '%O0%' OR USER03 LIKE '%O1%' OR USER03 LIKE '%O2%' OR USER03 LIKE '%O3%' OR USER03 LIKE '%O4%' OR USER03 LIKE '%O5%' ) "
 					, 'show_level' => true
+					, 'scriptname' => 'ontruimer'
 				)
 		);
 
@@ -41,8 +44,13 @@ class class_beo {
 	}
 
 	// TODOEXPLAIN
-	function showLevel() {
+	function getShowLevel() {
 		return $this->typeOfBeo[$this->type]['show_level'];
+	}
+
+	// TODOEXPLAIN
+	function getScriptName() {
+		return $this->typeOfBeo[$this->type]['scriptname'];
 	}
 
 	// TODOEXPLAIN

@@ -36,7 +36,7 @@ $ontruimersAanwezigOpVerdieping = array();
 while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
 	$verdieping = '';
 
-	if ( $oBeo->showLevel() ) {
+	if ( $oBeo->getShowLevel() ) {
 		$verdieping = "<td align=\"center\">" . cleanUpVerdieping($rowSelect["USER03"]) . "</td>";
 	}
 
@@ -87,7 +87,7 @@ mysql_free_result($resultSelect);
 
 if ( $retval != '' ) {
 	$verdieping = '';
-	if ( $oBeo->showLevel() ) {
+	if ( $oBeo->getShowLevel() ) {
 		$verdieping = "<td width=100 align=\"center\"><font size=-1><b>Verdieping</b></font></td>";
 	}
 
@@ -104,7 +104,7 @@ if ( $retval != '' ) {
 </table>";
 }
 
-if ( $oBeo->showLevel() ) {
+if ( $oBeo->getShowLevel() ) {
 	//
 	$retval .= "<br>
 	<table>

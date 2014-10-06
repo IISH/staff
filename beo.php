@@ -64,7 +64,7 @@ if (!xmlhttpCheckInOut && window.createRequest) {
 
 // TODOEXPLAIN
 function tcRefreshSearch() {
-	xmlhttpSearch.open(\"GET\", \"" . $oBeo->getType() . "_list.php\", true);
+	xmlhttpSearch.open(\"GET\", \"" . $oBeo->getScriptName() . "_list.php\", true);
 	xmlhttpSearch.onreadystatechange=function() {
 		if (xmlhttpSearch.readyState==4) {
 			document.getElementById('tcContentSearch').innerHTML = xmlhttpSearch.responseText;
