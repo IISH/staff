@@ -76,7 +76,7 @@ class class_website_protection {
 		$val .= "<br>We have logged your IP address.";
 		$val .= "<br>";
 
-		$val = "<font color=red><b>" . $val . "</b></font>";
+		$val = '<span style="color:red;"><b>' . $val . '</b></span>';
 
 		echo $val;
 	}

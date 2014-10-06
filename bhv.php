@@ -1,3 +1,3 @@
 <?php
-$type_of_beo = "BHV";
+$type_of_beo = "b";
 require_once "beo.php";

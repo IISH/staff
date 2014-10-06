@@ -1,4 +1,4 @@
-<?php 
+<?php
 // TODOEXPLAIN
 function getStatusColor( $persnr, $date ) {
 	global $databases;
@@ -220,7 +220,7 @@ function getBackUrl() {
 
 // TODOEXPLAIN
 function debug($text = "", $extra = '') {
-	echo "<font color=red>";
+	echo "<span style=\"color:red;\">";
 	if ( is_array($text) ) {
 		echo "<pre>" . date("H:i:s ") . $extra;
 		print_r($text);
@@ -228,7 +228,7 @@ function debug($text = "", $extra = '') {
 	} else {
 		echo date("H:i:s ") . $extra . $text . " +<br>";
 	}
-	echo "</font>";
+	echo "</span>";
 }
 
 // TODOEXPLAIN
