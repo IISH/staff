@@ -1,6 +1,6 @@
 <?php 
 
-require_once dirname(__DIR__) . "/sites/default/settings.php";
+require_once dirname(__DIR__) . "/sites/default/presentornot.settings.php";
 
 // TODOEXPLAIN
 class class_holiday {

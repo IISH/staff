@@ -126,7 +126,7 @@ if ( $retval != '' ) {
 	<td width=100 align=\"center\"><font size=-1><b>Telephone</b></font></td>
 </TR>
 " . $retval . "
-</table><br><font size=-1><i>Present: " . $totaal["aanwezig"] . "<br>Not present: " . $totaal["afwezig"] . "<br><br>Page refreshed every minute, last refresh at: " . date("H:i:s") . "</i></font>";
+</table><br><font size=-1><i>Present: " . $totaal["aanwezig"] . "<br>Not present: " . $totaal["afwezig"] . "<br><br>Page refreshes every minute, last refresh at: " . date("H:i:s") . "</i></font>";
 }
 
 echo $retval;

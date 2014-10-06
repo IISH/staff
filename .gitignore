@@ -1,5 +1,6 @@
 settings.inc.php
 settings.php
+presentornot.settings.php
 *.ipr
 *.iml
 .idea
