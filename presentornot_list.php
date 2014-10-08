@@ -20,19 +20,25 @@ $checkInOutIds = implode(',', $oEmployee->getFavourites('checkinout'));
 
 // CRITERIUM
 $queryCriterium = '';
+$title = '';
 if ( $s == '-a-' ) {
 	//
+    $title = 'All employees';
 } elseif ( $s == '-r-' ) {
 	//
+    $title = 'Absent employees';
 } elseif ( $s == '-g-' ) {
 	//
+    $title = 'Present employees';
 } elseif ( $s == '' ) {
 	// no search
 	// use favourites
 	$queryCriterium = 'AND PERSNR IN (' . $favIds . ') ';
+    $title = 'Your favourites';
 } else {
 	// search
 	$queryCriterium = Generate_Query(array("NAME", "FIRSTNAME", "EMAIL", "USER02"), explode(' ', $s));
+    $title = 'Search: ' . $s;
 }
 
 $oProtime = new class_mysql($databases['default']);
@@ -116,7 +122,7 @@ while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
 mysql_free_result($resultSelect);
 
 if ( $retval != '' ) {
-	$retval = "
+	$retval = "<h2>$title</h2>
 <table border=0 cellspacing=1 cellpadding=1>
 <TR>
 	<TD width=25></TD>
@@ -127,6 +133,9 @@ if ( $retval != '' ) {
 </TR>
 " . $retval . "
 </table><br><font size=-1><i>Present: " . $totaal["aanwezig"] . "<br>Not present: " . $totaal["afwezig"] . "<br><br>Page refreshes every minute, last refresh at: " . date("H:i:s") . "</i></font>";
+} else {
+    $retval = "<h2>$title</h2>
+";
 }
 
 echo $retval;

@@ -8,12 +8,12 @@ class class_authentication {
 	}
 
 	// TODOEXPLAIN
-	function authenticate( $login, $password ) {
+	public static function authenticate( $login, $password ) {
 		return class_authentication::check_ldap('iisgnet\\' . $login, $password, array("apollo3.iisg.net", "apollo2.iisg.net"));
 	}
 
 	// TODOEXPLAIN
-	function check_ldap($user, $pw, $servers) {
+	public static function check_ldap($user, $pw, $servers) {
 		$login_correct = 0;
 
 		// LDAP AUTHENTICATION VIA PHP-LDAP
