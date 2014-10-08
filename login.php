@@ -63,7 +63,7 @@ function createLoginPage() {
 	}
 
 	$ret = "
-<h2>Please log in...</h2>
+<h2>Please log in</h2>
 ";
 
 	if ( $error != '' ) {

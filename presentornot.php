@@ -139,7 +139,7 @@ Quick search: <input type=\"\" name=\"fldZoek\" id=\"fldZoek\" maxlength=\"20\" 
  &nbsp; <a href=\"#\" onclick=\"javascript:setSearchField('-g-');\">Present</a>
 </form>
 <br>
-<div id=\"tcContentSearch\">...</div>
+<div id=\"tcContentSearch\"></div>
 <script type=\"text/javascript\">
 <!--
 tcRefreshSearchStart();

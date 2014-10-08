@@ -32,6 +32,9 @@ $totaal["aanwezig"] = 0;
 $totaal["afwezig"] = 0;
 
 $ontruimersAanwezigOpVerdieping = array();
+for( $i=0 ; $i <= 5; $i++ ) {
+    $ontruimersAanwezigOpVerdieping[$i] = 0;
+}
 
 while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
 	$verdieping = '';
@@ -112,7 +115,7 @@ if ( $oBeo->getShowLevel() ) {
 		<td><font size=-1><b>Verdieping: </b></font></td>
 	";
 
-		for( $i =0 ; $i <= 5; $i++ ) {
+		for( $i=0 ; $i <= 5; $i++ ) {
 			if ( $ontruimersAanwezigOpVerdieping[$i] == 1 ) {
 				$style = " background-color:green;color:white; ";
 			} else {
