@@ -152,7 +152,7 @@ Go to &nbsp; &nbsp;
 </table>
 </form>
 <br>
-<div id=\"tcContentSearch\">...</div>
+<div id=\"tcContentSearch\"></div>
 <script type=\"text/javascript\">
 <!--
 tcRefreshSearchStart();

@@ -95,7 +95,7 @@ function checkInOut(pid, dowhat) {
 
 // -->
 </script>
-<div id=\"tcContentSearch\">...</div>
+<div id=\"tcContentSearch\"></div>
 <script type=\"text/javascript\">
 <!--
 tcRefreshSearchStart();

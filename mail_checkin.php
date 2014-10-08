@@ -42,4 +42,4 @@ foreach ( $protimeUsers as $protimeUser ) {
         }
 	}
 }
-?>Done <em>(<?php echo date("Y-m-d H:i:s"); ?>)</em>...
+?>Done <em>(<?php echo date("Y-m-d H:i:s"); ?>)</em>
