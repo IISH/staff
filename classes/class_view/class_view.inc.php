@@ -49,45 +49,39 @@ class class_view {
 		$res=mysql_query($this->m_view["query"], $this->oDb->getConnection()) or die( "error 8712378" . "<br>" . mysql_error());
 
 		if($res){
-			// moet overzicht wel getoond worden
-			// niet tonen als delete bevestigings bericht (-delete-now-)
-			// en ook niet tonen als men niks heeft geselecteerd bij -delete-
-			$show_view_table = true;
 
-			if ( $show_view_table === true ) {
+            $return_value .= "<table";
 
-				$return_value .= "<table";
+            // extra tabel parameters
+            if ( $this->m_view["table_parameters"] != '' ) {
+                $return_value .= " " . $this->m_view["table_parameters"] . " ";
+            }
 
-				// extra tabel parameters
-				if ( $this->m_view["table_parameters"] != '' ) {
-					$return_value .= " " . $this->m_view["table_parameters"] . " ";
-				}
+            // sluit tabel
+            $return_value .= ">";
 
-				// sluit tabel
-				$return_value .= ">";
+            $total_row = '';
 
-				$total_row = '';
+            // add header row
+            $return_value .= $this->generate_view_header();
 
-				// add header row
-				$return_value .= $this->generate_view_header();
+            // doorloop gevonden recordset
+            while($row=mysql_fetch_assoc($res)){
+                $total_data = '';
 
-				// doorloop gevonden recordset
-				while($row=mysql_fetch_assoc($res)){
-					$total_data = '';
+                foreach ($this->m_array_of_fields as $one_field_in_array_of_fields) {
+                    $total_data .= str_replace("::TD::", $one_field_in_array_of_fields->get_value($row), "<TD class=\"recorditem\">::TD::&nbsp;</td>");
+                }
+                // plaats alle cellen in row template
+                $total_row .= str_replace("::TR::", $total_data, "<tr>::TR::</tr>");
+            }
 
-					foreach ($this->m_array_of_fields as $one_field_in_array_of_fields) {
-						$total_data .= str_replace("::TD::", $one_field_in_array_of_fields->get_value($row), "<TD class=\"recorditem\">::TD::&nbsp;</td>");
-					}
-					// plaats alle cellen in row template
-					$total_row .= str_replace("::TR::", $total_data, "<tr>::TR::</tr>");
-				}
+            // voeg alle rijen toe aan tabel
+            $return_value .= $total_row;
 
-				// voeg alle rijen toe aan tabel
-				$return_value .= $total_row;
+            // end table
+            $return_value .= "</table>";
 
-				// end table
-				$return_value .= "</table>";
-			}
 		}
 
 		// free result set
