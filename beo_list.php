@@ -15,7 +15,7 @@ $oWebuser->checkLoggedIn();
 
 $retval = "<h2>" . $oBeo->getLabel() . "</h2>";
 
-$oEmployee = new class_employee($oWebuser->getUser(), $settings);
+$oEmployee = new class_employee($oWebuser->getUser());
 $checkInOutIds = implode(',', $oEmployee->getFavourites('checkinout'));
 
 $oProtime = new class_mysql($databases['default']);

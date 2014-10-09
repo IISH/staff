@@ -18,7 +18,7 @@ echo $oPage->getPage();
 
 // TODOEXPLAIN
 function createNationalHolidaysContent( ) {
-    global $settings, $databases;
+    global $databases;
 
 	$ret = "<h2>National holidays</h2><br>";
 
@@ -32,7 +32,7 @@ function createNationalHolidaysContent( ) {
 	$oView = new class_view($oDb);
 
 	$oView->set_view( array(
-		'query' => 'SELECT * FROM Feestdagen WHERE 1=1 AND isdeleted=0 AND datum >= \'' . date('Y') . '\' ORDER BY datum ASC '
+		'query' => 'SELECT * FROM Feestdagen WHERE 1=1 AND isdeleted=0 AND datum >= \'' . date('Y-m-d') . '\' ORDER BY datum ASC '
 		, 'count_source_type' => 'query'
 		, 'table_parameters' => ' cellspacing="0" cellpadding="0" border="0" '
 		));

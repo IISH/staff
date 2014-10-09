@@ -40,7 +40,15 @@ class class_page {
 		$welcome = 'Welcome';
 		$logout = '';
 		if ( $oWebuser->isLoggedIn() ) {
-			$welcome .= ', ' . $oWebuser->getFirstname() . ' ' . $oWebuser->getLastname();
+
+			$welcome .= ', ';
+
+            if ( trim($oWebuser->getFirstname() . ' ' . $oWebuser->getLastname()) != '' ) {
+                $welcome .= $oWebuser->getFirstname() . ' ' . $oWebuser->getLastname();
+            } else {
+                $welcome .= $oWebuser->getUser();
+            }
+
 			$logout = '<a href="logout.php" onclick="if (!confirm(\'Please confirm logout\')) return false;">(logout)</a>';
 		}
 		$page = str_replace('{welcome}', $welcome, $page);

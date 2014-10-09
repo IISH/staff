@@ -14,7 +14,7 @@ $s = getAndProtectSearch();
 
 $retval = '';
 
-$oEmployee = new class_employee($oWebuser->getUser(), $settings);
+$oEmployee = new class_employee($oWebuser->getUser());
 $favIds = implode(',', $oEmployee->getFavourites('present'));
 $checkInOutIds = implode(',', $oEmployee->getFavourites('checkinout'));
 

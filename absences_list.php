@@ -13,7 +13,7 @@ $s = getAndProtectSearch();
 
 $retval = '';
 
-$oEmployee = new class_employee($oWebuser->getUser(), $settings);
+$oEmployee = new class_employee($oWebuser->getUser());
 $favIds = implode(',', $oEmployee->getFavourites('vakantie'));
 
 // CRITERIUM

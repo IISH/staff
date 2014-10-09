@@ -31,7 +31,7 @@ require_once dirname(__FILE__) . "/class_syncprotimemysql.inc.php";
 $protect = new class_website_protection();
 
 //
-$oWebuser = new class_employee($_SESSION["presentornot"]["name"], $settings);
+$oWebuser = new class_employee($_SESSION["presentornot"]["name"]);
 
 //
 $menu[] = new class_menuitem('protime.presentornot', 'Present or not', 'presentornot.php');

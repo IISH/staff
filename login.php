@@ -48,7 +48,19 @@ function createLoginPage() {
 				// save id
 				$_SESSION["presentornot"]["name"] = $fldLogin;
 
-				// 
+                $oUser = new class_employee($fldLogin);
+
+                // if new user, add new user in table
+                if ( $oUser->getId() == 0 ) {
+                    // new user
+                    $oUser->setUser($fldLogin);
+                    $oUser->save();
+                }
+
+                // update last login
+                $oUser->updateLastLogin();
+
+				//
 				$burl = 'presentornot.php';
 				Header("Location: " . $burl);
 				die("Go to <a href=\"" . $burl . "\">next</a>");
