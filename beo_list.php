@@ -32,7 +32,11 @@ $totaal["aanwezig"] = 0;
 $totaal["afwezig"] = 0;
 
 $ontruimersAanwezigOpVerdieping = array();
-for( $i=0 ; $i <= 5; $i++ ) {
+$nrOfLevels = class_settings::getSetting("number_of_levels");
+if ( $nrOfLevels == '' ) {
+	$nrOfLevels = 6;
+}
+for( $i=0 ; $i <= $nrOfLevels; $i++ ) {
     $ontruimersAanwezigOpVerdieping[$i] = 0;
 }
 
@@ -115,7 +119,7 @@ if ( $oBeo->getShowLevel() ) {
 		<td><font size=-1><b>Verdieping: </b></font></td>
 	";
 
-		for( $i=0 ; $i <= 5; $i++ ) {
+		for( $i=0 ; $i <= $nrOfLevels; $i++ ) {
 			if ( $ontruimersAanwezigOpVerdieping[$i] == 1 ) {
 				$style = " background-color:green;color:white; ";
 			} else {

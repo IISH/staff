@@ -39,6 +39,15 @@ class class_employee {
             if ( $row["inouttime"] == 1 ) {
                 $this->authorisation[] = 'inouttime';
             }
+
+	        if ( $row["isadmin"] == 1 ) {
+		        $this->authorisation[] = 'admin';
+	        }
+
+	        if ( $row["isreception"] == 1 ) {
+		        $this->authorisation[] = 'reception';
+	        }
+
         }
         mysql_free_result($result);
     }
@@ -51,6 +60,16 @@ class class_employee {
 	// TODOEXPLAIN
 	function hasInOutTimeAuthorisation() {
 		return ( in_array( 'inouttime', $this->getAuthorisation() ) ) ? true : false ;
+	}
+
+	// TODOEXPLAIN
+	function isAdmin() {
+		return ( in_array( 'admin', $this->getAuthorisation() ) ) ? true : false ;
+	}
+
+	// TODOEXPLAIN
+	function isReception() {
+		return ( in_array( 'reception', $this->getAuthorisation() ) ) ? true : false ;
 	}
 
 	// TODOEXPLAIN
