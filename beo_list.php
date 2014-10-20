@@ -95,7 +95,7 @@ mysql_free_result($resultSelect);
 if ( $retval != '' ) {
 	$verdieping = '';
 	if ( $oBeo->getShowLevel() ) {
-		$verdieping = "<td width=100 align=\"center\"><font size=-1><b>Verdieping</b></font></td>";
+		$verdieping = "<td width=100 align=\"center\"><font size=-1><b>Level</b></font></td>";
 	}
 
 	$retval = "
@@ -116,7 +116,7 @@ if ( $oBeo->getShowLevel() ) {
 	$retval .= "<br>
 	<table>
 	<tr>
-		<td><font size=-1><b>Verdieping: </b></font></td>
+		<td><font size=-1><b>Level: </b></font></td>
 	";
 
 		for( $i=0 ; $i <= $nrOfLevels; $i++ ) {

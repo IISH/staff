@@ -23,7 +23,9 @@ function createBrandContent( ) {
 	global $databases;
 
 	$title = 'BRAND / Calamiteitenlijst';
-	$ret = "<h2>$title</h2>Overzicht van " . date("d-m-Y") . " om " . date("H:i:s") . "<br><br>
+	$ret = "<h2>$title</h2>
+<br>
+Overzicht van " . date("d-m-Y") . " om " . date("H:i:s") . "<br><br>
 <table border=0 cellspacing=0 cellpadding=7 style=\"border: 1px solid black;\">
 <TR>
 	<TD width=25 style=\"border: 1px solid black;\"></TD>
