@@ -39,18 +39,41 @@ class class_employee {
             if ( $row["inouttime"] == 1 ) {
                 $this->authorisation[] = 'inouttime';
             }
+
+	        if ( $row["isadmin"] == 1 ) {
+		        $this->authorisation[] = 'admin';
+	        }
+
+	        if ( $row["isreception"] == 1 ) {
+		        $this->authorisation[] = 'reception';
+	        }
+
+	        if ( $row["ishead"] == 1 ) {
+		        $this->authorisation[] = 'head';
+	        }
+
         }
         mysql_free_result($result);
     }
 
 	// TODOEXPLAIN
-	function getAuthorisation() {
-		return $this->authorisation ;
+	function hasInOutTimeAuthorisation() {
+		return ( in_array( 'inouttime', $this->authorisation ) ) ? true : false ;
 	}
 
 	// TODOEXPLAIN
-	function hasInOutTimeAuthorisation() {
-		return ( in_array( 'inouttime', $this->getAuthorisation() ) ) ? true : false ;
+	function isAdmin() {
+		return ( in_array( 'admin', $this->authorisation ) ) ? true : false ;
+	}
+
+	// TODOEXPLAIN
+	function isReception() {
+		return ( in_array( 'reception', $this->authorisation ) ) ? true : false ;
+	}
+
+	// TODOEXPLAIN
+	function isHead() {
+		return ( in_array( 'head', $this->authorisation ) ) ? true : false ;
 	}
 
 	// TODOEXPLAIN

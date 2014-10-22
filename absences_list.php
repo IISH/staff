@@ -85,7 +85,7 @@ if ( $to_short != 1 ) {
 		//
 		$tmp = str_replace('::STATUS_STYLE::', $status["status_color"], $tmp);
 
-        if ( $oWebuser->hasInOutTimeAuthorisation() || $oWebuser->getProtimeId() == $rowSelect["PERSNR"] ) {
+        if ( $oWebuser->hasInOutTimeAuthorisation() || $oWebuser->isAdmin() || $oWebuser->isReception() || $oWebuser->isHead() || $oWebuser->getProtimeId() == $rowSelect["PERSNR"] ) {
             $tmp = str_replace('::STATUS_TEXT::', $status["status_text"], $tmp);
             $tmp = str_replace('::STATUS_ALT::', $status["status_alt"], $tmp);
         } else {
@@ -116,7 +116,7 @@ if ( $to_short != 1 ) {
 				$cellStyleHrefStyle = $cellStyle["hrefStyle"];
 
 				// if person has no in/out time authorisation, then show only 'absent'
-				if ( !$oWebuser->hasInOutTimeAuthorisation() ) {
+				if ( !$oWebuser->hasInOutTimeAuthorisation() && !$oWebuser->isAdmin() && !$oWebuser->isReception() && !$oWebuser->isHead() ) {
 					$cellStyleAlt = '';
 					$cellStyleHrefStyle = 'color:white;';
 				}
@@ -221,7 +221,7 @@ function getColors($selectedYear, $selectedMonth, $day, $absences = array(), $ho
 	if ( $tdStyle == '' && $dayOfWeek != 0 && $dayOfWeek != 6 ) {
 		for ($i = 0; $i < count($absences); $i++) {
 			if ( $datum == $absences[$i]["date"] ) {
-				if ( !$oWebuser->hasInOutTimeAuthorisation() ) {
+				if ( !$oWebuser->hasInOutTimeAuthorisation() && !$oWebuser->isAdmin() && !$oWebuser->isReception() && !$oWebuser->isHead() ) {
 					$tdStyle = 'background-color: #C62431;';
 					$hrefStyle = 'color:white';
 					$alt = 'Absent';

@@ -40,6 +40,9 @@ $menu[] = new class_menuitem('protime.bhv', 'BHV', 'bhv.php');
 $menu[] = new class_menuitem('protime.ehbo', 'EHBO', 'ehbo.php');
 $menu[] = new class_menuitem('protime.ontruimer', 'Ontruimer', 'ontruimer.php');
 $menu[] = new class_menuitem('protime.holidays', 'National holidays', 'nationalholidays.php');
+if ( $oWebuser->isAdmin() || $oWebuser->isReception() ) {
+	$menu[] = new class_menuitem('protime.brand', 'BRAND', 'brand.php');
+}
 
 //
 if ( !defined('ENT_XHTML') ) {

@@ -32,7 +32,11 @@ $totaal["aanwezig"] = 0;
 $totaal["afwezig"] = 0;
 
 $ontruimersAanwezigOpVerdieping = array();
-for( $i=0 ; $i <= 5; $i++ ) {
+$nrOfLevels = class_settings::getSetting("number_of_levels");
+if ( $nrOfLevels == '' ) {
+	$nrOfLevels = 6;
+}
+for( $i=0 ; $i <= $nrOfLevels; $i++ ) {
     $ontruimersAanwezigOpVerdieping[$i] = 0;
 }
 
@@ -75,7 +79,7 @@ while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
 	// als nix gevonden
 	$tmp = str_replace('::STATUS_STYLE::', $status["status_color"], $tmp);
 
-	if ( $oWebuser->hasInOutTimeAuthorisation() || $oWebuser->getProtimeId() == $rowSelect["PERSNR"] ) {
+	if ( $oWebuser->hasInOutTimeAuthorisation() || $oWebuser->isAdmin() || $oWebuser->isReception() || $oWebuser->isHead() || $oWebuser->getProtimeId() == $rowSelect["PERSNR"] ) {
 		$tmp = str_replace('::STATUS_TEXT::', $status["status_text"], $tmp);
 		$tmp = str_replace('::STATUS_ALT::', $status["status_alt"], $tmp);
 	} else {
@@ -91,7 +95,7 @@ mysql_free_result($resultSelect);
 if ( $retval != '' ) {
 	$verdieping = '';
 	if ( $oBeo->getShowLevel() ) {
-		$verdieping = "<td width=100 align=\"center\"><font size=-1><b>Verdieping</b></font></td>";
+		$verdieping = "<td width=100 align=\"center\"><font size=-1><b>Level</b></font></td>";
 	}
 
 	$retval = "
@@ -112,10 +116,10 @@ if ( $oBeo->getShowLevel() ) {
 	$retval .= "<br>
 	<table>
 	<tr>
-		<td><font size=-1><b>Verdieping: </b></font></td>
+		<td><font size=-1><b>Level: </b></font></td>
 	";
 
-		for( $i=0 ; $i <= 5; $i++ ) {
+		for( $i=0 ; $i <= $nrOfLevels; $i++ ) {
 			if ( $ontruimersAanwezigOpVerdieping[$i] == 1 ) {
 				$style = " background-color:green;color:white; ";
 			} else {
