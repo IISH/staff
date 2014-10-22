@@ -79,7 +79,7 @@ while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
 	// als nix gevonden
 	$tmp = str_replace('::STATUS_STYLE::', $status["status_color"], $tmp);
 
-	if ( $oWebuser->hasInOutTimeAuthorisation() || $oWebuser->getProtimeId() == $rowSelect["PERSNR"] ) {
+	if ( $oWebuser->hasInOutTimeAuthorisation() || $oWebuser->isAdmin() || $oWebuser->isReception() || $oWebuser->isHead() || $oWebuser->getProtimeId() == $rowSelect["PERSNR"] ) {
 		$tmp = str_replace('::STATUS_TEXT::', $status["status_text"], $tmp);
 		$tmp = str_replace('::STATUS_ALT::', $status["status_alt"], $tmp);
 	} else {

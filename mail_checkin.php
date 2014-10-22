@@ -29,7 +29,7 @@ foreach ( $protimeUsers as $protimeUser ) {
 
 	foreach ( $timecardUsers as $timecardUser ) {
 
-		if ( $timecardUser->hasInOutTimeAuthorisation() ) {
+		if ( $timecardUser->hasInOutTimeAuthorisation() || $timecardUser->isAdmin() || $timecardUser->isReception() || $timecardUser->isHead() ) {
 			$body = trim( $protimeUser["user"]->getFirstname() . ' ' . $protimeUser["user"]->getLastname() ) . " has checked in at " . class_datetime::formatDate( $protimeUser["date"] ) . " " . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes( $protimeUser["time"] ) . " \r\n";
 		} else {
 			$body = trim( $protimeUser["user"]->getFirstname() . ' ' . $protimeUser["user"]->getLastname() ) . " has checked in. \r\n";

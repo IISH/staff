@@ -16,7 +16,7 @@ $date = class_datetime::get_date($protect);
 
 // create webpage
 $oPage = new class_page('design/page.php', $settings);
-$oPage->setTitle('Present or not | ' . $oBeo->getLabel());
+$oPage->setTitle('Present or not | ' . strip_tags($oBeo->getLabel()));
 $oPage->setContent(createBhvEhboContent( $oBeo ));
 
 // show page

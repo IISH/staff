@@ -48,28 +48,32 @@ class class_employee {
 		        $this->authorisation[] = 'reception';
 	        }
 
+	        if ( $row["ishead"] == 1 ) {
+		        $this->authorisation[] = 'head';
+	        }
+
         }
         mysql_free_result($result);
     }
 
 	// TODOEXPLAIN
-	function getAuthorisation() {
-		return $this->authorisation ;
-	}
-
-	// TODOEXPLAIN
 	function hasInOutTimeAuthorisation() {
-		return ( in_array( 'inouttime', $this->getAuthorisation() ) ) ? true : false ;
+		return ( in_array( 'inouttime', $this->authorisation ) ) ? true : false ;
 	}
 
 	// TODOEXPLAIN
 	function isAdmin() {
-		return ( in_array( 'admin', $this->getAuthorisation() ) ) ? true : false ;
+		return ( in_array( 'admin', $this->authorisation ) ) ? true : false ;
 	}
 
 	// TODOEXPLAIN
 	function isReception() {
-		return ( in_array( 'reception', $this->getAuthorisation() ) ) ? true : false ;
+		return ( in_array( 'reception', $this->authorisation ) ) ? true : false ;
+	}
+
+	// TODOEXPLAIN
+	function isHead() {
+		return ( in_array( 'head', $this->authorisation ) ) ? true : false ;
 	}
 
 	// TODOEXPLAIN
