@@ -230,8 +230,6 @@ function getColors($selectedYear, $selectedMonth, $day, $absences = array(), $ho
 					$hrefStyle = getColor("href", strtolower($absences[$i]["description"]));
 					$alt = $absences[$i]["description"];
 				}
-//				echo $tdStyle . ' ++<br>';
-//				echo $hrefStyle . ' --<br>';
 			}
 		}
 	}

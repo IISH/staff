@@ -16,9 +16,15 @@ class class_beo {
 				)
 			, 'o' => array(
 					'label' => 'Ontruimer (Evacuator)'
-					, 'query' => " ( USER03 LIKE '%O0%' OR USER03 LIKE '%O1%' OR USER03 LIKE '%O2%' OR USER03 LIKE '%O3%' OR USER03 LIKE '%O4%' OR USER03 LIKE '%O5%' ) "
+					, 'query' => " ( USER03 LIKE '%O0%' OR USER03 LIKE '%O1%' OR USER03 LIKE '%O2%' OR USER03 LIKE '%O3%' OR USER03 LIKE '%O4%' OR USER03 LIKE '%O5%' OR USER03 LIKE '%O6%' ) "
 					, 'show_level' => true
 					, 'scriptname' => 'ontruimer'
+				)
+			, 'mnotonotb' => array(
+					'label' => 'Medewerkers (Colleagues)'
+					, 'query' => " USER03 NOT LIKE '%O0%' AND USER03 NOT LIKE '%O1%' AND USER03 NOT LIKE '%O2%' AND USER03 NOT LIKE '%O3%' AND USER03 NOT LIKE '%O4%' AND USER03 NOT LIKE '%O5%' AND USER03 NOT LIKE '%O6%' AND USER03 NOT LIKE '%BHV%' "
+					, 'show_level' => false
+					, 'scriptname' => ''
 				)
 		);
 
@@ -61,9 +67,7 @@ class class_beo {
 			$beo = "b";
 		}
 
-		$beo = substr($beo, 0, 1);
-
-		if ( !in_array($beo, array('b', 'e', 'o')) ) {
+		if ( !in_array($beo, array('b', 'e', 'o', 'mnotonotb')) ) {
 			$beo = "b";
 		}
 
