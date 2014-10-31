@@ -25,8 +25,7 @@ function createBrandContent( ) {
 
 	$title = 'BRAND / Calamiteitenlijst';
 	$ret = "<h2>$title</h2>
-Overzicht van " . date("d-m-Y") . " om " . date("H:i:s") . "<br>
-";
+Overzicht van " . date("d-m-Y") . " om " . date("H:i:s") . "<br><br>";
 
 	//
 	$oBeoMedewerker = new class_beo( 'mnotonotb' );
@@ -92,8 +91,7 @@ Overzicht van " . date("d-m-Y") . " om " . date("H:i:s") . "<br>
 		mysql_free_result($resultSelect);
 
 		$ret .= "
-</table><br>Aanwezig: " . $totaal["aanwezig"] . "<br>
-<br>
+</table><br>
 ";
 	}
 
