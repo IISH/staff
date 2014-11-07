@@ -1,7 +1,7 @@
 <?php
 // TODOEXPLAIN
 function getStatusColor( $persnr, $date ) {
-	global $databases;
+	global $databases, $oWebuser;
 
 	$retval = array();
 
@@ -28,13 +28,22 @@ function getStatusColor( $persnr, $date ) {
 			$status_color = 'background-color:green;color:white;';
 			$status_alt .= 'In: ' . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes($row["BOOKTIME"]);
 			$aanwezig = 1;
+			if ( $oWebuser->hasInOutTimeAuthorisation() || $oWebuser->isAdmin() || $oWebuser->isReception() || $oWebuser->isHead() || $oWebuser->getProtimeId() == $persnr ) {
+				$status_text = 'In: ' . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes($row["BOOKTIME"]);
+			} else {
+				$status_text = 'In';
+			}
 		} else {
 			// red cell
 			$status_color = 'background-color:#C62431;color:white;';
 			$status_alt .= ' - Out: ' . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes($row["BOOKTIME"]) . "\n";
 			$aanwezig = 0;
+			if ( $oWebuser->hasInOutTimeAuthorisation() || $oWebuser->isAdmin() || $oWebuser->isReception() || $oWebuser->isHead() || $oWebuser->getProtimeId() == $persnr ) {
+				$status_text = 'Out: ' . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes($row["BOOKTIME"]);
+			} else {
+				$status_text = 'Out';
+			}
 		}
-		$status_text = class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes($row["BOOKTIME"]);
 
 		$status = $status % 2;
 	}
