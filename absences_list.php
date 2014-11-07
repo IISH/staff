@@ -84,14 +84,8 @@ if ( $to_short != 1 ) {
 
 		//
 		$tmp = str_replace('::STATUS_STYLE::', $status["status_color"], $tmp);
-
-        if ( $oWebuser->hasInOutTimeAuthorisation() || $oWebuser->isAdmin() || $oWebuser->isReception() || $oWebuser->isHead() || $oWebuser->getProtimeId() == $rowSelect["PERSNR"] ) {
-            $tmp = str_replace('::STATUS_TEXT::', $status["status_text"], $tmp);
-            $tmp = str_replace('::STATUS_ALT::', $status["status_alt"], $tmp);
-        } else {
-            $tmp = str_replace('::STATUS_TEXT::', '', $tmp);
-            $tmp = str_replace('::STATUS_ALT::', '', $tmp);
-        }
+		$tmp = str_replace('::STATUS_TEXT::', $status["status_text"], $tmp);
+		$tmp = str_replace('::STATUS_ALT::', $status["status_alt"], $tmp);
 
 		//
 		if ( strpos(',' . $favIds . ',', ',' . $rowSelect["PERSNR"] . ',') !== false ) {
