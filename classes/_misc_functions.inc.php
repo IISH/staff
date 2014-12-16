@@ -58,7 +58,7 @@ function getStatusColor( $persnr, $date ) {
 		$oProtime->connect();
 
 		$query = "
-SELECT PROTIME_ABSENCE.SHORT_1
+SELECT PROTIME_ABSENCE.SHORT_2
 FROM PROTIME_P_ABSENCE
 	INNER JOIN PROTIME_ABSENCE ON PROTIME_P_ABSENCE.ABSENCE = PROTIME_ABSENCE.ABSENCE
 WHERE PROTIME_P_ABSENCE.PERSNR = " . $persnr . " AND PROTIME_P_ABSENCE.BOOKDATE = '" . $date . "'
@@ -66,7 +66,8 @@ WHERE PROTIME_P_ABSENCE.PERSNR = " . $persnr . " AND PROTIME_P_ABSENCE.BOOKDATE 
 		$result = mysql_query($query, $oProtime->getConnection());
 		$status_separator = '';
 		while ( $row = mysql_fetch_assoc($result) ) {
-			$status_text .= $status_separator . $row["SHORT_1"];
+			//$status_text .= $status_separator . $row["SHORT_1"];
+			$status_text .= $status_separator . $row["SHORT_2"];
 			$status_separator = ', ';
 		}
 		mysql_free_result($result);
@@ -132,7 +133,7 @@ function getAbsencesAndHolidays($eid, $year, $month, $min_minutes = 0) {
 	$yearMonth = createDateAsString($year, $month);
 
 	$query = "
-SELECT PROTIME_P_ABSENCE.REC_NR, PROTIME_P_ABSENCE.PERSNR, PROTIME_P_ABSENCE.BOOKDATE, PROTIME_P_ABSENCE.ABSENCE_VALUE, PROTIME_P_ABSENCE.ABSENCE_STATUS, PROTIME_ABSENCE.SHORT_1, PROTIME_P_ABSENCE.ABSENCE
+SELECT PROTIME_P_ABSENCE.REC_NR, PROTIME_P_ABSENCE.PERSNR, PROTIME_P_ABSENCE.BOOKDATE, PROTIME_P_ABSENCE.ABSENCE_VALUE, PROTIME_P_ABSENCE.ABSENCE_STATUS, PROTIME_ABSENCE.SHORT_2, PROTIME_P_ABSENCE.ABSENCE
 FROM PROTIME_P_ABSENCE
 	LEFT OUTER JOIN PROTIME_ABSENCE ON PROTIME_P_ABSENCE.ABSENCE = PROTIME_ABSENCE.ABSENCE
 WHERE PROTIME_P_ABSENCE.PERSNR=" . $eid . " AND PROTIME_P_ABSENCE.BOOKDATE LIKE '" . $yearMonth . "%' AND PROTIME_P_ABSENCE.ABSENCE NOT IN (5, 19)
@@ -147,7 +148,7 @@ ORDER BY PROTIME_P_ABSENCE.BOOKDATE, PROTIME_P_ABSENCE.REC_NR
 	$num = mysql_num_rows($result);
 	if ( $num ) {
 		while ( $row = mysql_fetch_assoc($result) ) {
-			$ret[] = array( 'date' => $row["BOOKDATE"], 'description' => $row["SHORT_1"] );
+			$ret[] = array( 'date' => $row["BOOKDATE"], 'description' => $row["SHORT_2"] );
 		}
 	}
 

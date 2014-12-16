@@ -235,7 +235,7 @@ a.checkinouttime {
 
 #menu li {
 	display: inline;
-	padding-right: 20px;
+	padding-right: 16px;
 }
 
 a.favourites_on:link, a.favourites_on:visited {
@@ -246,4 +246,15 @@ a.favourites_on:link, a.favourites_on:visited {
 a.favourites_off:link, a.favourites_off:visited {
 	color: lightgrey;
 	font-size: 120%;
+}
+
+div.incaseofemergency {
+	font-size: 130%;
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
+
+span.incaseofemergencynumber {
+	font-weight: bold;
+	color: red;
 }

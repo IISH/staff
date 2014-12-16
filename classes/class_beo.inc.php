@@ -3,25 +3,25 @@ class class_beo {
 	var $type = '';
 	var $typeOfBeo = array(
 			'b' => array(
-					'label' => '<a title="Bedrijfshulpverlening">BHV</a> (<a title="Emergency Response Team">ERT</a>)'
+					'label' => '<a title="Emergency Response Team">ERT</a> (<a title="Bedrijfshulpverlening">BHV</a>)'
 					, 'query' => " USER03 LIKE '%BHV%' "
 					, 'show_level' => false
 					, 'scriptname' => 'bhv'
 				)
 			, 'e' => array(
-					'label' => '<a title="Eerste Hulp bij Ongevallen">EHBO</a> (First Aid)'
+					'label' => 'First Aid (<a title="Eerste Hulp bij Ongevallen">EHBO</a>)'
 					, 'query' => " USER03 LIKE '%EHBO%' "
 					, 'show_level' => false
 					, 'scriptname' => 'ehbo'
 				)
 			, 'o' => array(
-					'label' => 'Ontruimer (Evacuator)'
+					'label' => 'Evacuator (Ontruimer)'
 					, 'query' => " ( USER03 LIKE '%O0%' OR USER03 LIKE '%O1%' OR USER03 LIKE '%O2%' OR USER03 LIKE '%O3%' OR USER03 LIKE '%O4%' OR USER03 LIKE '%O5%' OR USER03 LIKE '%O6%' ) "
 					, 'show_level' => true
 					, 'scriptname' => 'ontruimer'
 				)
 			, 'mnotonotb' => array(
-					'label' => 'Medewerkers (Colleagues)'
+					'label' => 'Colleagues (Medewerkers)'
 					, 'query' => " USER03 NOT LIKE '%O0%' AND USER03 NOT LIKE '%O1%' AND USER03 NOT LIKE '%O2%' AND USER03 NOT LIKE '%O3%' AND USER03 NOT LIKE '%O4%' AND USER03 NOT LIKE '%O5%' AND USER03 NOT LIKE '%O6%' AND USER03 NOT LIKE '%BHV%' "
 					, 'show_level' => false
 					, 'scriptname' => ''

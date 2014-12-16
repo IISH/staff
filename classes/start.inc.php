@@ -36,12 +36,12 @@ $oWebuser = new class_employee($_SESSION["presentornot"]["name"]);
 //
 $menu[] = new class_menuitem('protime.presentornot', 'Present or not', 'presentornot.php');
 $menu[] = new class_menuitem('protime.vakantie', 'Absences', 'absences.php');
-$menu[] = new class_menuitem('protime.bhv', 'BHV', 'bhv.php');
-$menu[] = new class_menuitem('protime.ehbo', 'EHBO', 'ehbo.php');
-$menu[] = new class_menuitem('protime.ontruimer', 'Ontruimer', 'ontruimer.php');
-$menu[] = new class_menuitem('protime.holidays', 'National holidays', 'nationalholidays.php');
+$menu[] = new class_menuitem('protime.bhv', 'ERT (BHV)', 'bhv.php');
+$menu[] = new class_menuitem('protime.ehbo', 'First Aid (EHBO)', 'ehbo.php');
+$menu[] = new class_menuitem('protime.ontruimer', 'Evacuator (Ontruimer)', 'ontruimer.php');
+$menu[] = new class_menuitem('protime.holidays', 'Nat. holidays', 'nationalholidays.php');
 if ( $oWebuser->isAdmin() || $oWebuser->isReception() ) {
-	$menu[] = new class_menuitem('protime.brand', 'BRAND', 'brand.php');
+	$menu[] = new class_menuitem('protime.brand', 'Fire (Brand)', 'brand.php');
 }
 
 //

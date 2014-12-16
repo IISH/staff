@@ -133,10 +133,10 @@ function setSearchField(fldValue) {
 </script>
 <form name=\"frmTc\" method=\"GET\" onsubmit=\"return false;\">
 Quick search: <input type=\"\" name=\"fldZoek\" id=\"fldZoek\" maxlength=\"20\" onkeyup=\"tcRefreshSearch();\" value=\"" . $s . "\">
- &nbsp; <a href=\"#\" onclick=\"javascript:setSearchField('');\">Clear</a>
+ &nbsp; <a href=\"#\" onclick=\"javascript:setSearchField('');\">Show favourites</a>
+ &nbsp; <a href=\"#\" onclick=\"javascript:setSearchField('-g-');\">Show present</a>
+ &nbsp; <a href=\"#\" onclick=\"javascript:setSearchField('-r-');\">Show absent</a>
  &nbsp; <a href=\"#\" onclick=\"javascript:setSearchField('-a-');\">Show all</a>
- &nbsp; <a href=\"#\" onclick=\"javascript:setSearchField('-r-');\">Absent</a>
- &nbsp; <a href=\"#\" onclick=\"javascript:setSearchField('-g-');\">Present</a>
 </form>
 <br>
 <div id=\"tcContentSearch\"></div>

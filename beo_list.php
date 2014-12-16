@@ -13,7 +13,10 @@ if ( !isset($settings) ) {
 
 $oWebuser->checkLoggedIn();
 
-$retval = "<h2>" . $oBeo->getLabel() . "</h2>";
+$retval = "
+<h2>" . $oBeo->getLabel() . "</h2>
+<div class='incaseofemergency'>In case of emergency please call alarm number <span class='incaseofemergencynumber'>400</span></div>
+";
 
 $oEmployee = new class_employee($oWebuser->getUser());
 $checkInOutIds = implode(',', $oEmployee->getFavourites('checkinout'));

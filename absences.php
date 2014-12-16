@@ -138,7 +138,7 @@ function setSearchField(fldValue) {
 	<TD>
 
 Quick search: <input type=\"\" name=\"fldZoek\" id=\"fldZoek\" maxlength=\"20\" onkeyup=\"tcRefreshSearch();\" value=\"" . $s . "\">
- &nbsp; <a href=\"#\" onclick=\"javascript:setSearchField('');\">Clear</a> &nbsp; <font size=-2><em>(min. 3 characters)</em></font>
+<em>(min. 3 characters)</em> &nbsp; <a href=\"#\" onclick=\"javascript:setSearchField('');\">Show favourites</a> &nbsp; <font size=-2></font>
 	</TD>
 	<TD align=\"right\">
 <input type=\"hidden\" name=\"fldYear\" id=\"fldYear\" value=\"" . date("Y") . "\">
