@@ -6,7 +6,7 @@ if ( !isset($settings) ) {
 	$settings = array();
 }
 
-$oWebuser->checkLoggedIn();
+//$oWebuser->checkLoggedIn();
 
 // create webpage
 $oPage = new class_page('design/page.php', $settings);
