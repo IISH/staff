@@ -44,9 +44,9 @@ if ( $selectedYear == '' ) {
 	$selectedYear = date("Y");
 }
 
-// TODOTODO: in absences.php moet url gedisabled worden als min/max bereikt is
-if ( $selectedYear < date("Y") ) {
-	$selectedYear = date("Y");
+// allow only previous, current and next year
+if ( $selectedYear < date("Y")-1 ) {
+	$selectedYear = date("Y")-1;
 	$selectedMonth = 1;
 } elseif ( $selectedYear > date("Y")+1 ) {
 	$selectedYear = date("Y")+1;

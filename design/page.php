@@ -19,7 +19,7 @@
 
 	<div class="content">{content}</div>
 
-	<div class="footer">{url} - Last modified: {lastmodified}</div>
+	<div class="footer">{url} - Last modified: 22 January 2015<!--{lastmodified}--></div>
 
 </div>
 
