@@ -6,12 +6,12 @@
 class class_settings {
 	private static $is_loaded = false;
 	private static $settings = null;
-	private static $settings_table = 'Settings';
+	private static $settings_table = 'Staff_settings';
 
 	/**
 	 * Load the settings from the database
 	 */
-	private static function loadSettings() {
+	private static function load() {
 		global $databases;
 
 		$oConn = new class_mysql($databases['default']);
@@ -39,9 +39,9 @@ class class_settings {
 	 * @param string $setting_name The name of the setting
 	 * @return string The value of the setting
 	 */
-	public static function getSetting($setting_name) {
+	public static function get($setting_name) {
 		if ( !self::$is_loaded ) {
-			self::loadSettings();
+			self::load();
 		}
 
 		$value = self::$settings[$setting_name];
@@ -49,7 +49,7 @@ class class_settings {
 		return $value;
 	}
 
-	public static function saveSetting( $setting_name, $value, $settingsTable = '' ) {
+	public static function save( $setting_name, $value, $settingsTable = '' ) {
 		global $databases;
 
 		$setting_name = trim($setting_name);

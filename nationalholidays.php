@@ -6,8 +6,6 @@ if ( !isset($settings) ) {
 	$settings = array();
 }
 
-//$oWebuser->checkLoggedIn();
-
 // create webpage
 $oPage = new class_page('design/page.php', $settings);
 $oPage->setTitle('Present or not | National holidays');
@@ -32,7 +30,7 @@ function createNationalHolidaysContent( ) {
 	$oView = new class_view($oDb);
 
 	$oView->set_view( array(
-		'query' => 'SELECT * FROM Feestdagen WHERE 1=1 AND isdeleted=0 AND datum >= \'' . date('Y-m-d') . '\' ORDER BY datum ASC '
+		'query' => 'SELECT * FROM Staff_feestdagen WHERE 1=1 AND isdeleted=0 AND datum >= \'' . date('Y-m-d') . '\' ORDER BY datum ASC '
 		, 'count_source_type' => 'query'
 		, 'table_parameters' => ' cellspacing="0" cellpadding="0" border="0" '
 		));
@@ -50,10 +48,10 @@ function createNationalHolidaysContent( ) {
 
 	$oView->add_field( new class_field_bit ( array(
 		'fieldname' => 'vooreigenrekening'
-		, 'fieldlabel' => 'For own account'
+		, 'fieldlabel' => ''
 		, 'show_different_values' => 1
-		, 'different_true_value' => 'yes'
-		, 'different_false_value' => 'no'
+		, 'different_true_value' => 'brugdag'
+		, 'different_false_value' => ''
 		)));
 
 	// calculate and show view

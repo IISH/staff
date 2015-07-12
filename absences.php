@@ -8,6 +8,10 @@ if ( !isset($settings) ) {
 
 $oWebuser->checkLoggedIn();
 
+if ( !$oWebuser->isTabAbsences() ) {
+	die('Access denied.');
+}
+
 $date = class_datetime::get_date($protect);
 
 // create webpage
@@ -162,7 +166,8 @@ tcRefreshSearchStart();
 
 		$ret .= "<br>Legenda:<br>";
 		foreach ( $colors["td"] as $a => $b ) {
-			if ( $oWebuser->hasInOutTimeAuthorisation() || $oWebuser->isAdmin() || $oWebuser->isReception() || $oWebuser->isHead() || in_array($a, array('vandaag', 'brugdag', 'holiday', 'vakantie', 'weekend')) ) {
+			// TODO: hier moet gecontroleerd worden of persoon inout rechten heeft
+			if ( $oWebuser->hasInOutTimeAuthorisation() || $oWebuser->isAdmin() || $oWebuser->isTabAbsences() || $oWebuser->isHead() || in_array($a, array('vandaag', 'brugdag', 'holiday', 'vakantie', 'weekend')) ) {
 				if ( $a == 'vakantie' ) {
 					$a = 'afwezig';
 				}

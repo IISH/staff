@@ -35,15 +35,15 @@ Overzicht van " . date("d-m-Y") . " om " . date("H:i:s") . "<br><br>";
 	$loop = array();
 	$loop[] = array(
 			'label' => 'Medewerkers'
-			, 'query' => "SELECT * FROM PROTIME_CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) AND " . $oBeoMedewerker->getQuery() . " ORDER BY NAME, FIRSTNAME "
+			, 'query' => "SELECT * FROM " . class_settings::get('protime_tables_prefix') . "CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) AND " . $oBeoMedewerker->getQuery() . " ORDER BY NAME, FIRSTNAME "
 		);
 	$loop[] = array(
 			'label' => 'Ontruimers'
-			, 'query' => "SELECT * FROM PROTIME_CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) AND " . $oBeoOntruimer->getQuery() . " ORDER BY NAME, FIRSTNAME "
+			, 'query' => "SELECT * FROM " . class_settings::get('protime_tables_prefix') . "CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) AND " . $oBeoOntruimer->getQuery() . " ORDER BY NAME, FIRSTNAME "
 		);
 	$loop[] = array(
 			'label' => 'BHV'
-			, 'query' => "SELECT * FROM PROTIME_CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) AND " . $oBeoBhv->getQuery() . " ORDER BY NAME, FIRSTNAME "
+			, 'query' => "SELECT * FROM " . class_settings::get('protime_tables_prefix') . "CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) AND " . $oBeoBhv->getQuery() . " ORDER BY NAME, FIRSTNAME "
 		);
 
 	//

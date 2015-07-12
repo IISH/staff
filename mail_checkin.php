@@ -7,7 +7,7 @@ if ( !isset($settings) ) {
 }
 
 //
-if ( !isset( $_GET["cron_key"] ) || class_settings::getSetting("cron_key") == '' || $_GET["cron_key"] != class_settings::getSetting("cron_key") ) {
+if ( !isset( $_GET["cron_key"] ) || class_settings::get("cron_key") == '' || $_GET["cron_key"] != class_settings::get("cron_key") ) {
 	die('Blocked due to incorrect security code');
 }
 
@@ -22,14 +22,15 @@ foreach ( $protimeUsers as $protimeUser ) {
 
 	echo $protimeUser["user"]->getFirstname() . " has checked in.<br>";
 
-	$headers = "From: " . class_settings::getSetting("from_email") . "\r\nReply-To: " . class_settings::getSetting("from_email");
+	$headers = "From: " . class_settings::get("email_sender_email") . "\r\nReply-To: " . class_settings::get("email_sender_email");
 	$subject = trim( $protimeUser["user"]->getFirstname() . ' ' . $protimeUser["user"]->getLastname() ) . ' has checked in.';
 
 	$timecardUsers = $oMail->getListOfTimecardUsersForProtimeUserNotification( $protimeUser["user"]->getId() );
 
 	foreach ( $timecardUsers as $timecardUser ) {
 
-		if ( $timecardUser->hasInOutTimeAuthorisation() || $timecardUser->isAdmin() || $timecardUser->isReception() || $timecardUser->isHead() ) {
+		// TODO: hier moet eigenlijk gecontroleerd worden of persoon inout tijden mag zien
+		if ( $timecardUser->hasInOutTimeAuthorisation() || $timecardUser->isAdmin() || $timecardUser->isHead() ) {
 			$body = trim( $protimeUser["user"]->getFirstname() . ' ' . $protimeUser["user"]->getLastname() ) . " has checked in at " . class_datetime::formatDate( $protimeUser["date"] ) . " " . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes( $protimeUser["time"] ) . " \r\n";
 		} else {
 			$body = trim( $protimeUser["user"]->getFirstname() . ' ' . $protimeUser["user"]->getLastname() ) . " has checked in. \r\n";

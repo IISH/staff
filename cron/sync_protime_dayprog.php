@@ -1,6 +1,9 @@
 <?php
 require_once "../classes/start.inc.php";
 
+ini_set("display_errors", 1);
+error_reporting(E_ALL ^ E_NOTICE);
+
 // check cron key
 $cron_key = '';
 if ( isset($_GET["cron_key"]) ) {
@@ -8,8 +11,8 @@ if ( isset($_GET["cron_key"]) ) {
 } elseif ( isset($_POST["cron_key"]) ) {
 	$cron_key = $_POST["cron_key"];
 }
-if ( trim( $cron_key ) != class_settings::get('cron_key') ) {
-	die('Error: Incorrect cron key');
+if ( trim( $cron_key ) != class_settings::getSetting('cron_key') ) {
+	die('Error: Incorrect cron key...');
 }
 
 // show time
@@ -17,10 +20,10 @@ echo "Start time: " . date("Y-m-d H:i:s") . "<br>\n";
 
 // sync
 $sync = new class_syncProtimeMysql();
-$sync->setSourceTable("CURRIC");
-$sync->setTargetTable(class_settings::get('protime_tables_prefix') . "CURRIC");
-$sync->setPrimaryKey("PERSNR");
-$sync->addFields( array("PERSNR", "NAME", "FIRSTNAME", "EMAIL", "REGISTERNR", "WORKLOCATION", "ADDRESS", "ZIPCODE", "CITY", "COUNTRY", "DATEBIRTH", "DATE_IN", "DATE_OUT", "BADGENR", "SEX", "USER01", "USER02", "USER03", "USER04", "USER05", "USER06", "USER07", "USER08", "USER09", "USER10", "USER11", "USER12", "USER13", "USER14", "USER15", "USER16", "USER17", "USER18", "USER19", "USER20") );
+$sync->setSourceTable("DAYPROG");
+$sync->setTargetTable(class_settings::get('protime_tables_prefix') . "DAYPROG");
+$sync->setPrimaryKey("DAYPROG");
+$sync->addFields( array("DAYPROG", "SHORT_1", "SHORT_2", "ITEM_LEVEL", "CODE", "COLOR", "NORM", "F_CORE", "T_CORE", "F_FICTIF", "T_FICTIF", "B_CLOSURE", "E_CLOSURE", "DP_ROUND", "DP_OVERTIME", "DP_SLIDE", "SHIFT", "ABSENCEDAY", "ACCESSDAYTYPE", "CUSTOMER", "DISPLAY_1", "DISPLAY_2", "VALIDFORDAYS", "F_PLANNABLE", "T_PLANNABLE", "USEPLANNEDCORE") );
 class_syncinfo::save($sync->getTargetTable(), 'start', date("Y-m-d H:i:s"));
 $sync->doSync();
 

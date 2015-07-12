@@ -18,7 +18,7 @@ class class_mail_checkin {
 		$arr = array();
 		$arr[] = 0;
 
-		$query = "SELECT ProtimeID FROM Favourites WHERE type='checkinout' GROUP BY ProtimeID ";
+		$query = "SELECT ProtimeID FROM Staff_favourites WHERE type='checkinout' GROUP BY ProtimeID ";
 
 		$result = mysql_query($query, $oConn->getConnection());
 
@@ -44,7 +44,7 @@ class class_mail_checkin {
 		$oProtime->connect();
 
 		//
-		$query = "SELECT PERSNR, MAX(BOOKTIME) AS CHECKTIME, COUNT(*) AS AANTAL FROM SPEC_PROTIME_BOOKINGS_CURRENTDAY WHERE PERSNR IN ( " . $ids . " ) AND BOOKDATE='" . $date . "' AND BOOKTIME<>9999 GROUP BY PERSNR HAVING COUNT(*) % 2 = 1 ";
+		$query = "SELECT PERSNR, MAX(BOOKTIME) AS CHECKTIME, COUNT(*) AS AANTAL FROM Staff_today_checkinout WHERE PERSNR IN ( " . $ids . " ) AND BOOKDATE='" . $date . "' AND BOOKTIME<>9999 GROUP BY PERSNR HAVING COUNT(*) % 2 = 1 ";
 		$result = mysql_query($query, $oProtime->getConnection());
 		while ( $row = mysql_fetch_assoc($result) ) {
 			$user = array();
@@ -65,11 +65,11 @@ class class_mail_checkin {
 
 		$arr = array();
 
-		$query = "SELECT * FROM Favourites WHERE ProtimeID=" . $protime_id . " AND type='checkinout' ";
+		$query = "SELECT * FROM Staff_favourites WHERE ProtimeID=" . $protime_id . " AND type='checkinout' ";
 		$result = mysql_query($query, $oConn->getConnection());
 
 		while ( $row = mysql_fetch_assoc($result) ) {
-            $arr[] = new class_employee( $row["user"] );
+			$arr[] = static_protime_user::getProtimeUserByLoginName($row["user"]);
 		}
 
 		return $arr;
@@ -80,7 +80,7 @@ class class_mail_checkin {
 		$oConn = new class_mysql($this->databases['default']);
 		$oConn->connect();
 
-		$query = 'DELETE FROM Favourites WHERE user=\'' . $user . '\' AND ProtimeID=' . $protime_id . ' AND type=\'checkinout\' ';
+		$query = 'DELETE FROM Staff_favourites WHERE user=\'' . $user . '\' AND ProtimeID=' . $protime_id . ' AND type=\'checkinout\' ';
 		mysql_query($query, $oConn->getConnection());
 	}
 }

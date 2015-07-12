@@ -45,20 +45,8 @@ function createLoginPage() {
 			$result_login_check = class_authentication::authenticate($fldLogin, $fldPassword);
 
 			if ( $result_login_check == 1 ) {
-				// save id
-				$_SESSION["presentornot"]["name"] = $fldLogin;
-
-                $oUser = new class_employee($fldLogin);
-
-                // if new user, add new user in table
-                if ( $oUser->getId() == 0 ) {
-                    // new user
-                    $oUser->setUser($fldLogin);
-                    $oUser->save();
-                }
-
-                // update last login
-                $oUser->updateLastLogin();
+				// retain login name
+				$_SESSION["loginname"] = $fldLogin;
 
 				//
 				$burl = 'presentornot.php';

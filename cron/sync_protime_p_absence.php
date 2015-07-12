@@ -8,7 +8,7 @@ if ( isset($_GET["cron_key"]) ) {
 } elseif ( isset($_POST["cron_key"]) ) {
 	$cron_key = $_POST["cron_key"];
 }
-if ( trim( $cron_key ) != class_settings::getSetting('cron_key') ) {
+if ( trim( $cron_key ) != class_settings::get('cron_key') ) {
 	die('Error: Incorrect cron key');
 }
 
@@ -19,18 +19,18 @@ echo "Start time: " . date("Y-m-d H:i:s") . "<br>\n";
 $sync = new class_syncProtimeMysql();
 $sync->setSourceTable("P_ABSENCE");
 $sync->setSourceCriterium(" BOOKDATE>='" . date("Ymd", mktime(0, 0, 0, date("m")-3, 1, date("Y"))) . "' ");
-$sync->setTargetTable("PROTIME_P_ABSENCE");
+$sync->setTargetTable(class_settings::get('protime_tables_prefix') . "P_ABSENCE");
 $sync->setPrimaryKey("REC_NR");
 $sync->addFields( array("REC_NR", "PERSNR", "BOOKDATE", "PERIODETYPE", "ABSENCE", "ABSENCE_VALUE", "ABSENCE_STATUS", "SHIFT", "PAINTABSENCE", "PAINTTIME", "AUTHORISED", "COMMENTS", "REQUEST", "CALCTIME", "FROMTIME") );
-class_settings::saveSetting('cron_' . $sync->getTargetTable() . '_start', date("Y-m-d H:i:s"), $sync->getTargetTable() . "_syncinfo");
+class_syncinfo::save($sync->getTargetTable(), 'start', date("Y-m-d H:i:s"));
 $sync->doSync();
 
 //
 echo "<br>Rows inserted/updated: " . $sync->getCounter() . "<br>";
 
 // save sync last run
-class_settings::saveSetting('cron_' . $sync->getTargetTable() . '_end', date("Y-m-d H:i:s"), $sync->getTargetTable() . "_syncinfo");
-class_settings::saveSetting('cron_last_insert_id_' . $sync->getTargetTable(), $sync->getLastInsertId(), $sync->getTargetTable() . "_syncinfo");
+class_syncinfo::save($sync->getTargetTable(), 'end', date("Y-m-d H:i:s"));
+class_syncinfo::save($sync->getTargetTable(), 'last_insert_id', $sync->getLastInsertId());
 
 // show time
 echo "End time: " . date("Y-m-d H:i:s") . "<br>\n";

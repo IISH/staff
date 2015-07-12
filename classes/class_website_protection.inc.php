@@ -10,7 +10,7 @@ class class_website_protection {
 	function send_warning_mail($tekst) {
 		$message = '';
 
-		$recipients = trim(class_settings::getSetting("admin_email"));
+		$recipients = trim(class_settings::get("admin_email"));
 
 		$recipients = str_replace(array(';', ':', ' '), ',', $recipients);
 
@@ -21,8 +21,8 @@ class class_website_protection {
 
 		if ( $recipients != '' ) {
 
-			$fromname = trim(class_settings::getSetting("from_name"));
-			$fromaddress = trim(class_settings::getSetting("from_email"));
+			$fromname = trim(class_settings::get("email_sender_name"));
+			$fromaddress = trim(class_settings::get("email_sender_email"));
 			$eol = "\n";
 
 			$headers = "From: " . $fromname . " <" . $fromaddress . ">";
@@ -327,7 +327,7 @@ class class_website_protection {
 		}
 
 		if ( $recipients != '' ) {
-			$headers = "From: " . class_settings::getSetting("from_name") . " <" . class_settings::getSetting("from_email") . ">";
+			$headers = "From: " . class_settings::get("email_sender_name") . " <" . class_settings::get("email_sender_email") . ">";
 
 			// send email
 			mail($recipients, $subject, $message, $headers);

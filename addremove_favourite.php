@@ -24,22 +24,22 @@ if ( !in_array($fav, array('', 'vakantie', 'present', 'checkinout', 'absences') 
 $query = '';
 if ( $dowhat == 'a' ) {
 	// add to database
-	$query = 'INSERT INTO Favourites(user, ProtimeID, type) VALUES(\'' . $oWebuser->getUser() . '\', ' . $id . ', \'' . $fav . '\') ';
+	$query = 'INSERT INTO Staff_favourites(user, ProtimeID, type) VALUES(\'' . $oWebuser->getLoginname() . '\', ' . $id . ', \'' . $fav . '\') ';
 	// show remove button in window
 	if ( $fav == 'checkinout' ) {
 		$alttitle = "Click to remove the 'checked in' email notification";
-		$div = '<a href="#" onClick="checkInOut(' . $id . ', \'r\');" title="' . $alttitle . '" class="nolink"><img src="images/clock-red.png" border=0></a>';
+		$div = '<a href="#" onClick="checkInOut(' . $id . ', \'r\');" title="' . $alttitle . '" class="nolink"><img src="images/misc/clock-red.png" border=0></a>';
 	} else {
 		$alttitle = "Click to remove the person from your favourites";
 		$div = '<a href="#" onClick="addRemove(' . $id . ', \'r\');" title="' . $alttitle . '" class="nolink favourites_on">&#9733;</a>';
 	}
 } elseif ( $dowhat == 'r' ) {
 	// remove from database
-	$query = 'DELETE FROM Favourites WHERE user=\'' . $oWebuser->getUser() . '\' AND ProtimeID=' . $id . ' AND type=\'' . $fav . '\' ';
+	$query = 'DELETE FROM Staff_favourites WHERE user=\'' . $oWebuser->getLoginname() . '\' AND ProtimeID=' . $id . ' AND type=\'' . $fav . '\' ';
 	// show add button in window
 	if ( $fav == 'checkinout' ) {
 		$alttitle = "Click to get a 'checked in' email notification when user checks in.";
-		$div = '<a href="#" onClick="checkInOut(' . $id . ', \'a\');" title="' . $alttitle . '" class="nolink"><img src="images/clock-black.png" border=0></a>';
+		$div = '<a href="#" onClick="checkInOut(' . $id . ', \'a\');" title="' . $alttitle . '" class="nolink"><img src="images/misc/clock-black.png" border=0></a>';
 	} else {
 		$alttitle = "Click to add the person to your favourites";
 		$div = '<a href="#" onClick="addRemove(' . $id . ', \'a\');" title="' . $alttitle . '" class="nolink favourites_off">&#9733;</a>';

@@ -12,14 +12,34 @@
 <div class="main">
 
 	<div class="header">
-		<div class="welcome"><span><span class="name">{welcome}</span><span class="logout">{logout}</span></span></div>
-		<div class="logo"><img src="images/logo-iisg/{color}.png"></div>
-		<div class="title"><span><span class="title">present or not</span><span class="subtitle" id="menu">{menu}</span></span></div>
+	<table width="100%" cellspacing="0" cellpadding="0">
+		<tr>
+			<td rowspan="2"><div class="logo"><img src="images/logo/{color}.png"></div></td>
+			<td><span class="title">{website_name}</span></td>
+			<td align="right">
+				<span class="name">{welcome}</span>
+				<br>
+				<a href="en.php"><img src="images/misc/en.png"></a>
+				<a href="nl.php"><img src="images/misc/nl.png"></a>
+				<br>
+				<span class="logout">{logout}</span></td>
+		</tr>
+		<tr>
+			<td colspan="3"><span class="subtitle" id="menu">{menu}</span></td>
+		</tr>
+	</table>
 	</div>
 
 	<div class="content">{content}</div>
 
-	<div class="footer">{url} - Last modified: 22 January 2015<!--{lastmodified}--></div>
+	<div class="footer">
+		<table width="100%" cellspacing="0" cellpadding="0">
+		<tr>
+			<td>&nbsp;<a href="contact.php">{contact_and_questions}</a></td>
+			<td align="right">{url}&nbsp;</td>
+		</tr>
+		</table>
+	</div>
 
 </div>
 

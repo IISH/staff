@@ -112,7 +112,7 @@ class class_syncProtimeMysql {
 		$query .= " ORDER BY " . $this->getPrimaryKey();
 
 		// save counter in table
-		class_settings::saveSetting('cron_counter_' . $this->getTargetTable(), $this->counter, $this->getTargetTable() . "_syncinfo");
+		class_syncinfo::save($this->getTargetTable(), 'counter', $this->counter);
 
 		//
 		$resultData = mssql_query($query, $oPt->getConnection());
@@ -179,7 +179,7 @@ class class_syncProtimeMysql {
 				echo $this->counter . ' ';
 
 				// save counter in table
-				class_settings::saveSetting('cron_counter_' . $this->getTargetTable(), $this->counter, $this->getTargetTable() . "_syncinfo");
+				class_syncinfo::save($this->getTargetTable(), 'counter', $this->counter);
 			} else {
 				echo '. ';
 			}
@@ -187,7 +187,7 @@ class class_syncProtimeMysql {
 		}
 
 		// save counter in table
-		class_settings::saveSetting('cron_counter_' . $this->getTargetTable(), $this->counter, $this->getTargetTable() . "_syncinfo");
+		class_syncinfo::save($this->getTargetTable(), 'counter', $this->counter);
 
 		// execute query
 		$result = mysql_query($query, $oConn->getConnection());
