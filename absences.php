@@ -16,7 +16,7 @@ $date = class_datetime::get_date($protect);
 
 // create webpage
 $oPage = new class_page('design/page.php', $settings);
-$oPage->setTitle('Present or not | Absences');
+$oPage->setTitle('Staff | Absences');
 $oPage->setContent(createPresentContent( ));
 
 // show page

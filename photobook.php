@@ -1,6 +1,6 @@
 <?php
 $pageSettings = array(
-	'title' => 'Present or not'
-	, 'layout' => '1'
+	'title' => 'Photobook'
+	, 'layout' => '2'
 );
 require "presentornot_main.php";

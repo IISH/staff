@@ -45,6 +45,7 @@ class class_protime_user {
 	protected $is_tab_absences = false;
 	protected $is_tab_fire = false;
 	protected $all_roles = array();
+	protected $department;
 
 	// TODOEXPLAIN
 	function __construct($protime_id) {
@@ -85,6 +86,8 @@ class class_protime_user {
 			$this->telephone =  trim($row[class_settings::get('curric_telephone')]);
 			$this->beo =  trim($row[class_settings::get('curric_beo')]);
 			$this->authorisation =  trim($row[class_settings::get('curric_authorisation')]);
+
+			$this->department = new class_department( $row["DEPART"] );
 
 			$this->calculateIsAdmin();
 
@@ -255,6 +258,10 @@ class class_protime_user {
 
 	function getEmail() {
 		return $this->email;
+	}
+
+	function getDepartment() {
+		return $this->department;
 	}
 
 	//

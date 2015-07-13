@@ -10,7 +10,7 @@ $oWebuser->checkLoggedIn();
 
 // create webpage
 $oPage = new class_page('design/page.php', $settings);
-$oPage->setTitle('Present or not | Contact & Questions');
+$oPage->setTitle('Staff | Contact & Questions');
 $oPage->setContent(createContactQuestionsContent( ));
 
 // show page

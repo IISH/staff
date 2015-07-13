@@ -8,7 +8,7 @@ if ( !isset($settings) ) {
 
 // create webpage
 $oPage = new class_page('design/page.php', $settings);
-$oPage->setTitle('Present or not | Login');
+$oPage->setTitle('Staff | Login');
 $oPage->setContent(createLoginPage());
 
 // show page

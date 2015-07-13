@@ -53,7 +53,7 @@ while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
 	$tmp = "
 <tr>
 	<td><div id=\"divCheckInOut" . $rowSelect["PERSNR"] . "\">::CHECKINOUT::</div></td>
-	<td>" . createUrl( array( 'url' => 'staff.php?id=' . $rowSelect["PERSNR"], 'label' => fixBrokenChars(trim($rowSelect["FIRSTNAME"]) . " " . verplaatsTussenvoegselNaarBegin(trim($rowSelect["NAME"]))) ) ) . "</td>
+	<td>" . createUrl( array( 'url' => 'employee.php?id=' . $rowSelect["PERSNR"], 'label' => fixBrokenChars(trim($rowSelect["FIRSTNAME"]) . " " . verplaatsTussenvoegselNaarBegin(trim($rowSelect["NAME"]))) ) ) . "</td>
 	<td class=\"presentornot_absence\" style=\"::STATUS_STYLE::\"><A class=\"checkinouttime\" TITLE=\"::STATUS_ALT::\">::STATUS_TEXT::</A></td>
 	<td align=\"center\">" . cleanUpTelephone($rowSelect["USER02"]) . "</td>
 	$verdieping
