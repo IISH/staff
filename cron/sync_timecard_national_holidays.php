@@ -1,7 +1,7 @@
 <?php
 require_once "../classes/start.inc.php";
 
-$path_parts['filename'] = 'timecard_national_holidays';
+$path_parts['filename'] = 'Staff_feestdagen';
 
 // check cron key
 $cron_key = '';
@@ -25,8 +25,11 @@ $source = file_get_contents( $url );
 // decode data
 $holidays = json_decode( $source );
 
+$counter = 0;
+
 // loop through all holidays
 foreach ( $holidays as $holiday ) {
+	$counter++;
 	echo $holiday->description . " (" . $holiday->date . ")<br>";
 	$f = new class_feestdag( $holiday->id );
 	$f->setDate( $holiday->date );
@@ -38,6 +41,7 @@ foreach ( $holidays as $holiday ) {
 }
 
 // save sync last run
+class_syncinfo::save($path_parts['filename'], 'counter', $counter);
 class_syncinfo::save($path_parts['filename'], 'end', date("Y-m-d H:i:s"));
 
 // show time

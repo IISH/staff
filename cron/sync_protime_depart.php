@@ -17,10 +17,10 @@ echo "Start time: " . date("Y-m-d H:i:s") . "<br>\n";
 
 // sync
 $sync = new class_syncProtimeMysql();
-$sync->setSourceTable("CURRIC");
-$sync->setTargetTable(class_settings::get('protime_tables_prefix') . "CURRIC");
-$sync->setPrimaryKey("PERSNR");
-$sync->addFields( array("PERSNR", "NAME", "FIRSTNAME", "EMAIL", "REGISTERNR", "WORKLOCATION", "ADDRESS", "ZIPCODE", "CITY", "COUNTRY", "DATEBIRTH", "DATE_IN", "DATE_OUT", "DEPART", "BADGENR", "SEX", "USER01", "USER02", "USER03", "USER04", "USER05", "USER06", "USER07", "USER08", "USER09", "USER10", "USER11", "USER12", "USER13", "USER14", "USER15", "USER16", "USER17", "USER18", "USER19", "USER20") );
+$sync->setSourceTable("DEPART");
+$sync->setTargetTable(class_settings::get('protime_tables_prefix') . "DEPART");
+$sync->setPrimaryKey("DEPART");
+$sync->addFields( array("DEPART", "SHORT_1", "SHORT_2", "CODE_EXTERN", "CUSTOMER") );
 class_syncinfo::save($sync->getTargetTable(), 'start', date("Y-m-d H:i:s"));
 $sync->doSync();
 

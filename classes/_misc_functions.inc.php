@@ -123,9 +123,9 @@ WHERE ${prefix}P_ABSENCE.PERSNR = " . $persnr . " AND ${prefix}P_ABSENCE.BOOKDAT
 	}
 
 	$retval["aanwezig"] = $aanwezig;
-	$retval["status_text"] = $status_text;
+	$retval["status_text"] = strtolower($status_text);
 	$retval["status_color"] = $status_color;
-	$retval["status_alt"] = $status_alt;
+	$retval["status_alt"] = strtolower($status_alt);
 
 	return $retval;
 }

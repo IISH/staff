@@ -28,55 +28,60 @@ function createStaffContent( ) {
 	$oProtime->connect();
 
 	$staff = new class_protime_user($id);
+
+	// header
+	$ret = '<h2>' . $staff->getFirstname() . ' ' . verplaatsTussenvoegselNaarBegin($staff->getLastname()) . '</h2>';
+
+	// go back
 	$goback = getReferer();
 	if ( $goback == '' ) {
 		$goback = 'presentornot.php';
 	} else {
 		$goback = stripDomainnameFromUrl( $goback );
 	}
-
 	$goback = createUrl( array( 'url' => $goback, 'label' => 'Go back' ) );
-
-	$ret = '<h2>' . $staff->getFirstname() . ' ' . verplaatsTussenvoegselNaarBegin($staff->getLastname()) . '</h2>';
 	$ret .= $goback . '<br><br>';
 
-	$ret .= "<table border=0 cellpadding=2 cellspacing=0>";
-
-	//
+	// get check in/out status
 	$status = getStatusColor($staff->getId(), date("Ymd"));
-
-	//
-//	$tmp = str_replace('::STATUS_STYLE::', $status["status_color"], $tmp);
-//	$tmp = str_replace('::STATUS_TEXT::', $status["status_text"], $tmp);
-//	$tmp = str_replace('::STATUS_ALT::', $status["status_alt"], $tmp);
 	if ( $status["status_text"] == '' ) {
 		$status["status_text"] = '&nbsp;';
 	}
 
 	$ret .= "
+<table border=0 cellpadding=2 cellspacing=0>
+";
+
+	$photo = trim(trim($staff->getFirstname()) . ' ' . trim(verplaatsTussenvoegselNaarBegin($staff->getLastname())));
+	$photo = str_replace(' ', '.', $photo);
+	$photo = strtolower( $photo . '.jpg' );
+	$photo = "<img src=\"/images/staff/$photo\">";
+
+	// NAAM
+	$ret .= "
 <tr>
 	<td>Name:</td>
 	<td>" . $staff->getFirstname() . ' ' . verplaatsTussenvoegselNaarBegin($staff->getLastname()) . "</td>
 	<td width=\"20px\"></td>
-	<td rowspan=10 valign=top>::PHOTO::</td>
+	<td rowspan=10 valign=top>$photo</td>
 </tr>
 ";
 
+	// CHECK IN/OUT
 	$ret .= "
 <tr>
 	<td>Check in/out:</td>
 	<td>
-
-<table border=0 cellpadding=0 cellspacing=0>
-<tr>
-	<td width=\"120px\" class=\"presentornot_absence\" style=\"" . $status["status_color"] . "\"><A class=\"checkinouttime\" TITLE=\"" . $status["status_alt"] . "\">" . $status["status_text"] . "</A></td>
-</tr>
-</table>
-
+		<table border=0 cellpadding=0 cellspacing=0>
+		<tr>
+			<td width=\"120px\" class=\"presentornot_absence\" style=\"" . $status["status_color"] . "\"><A class=\"checkinouttime\" TITLE=\"" . $status["status_alt"] . "\">" . $status["status_text"] . "</A></td>
+		</tr>
+		</table>
 	</td>
 </tr>
 ";
 
+	// ROOM
 	$ret .= "
 <tr>
 	<td>Room:</td>
@@ -84,6 +89,7 @@ function createStaffContent( ) {
 </tr>
 ";
 
+	// TELEPHONE
 	$ret .= "
 <tr>
 	<td>Telephone:</td>
@@ -91,6 +97,7 @@ function createStaffContent( ) {
 </tr>
 ";
 
+	// EMAIL
 	$ret .= "
 <tr>
 	<td>E-mail:</td>
@@ -98,6 +105,15 @@ function createStaffContent( ) {
 </tr>
 ";
 
+	// DEPARTMENT
+	$ret .= "
+<tr>
+	<td>Department:</td>
+	<td>Under construction</td>
+</tr>
+";
+
+	// BHV
 	$ret .= "
 <tr>
 	<td>" . createUrl( array( 'url' => 'bhv.php', 'label' => 'BHV' ) ) . ":</td>
@@ -105,6 +121,7 @@ function createStaffContent( ) {
 </tr>
 ";
 
+	// EHBO
 	$ret .= "
 <tr>
 	<td>" . createUrl( array( 'url' => 'ehbo.php', 'label' => 'EHBO' ) ) . ":</td>
@@ -112,6 +129,7 @@ function createStaffContent( ) {
 </tr>
 ";
 
+	// ONTRUIMER
 	$ret .= "
 <tr>
 	<td>Ontruimer:</td>
@@ -119,7 +137,7 @@ function createStaffContent( ) {
 </tr>
 ";
 
-	//
+	// SCHEDULE
 	$currentSchedule = new class_protime_user_schedule($staff->getId(), 2015);
 	$show_all_weekdays = false;
 	// TODO: move persmueum to settings table
@@ -133,7 +151,9 @@ function createStaffContent( ) {
 </tr>
 ";
 
-	$ret .= "</table>";
+	$ret .= "
+</table>
+";
 
 	return $ret;
 }

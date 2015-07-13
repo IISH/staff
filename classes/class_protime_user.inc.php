@@ -5,22 +5,25 @@ require_once "class_roles.inc.php";
 class static_protime_user {
 	public static function getProtimeUserByLoginName( $loginname ) {
 		global $databases;
+		$id = 0;
+
 		$oProtime = new class_mysql($databases['default']);
 		$oProtime->connect();
 
 		//
 		$loginname = trim($loginname);
 
-		//
-		$query = "SELECT * FROM " . class_settings::get('protime_tables_prefix') .  "CURRIC WHERE CONCAT(TRIM(FIRSTNAME),'.',TRIM(NAME))='" . $loginname . "' OR TRIM(" . class_settings::get('curric_loginname') . ")='" . $loginname . "' ";
+		if ( $loginname != '' ) {
+			//
+			$query = "SELECT * FROM " . class_settings::get('protime_tables_prefix') .  "CURRIC WHERE CONCAT(TRIM(FIRSTNAME),'.',TRIM(NAME))='" . $loginname . "' OR TRIM(" . class_settings::get('curric_loginname') . ")='" . $loginname . "' ";
 
-		$id = 0;
-		$resultReset = mysql_query($query, $oProtime->getConnection());
-		if ($row = mysql_fetch_assoc($resultReset)) {
-			$id = $row['PERSNR'];
+			$resultReset = mysql_query($query, $oProtime->getConnection());
+			if ($row = mysql_fetch_assoc($resultReset)) {
+				$id = $row['PERSNR'];
 
+			}
+			mysql_free_result($resultReset);
 		}
-		mysql_free_result($resultReset);
 
 		return new class_protime_user( $id );
 	}
@@ -95,7 +98,7 @@ class class_protime_user {
 		$oConn = new class_mysql($this->databases['default']);
 		$oConn->connect();
 
-		$query = "SELECT * FROM Staff_roles WHERE isdeleted=0";
+		$query = "SELECT * FROM Staff_roles WHERE isdeleted=0 ";
 
 		$res = mysql_query($query, $oConn->getConnection());
 		while ($r = mysql_fetch_assoc($res)) {
