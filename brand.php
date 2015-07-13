@@ -13,7 +13,7 @@ $date = class_datetime::get_date($protect);
 
 // create webpage
 $oPage = new class_page('design/page.php', $settings);
-$oPage->setTitle('Present or not | Brand');
+$oPage->setTitle('Staff | Brand');
 $oPage->setContent(createBrandContent( ));
 
 // show page

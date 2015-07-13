@@ -262,3 +262,24 @@ span.incaseofemergencynumber {
 	font-weight: bold;
 	color: red;
 }
+
+div.photobook {
+	margin-bottom: 30px;
+	margin-right: 20px;
+}
+
+table.photobook {
+	text-align: center;
+	width: 210px;
+	border-spacing: 0;
+	border-collapse: collapse;
+}
+
+tr.photobook {
+	text-align: center;
+}
+
+td.photobook {
+	border-style: solid;
+	border-width: thin;
+}

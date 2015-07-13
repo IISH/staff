@@ -8,7 +8,7 @@ if ( !isset($settings) ) {
 
 // create webpage
 $oPage = new class_page('design/page.php', $settings);
-$oPage->setTitle('Present or not | National holidays');
+$oPage->setTitle('Staff | National holidays');
 $oPage->setContent(createNationalHolidaysContent( ));
 
 // show page

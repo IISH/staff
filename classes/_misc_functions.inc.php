@@ -1,4 +1,16 @@
 <?php
+function valueOr( $value, $or = '?' ) {
+	return ( ( trim($value) != '' ) ? $value : $or );
+}
+
+function checkImageExists( $photo, $imageIfNotExists = '' ) {
+	if ( !file_exists ( $_SERVER['DOCUMENT_ROOT'] . '/' . $photo ) ) {
+		$photo = $imageIfNotExists;
+	}
+
+	return $photo;
+}
+
 function createUrl( $parts ) {
 	$ret = "<a href=\"". $parts['url'] . "\">" . $parts["label"] . "</a>";
 
@@ -25,7 +37,6 @@ function getReferer() {
 
 	if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
 		$url = $_SERVER['HTTP_REFERER'];
-//		$url = stripDomainnameFromUrl( $url );
 	}
 
 	return $url;

@@ -12,7 +12,7 @@ $date = class_datetime::get_date($protect);
 
 // create webpage
 $oPage = new class_page('design/page.php', $settings);
-$oPage->setTitle('Present or not | Staff');
+$oPage->setTitle('Staff | Employee');
 $oPage->setContent(createStaffContent( ));
 
 // show page
@@ -55,7 +55,9 @@ function createStaffContent( ) {
 	$photo = trim(trim($staff->getFirstname()) . ' ' . trim(verplaatsTussenvoegselNaarBegin($staff->getLastname())));
 	$photo = str_replace(' ', '.', $photo);
 	$photo = strtolower( $photo . '.jpg' );
-	$photo = "<img src=\"/images/staff/$photo\">";
+	$photo = checkImageExists( class_settings::get('staff_images_directory') . $photo, class_settings::get('noimage_file') );
+
+	$photo = "<img src=\"$photo\">";
 
 	// NAAM
 	$ret .= "
@@ -109,7 +111,7 @@ function createStaffContent( ) {
 	$ret .= "
 <tr>
 	<td>Department:</td>
-	<td>Under construction</td>
+	<td>" . $staff->getDepartment()->getShort1() . "</td>
 </tr>
 ";
 
