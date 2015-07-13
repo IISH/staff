@@ -1,7 +1,7 @@
 <?php 
 require_once "classes/start.inc.php";
 
-$_SESSION["presentornot"]["name"] = '';
+$_SESSION["loginname"] = '';
 
 Header("Location: login.php");
 die();

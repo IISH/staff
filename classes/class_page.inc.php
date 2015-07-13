@@ -37,10 +37,9 @@ class class_page {
 		$page = str_replace('{menu}', $this->createMenu(), $page);
 
 		// 
-		$welcome = 'Welcome';
+		$welcome = class_translations::get('welcome');
 		$logout = '';
 		if ( $oWebuser->isLoggedIn() ) {
-
 			$welcome .= ', ';
 
             if ( trim($oWebuser->getFirstname() . ' ' . $oWebuser->getLastname()) != '' ) {
@@ -49,10 +48,13 @@ class class_page {
                 $welcome .= $oWebuser->getUser();
             }
 
-			$logout = '<a href="logout.php" onclick="if (!confirm(\'Please confirm logout\')) return false;">(logout)</a>';
+			$logout = '<a href="logout.php" onclick="if (!confirm(\'' . class_translations::get('confirm') . '\')) return false;">(' . class_translations::get('logout') . ')</a>';
 		}
 		$page = str_replace('{welcome}', $welcome, $page);
 		$page = str_replace('{logout}', $logout, $page);
+		$page = str_replace('{website_name}', class_translations::get('website_name'), $page);
+		$page = str_replace('{contact_and_questions}', class_translations::get('contact_and_questions'), $page);
+		$page = str_replace('{last_modified}', class_translations::get('last_modified'), $page);
 
 		// als laatste
 		$page = str_replace('{date}', class_datetime::getQueryDate(), $page);
@@ -83,7 +85,7 @@ class class_page {
 
 	// TODOEXPLAIN
 	function getLastModified( $dateformat = "j F Y") {
-		return date($dateformat, strtotime(class_settings::getSetting("last_modified")));
+		return date($dateformat, strtotime(class_settings::get("last_modified")));
 	}
 
 	// TODOEXPLAIN

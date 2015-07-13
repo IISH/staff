@@ -8,13 +8,17 @@ if ( !isset($settings) ) {
 
 $oWebuser->checkLoggedIn();
 
+if ( !$oWebuser->isTabAbsences() ) {
+	die('Access denied.');
+}
+
 //
 $s = getAndProtectSearch();
 
 $retval = '';
 
-$oEmployee = new class_employee($oWebuser->getUser());
-$favIds = implode(',', $oEmployee->getFavourites('vakantie'));
+//
+$favIds = implode(',', $oWebuser->getFavourites('vakantie'));
 
 // CRITERIUM
 $queryCriterium = '';
@@ -44,9 +48,9 @@ if ( $selectedYear == '' ) {
 	$selectedYear = date("Y");
 }
 
-// TODOTODO: in absences.php moet url gedisabled worden als min/max bereikt is
-if ( $selectedYear < date("Y") ) {
-	$selectedYear = date("Y");
+// allow only previous, current and next year
+if ( $selectedYear < date("Y")-1 ) {
+	$selectedYear = date("Y")-1;
 	$selectedMonth = 1;
 } elseif ( $selectedYear > date("Y")+1 ) {
 	$selectedYear = date("Y")+1;
@@ -65,14 +69,14 @@ if ( $to_short != 1 ) {
 	$oProtime->connect();
 
 	// loop employees
-	$querySelect = "SELECT * FROM PROTIME_CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) " . $queryCriterium . " ORDER BY FIRSTNAME, NAME ";
+	$querySelect = "SELECT * FROM " . class_settings::get('protime_tables_prefix') . "CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) " . $queryCriterium . " ORDER BY FIRSTNAME, NAME ";
 	$resultSelect = mysql_query($querySelect, $oProtime->getConnection());
 
 	while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
 		$tmp = "
 <TR>
 	<TD><div id=\"divAddRemove" . $rowSelect["PERSNR"] . "\">::ADDREMOVE::</div></TD>
-	<TD>" . fixBrokenChars(trim($rowSelect["FIRSTNAME"]) . " " . verplaatsTussenvoegselNaarBegin(trim($rowSelect["NAME"]))) . "</TD>
+	<TD>" . createUrl( array( 'url' => 'staff.php?id=' . $rowSelect["PERSNR"], 'label' => fixBrokenChars(trim($rowSelect["FIRSTNAME"]) . " " . verplaatsTussenvoegselNaarBegin(trim($rowSelect["NAME"]))) ) ) . "</TD>
 	<td class=\"presentornot_absence\" style=\"::STATUS_STYLE::\"><A class=\"checkinouttime\" TITLE=\"::STATUS_ALT::\">::STATUS_TEXT::</A></td>
 	<TD></TD>
 	<TD align=\"center\">::VAKANTIE::</TD>
@@ -110,7 +114,8 @@ if ( $to_short != 1 ) {
 				$cellStyleHrefStyle = $cellStyle["hrefStyle"];
 
 				// if person has no in/out time authorisation, then show only 'absent'
-				if ( !$oWebuser->hasInOutTimeAuthorisation() && !$oWebuser->isAdmin() && !$oWebuser->isReception() && !$oWebuser->isHead() ) {
+				// TODO hier controlen op inout rechten
+				if ( !$oWebuser->hasInOutTimeAuthorisation() && !$oWebuser->isAdmin() && !$oWebuser->isTabAbsences() && !$oWebuser->isHead() ) {
 					$cellStyleAlt = '';
 					$cellStyleHrefStyle = 'color:white;';
 				}
@@ -215,7 +220,8 @@ function getColors($selectedYear, $selectedMonth, $day, $absences = array(), $ho
 	if ( $tdStyle == '' && $dayOfWeek != 0 && $dayOfWeek != 6 ) {
 		for ($i = 0; $i < count($absences); $i++) {
 			if ( $datum == $absences[$i]["date"] ) {
-				if ( !$oWebuser->hasInOutTimeAuthorisation() && !$oWebuser->isAdmin() && !$oWebuser->isReception() && !$oWebuser->isHead() ) {
+				// TODO hier controlen op inout rechten
+				if ( !$oWebuser->hasInOutTimeAuthorisation() && !$oWebuser->isAdmin() && !$oWebuser->isTabAbsences() && !$oWebuser->isHead() ) {
 					$tdStyle = 'background-color: #C62431;';
 					$hrefStyle = 'color:white';
 					$alt = 'Absent';
@@ -265,7 +271,7 @@ function getNationalHolidays($year, $month) {
 
 	$arr = array();
 
-    $query = "SELECT * FROM Feestdagen WHERE datum LIKE '" . $year . '-' . substr("0" . $month,-2) . "-%' AND isdeleted=0 ";
+    $query = "SELECT * FROM Staff_feestdagen WHERE datum LIKE '" . $year . '-' . substr("0" . $month,-2) . "-%' AND isdeleted=0 ";
    	$result = mysql_query($query, $oConn->getConnection());
     while ($row = mysql_fetch_assoc($result)) {
    		$arr[] = new class_holiday($row["ID"]);

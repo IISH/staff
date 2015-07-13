@@ -8,6 +8,10 @@ if ( !isset($settings) ) {
 
 $oWebuser->checkLoggedIn();
 
+if ( !$oWebuser->isTabAbsences() ) {
+	die('Access denied.');
+}
+
 $date = class_datetime::get_date($protect);
 
 // create webpage
@@ -138,7 +142,7 @@ function setSearchField(fldValue) {
 	<TD>
 
 Quick search: <input type=\"\" name=\"fldZoek\" id=\"fldZoek\" maxlength=\"20\" onkeyup=\"tcRefreshSearch();\" value=\"" . $s . "\">
- &nbsp; <a href=\"#\" onclick=\"javascript:setSearchField('');\">Clear</a> &nbsp; <font size=-2><em>(min. 3 characters)</em></font>
+<em>(min. 3 characters)</em> &nbsp; <a href=\"#\" onclick=\"javascript:setSearchField('');\">Show favourites</a> &nbsp; <font size=-2></font>
 	</TD>
 	<TD align=\"right\">
 <input type=\"hidden\" name=\"fldYear\" id=\"fldYear\" value=\"" . date("Y") . "\">
@@ -162,7 +166,8 @@ tcRefreshSearchStart();
 
 		$ret .= "<br>Legenda:<br>";
 		foreach ( $colors["td"] as $a => $b ) {
-			if ( $oWebuser->hasInOutTimeAuthorisation() || $oWebuser->isAdmin() || $oWebuser->isReception() || $oWebuser->isHead() || in_array($a, array('vandaag', 'brugdag', 'holiday', 'vakantie', 'weekend')) ) {
+			// TODO: hier moet gecontroleerd worden of persoon inout rechten heeft
+			if ( $oWebuser->hasInOutTimeAuthorisation() || $oWebuser->isAdmin() || $oWebuser->isTabAbsences() || $oWebuser->isHead() || in_array($a, array('vandaag', 'brugdag', 'holiday', 'vakantie', 'weekend')) ) {
 				if ( $a == 'vakantie' ) {
 					$a = 'afwezig';
 				}

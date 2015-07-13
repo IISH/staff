@@ -1,4 +1,48 @@
 <?php
+function createUrl( $parts ) {
+	$ret = "<a href=\"". $parts['url'] . "\">" . $parts["label"] . "</a>";
+
+	return $ret;
+}
+
+function splitStringIntoArray( $text, $pattern = "/[^a-zA-Z0-9]/" ) {
+	return preg_split($pattern, $text);
+}
+
+function stripDomainnameFromUrl( $url ) {
+	$arr = parse_url( $url );
+
+	$ret = $arr['path'];
+	if ( isset( $arr['query'] ) && $arr['query'] != '' ) {
+		$ret .= '?' . $arr['query'];
+	}
+
+	return $ret;
+}
+
+function getReferer() {
+	$url = '';
+
+	if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
+		$url = $_SERVER['HTTP_REFERER'];
+//		$url = stripDomainnameFromUrl( $url );
+	}
+
+	return $url;
+}
+
+function goBack() {
+	$url = 'presentornot.php';
+
+	$referer = getReferer();
+	if ( $referer != '' ) {
+		$url = $referer;
+		$url = stripDomainnameFromUrl( $url );
+	}
+
+	Header("Location: " . $url);
+}
+
 // TODOEXPLAIN
 function getStatusColor( $persnr, $date ) {
 	global $databases, $oWebuser;
@@ -14,7 +58,7 @@ function getStatusColor( $persnr, $date ) {
 	$oProtime->connect();
 
 	// achterhaal 'present' status
-	$query = "SELECT REC_NR, PERSNR, BOOKDATE, BOOKTIME FROM SPEC_PROTIME_BOOKINGS_CURRENTDAY WHERE PERSNR=" . $persnr . " AND BOOKDATE='" . $date . "' AND BOOKTIME<>9999 ORDER BY REC_NR ";
+	$query = "SELECT REC_NR, PERSNR, BOOKDATE, BOOKTIME FROM Staff_today_checkinout WHERE PERSNR=" . $persnr . " AND BOOKDATE='" . $date . "' AND BOOKTIME<>9999 ORDER BY REC_NR ";
 	$result = mysql_query($query, $oProtime->getConnection());
 	$status = 0;
 	$found = 0;
@@ -28,7 +72,8 @@ function getStatusColor( $persnr, $date ) {
 			$status_color = 'background-color:green;color:white;';
 			$status_alt .= 'In: ' . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes($row["BOOKTIME"]);
 			$aanwezig = 1;
-			if ( $oWebuser->hasInOutTimeAuthorisation() || $oWebuser->isAdmin() || $oWebuser->isReception() || $oWebuser->isHead() || $oWebuser->getProtimeId() == $persnr ) {
+			// TODO: hier moet gecontroleerd worden of persoon check inout rechten heeft
+			if ( $oWebuser->hasInOutTimeAuthorisation() || $oWebuser->isAdmin() || $oWebuser->isHead() || $oWebuser->getId() == $persnr ) {
 				$status_text = 'In: ' . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes($row["BOOKTIME"]);
 			} else {
 				$status_text = 'In';
@@ -38,7 +83,8 @@ function getStatusColor( $persnr, $date ) {
 			$status_color = 'background-color:#C62431;color:white;';
 			$status_alt .= ' - Out: ' . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes($row["BOOKTIME"]) . "\n";
 			$aanwezig = 0;
-			if ( $oWebuser->hasInOutTimeAuthorisation() || $oWebuser->isAdmin() || $oWebuser->isReception() || $oWebuser->isHead() || $oWebuser->getProtimeId() == $persnr ) {
+			// TODO: hier moet gecontroleerd worden of persoon check inout rechten heeft
+			if ( $oWebuser->hasInOutTimeAuthorisation() || $oWebuser->isAdmin() || $oWebuser->isHead() || $oWebuser->getId() == $persnr ) {
 				$status_text = 'Out: ' . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes($row["BOOKTIME"]);
 			} else {
 				$status_text = 'Out';
@@ -57,25 +103,29 @@ function getStatusColor( $persnr, $date ) {
 	if ( $status_text == '' && $found == 0 ) {
 		$oProtime->connect();
 
+		$prefix = class_settings::get('protime_tables_prefix');
+
+		// SHORT_1 - dutch, SHORT_2 - english
 		$query = "
-SELECT PROTIME_ABSENCE.SHORT_1
-FROM PROTIME_P_ABSENCE
-	INNER JOIN PROTIME_ABSENCE ON PROTIME_P_ABSENCE.ABSENCE = PROTIME_ABSENCE.ABSENCE
-WHERE PROTIME_P_ABSENCE.PERSNR = " . $persnr . " AND PROTIME_P_ABSENCE.BOOKDATE = '" . $date . "'
+SELECT DISTINCT ${prefix}ABSENCE.SHORT_2
+FROM ${prefix}P_ABSENCE
+	INNER JOIN ${prefix}ABSENCE ON ${prefix}P_ABSENCE.ABSENCE = ${prefix}ABSENCE.ABSENCE
+WHERE ${prefix}P_ABSENCE.PERSNR = " . $persnr . " AND ${prefix}P_ABSENCE.BOOKDATE = '" . $date . "'
 ";
 		$result = mysql_query($query, $oProtime->getConnection());
 		$status_separator = '';
 		while ( $row = mysql_fetch_assoc($result) ) {
-			$status_text .= $status_separator . $row["SHORT_1"];
+			// SHORT_1 - dutch, SHORT_2 - english
+			$status_text .= $status_separator . $row["SHORT_2"];
 			$status_separator = ', ';
 		}
 		mysql_free_result($result);
 	}
 
 	$retval["aanwezig"] = $aanwezig;
-	$retval["status_text"] = $status_text;
+	$retval["status_text"] = strtolower($status_text);
 	$retval["status_color"] = $status_color;
-	$retval["status_alt"] = $status_alt;
+	$retval["status_alt"] = strtolower($status_alt);
 
 	return $retval;
 }
@@ -131,13 +181,16 @@ function getAbsencesAndHolidays($eid, $year, $month, $min_minutes = 0) {
 
 	$yearMonth = createDateAsString($year, $month);
 
+	$prefix = class_settings::get('protime_tables_prefix');
+
+	// SHORT_1 - dutch, SHORT_2 - english
 	$query = "
-SELECT PROTIME_P_ABSENCE.REC_NR, PROTIME_P_ABSENCE.PERSNR, PROTIME_P_ABSENCE.BOOKDATE, PROTIME_P_ABSENCE.ABSENCE_VALUE, PROTIME_P_ABSENCE.ABSENCE_STATUS, PROTIME_ABSENCE.SHORT_1, PROTIME_P_ABSENCE.ABSENCE
-FROM PROTIME_P_ABSENCE
-	LEFT OUTER JOIN PROTIME_ABSENCE ON PROTIME_P_ABSENCE.ABSENCE = PROTIME_ABSENCE.ABSENCE
-WHERE PROTIME_P_ABSENCE.PERSNR=" . $eid . " AND PROTIME_P_ABSENCE.BOOKDATE LIKE '" . $yearMonth . "%' AND PROTIME_P_ABSENCE.ABSENCE NOT IN (5, 19)
-AND ( PROTIME_P_ABSENCE.ABSENCE_VALUE>=" . $min_minutes . " OR PROTIME_P_ABSENCE.ABSENCE_VALUE=0 )
-ORDER BY PROTIME_P_ABSENCE.BOOKDATE, PROTIME_P_ABSENCE.REC_NR
+SELECT ${prefix}P_ABSENCE.REC_NR, ${prefix}P_ABSENCE.PERSNR, ${prefix}P_ABSENCE.BOOKDATE, ${prefix}P_ABSENCE.ABSENCE_VALUE, ${prefix}P_ABSENCE.ABSENCE_STATUS, ${prefix}ABSENCE.SHORT_2, ${prefix}P_ABSENCE.ABSENCE
+FROM ${prefix}P_ABSENCE
+	LEFT OUTER JOIN ${prefix}ABSENCE ON ${prefix}P_ABSENCE.ABSENCE = ${prefix}ABSENCE.ABSENCE
+WHERE ${prefix}P_ABSENCE.PERSNR=" . $eid . " AND ${prefix}P_ABSENCE.BOOKDATE LIKE '" . $yearMonth . "%' AND ${prefix}P_ABSENCE.ABSENCE NOT IN (5, 19)
+AND ( ${prefix}P_ABSENCE.ABSENCE_VALUE>=" . $min_minutes . " OR ${prefix}P_ABSENCE.ABSENCE_VALUE=0 )
+ORDER BY ${prefix}P_ABSENCE.BOOKDATE, ${prefix}P_ABSENCE.REC_NR
 ";
 
 	$oProtime = new class_mysql($databases['default']);
@@ -147,7 +200,8 @@ ORDER BY PROTIME_P_ABSENCE.BOOKDATE, PROTIME_P_ABSENCE.REC_NR
 	$num = mysql_num_rows($result);
 	if ( $num ) {
 		while ( $row = mysql_fetch_assoc($result) ) {
-			$ret[] = array( 'date' => $row["BOOKDATE"], 'description' => $row["SHORT_1"] );
+			// SHORT_1 - dutch, SHORT_2 - english
+			$ret[] = array( 'date' => $row["BOOKDATE"], 'description' => $row["SHORT_2"] );
 		}
 	}
 

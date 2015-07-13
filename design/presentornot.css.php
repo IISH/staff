@@ -32,13 +32,19 @@ html, body, input, select {
 	color: red;
 }
 
-a, a:visited, a:active, a:hover {
+a
+, a:visited
+, a:active
+, a:hover {
 	color: <?php echo $c; ?>;
 	text-decoration: none;
 	border-bottom: 1px blue dotted;
 }
 
-a.PT, a.PT:visited, a.PT:active, a.PT:hover {
+a.PT
+, a.PT:visited
+, a.PT:active
+, a.PT:hover {
 	color: black;
 	text-decoration: none;
 	border-bottom: 0px;
@@ -46,12 +52,18 @@ a.PT, a.PT:visited, a.PT:active, a.PT:hover {
 	font-size:80%;
 }
 
-a.nolink, a.nolink:visited, a.nolink:active, a.nolink:hover {
+a.nolink
+, a.nolink:visited
+, a.nolink:active
+, a.nolink:hover {
 	text-decoration: none;
 	border-bottom: 0px;
 }
 
-a.add, a.add:visited, a.add:active, a.add:hover {
+a.add
+, a.add:visited
+, a.add:active
+, a.add:hover {
 	font-size: 90%;
 	font-style:italic;
 }
@@ -102,13 +114,11 @@ div.main {
 }
 
 div.header {
-	position: relative;
 	margin-top: auto;
 	margin-bottom: auto;
 }
 
 div.logo {
-	position: relative;
 	margin-left: -13px;
 	margin-bottom: 7px;
 	height: 94px;
@@ -121,27 +131,14 @@ div.title {
 	top: 7px;
 }
 
-div.welcome {
-	float: right;
-	margin-top: 5px;
-}
-
-div.logout {
-	float: right;
-	margin-top: 50px;
-}
-
 span.name {
-	display: block;
 	font-family: 'Times New Roman';
 	font-size: 18px;
 	font-weight: bold;
 	color: <?php echo $c; ?>;
-	text-align: right;
 }
 
 span.logout {
-	display: block;
 	font-family: 'Times New Roman';
 	font-size: 14px;
 	font-style: italic;
@@ -164,10 +161,17 @@ div.content {
 }
 
 div.footer {
-	color: white;
 	background-color: <?php echo $c; ?>;
-	text-align: right;
 	border: 1px solid #AAAAAA;
+	color: white;
+}
+
+div.footer a
+, div.footer a:visited
+, div.footer a:active
+, div.footer a:hover {
+	color: white;
+	text-decoration: none;
 }
 
 div.hidden {
@@ -235,7 +239,7 @@ a.checkinouttime {
 
 #menu li {
 	display: inline;
-	padding-right: 20px;
+	padding-right: 16px;
 }
 
 a.favourites_on:link, a.favourites_on:visited {
@@ -246,4 +250,15 @@ a.favourites_on:link, a.favourites_on:visited {
 a.favourites_off:link, a.favourites_off:visited {
 	color: lightgrey;
 	font-size: 120%;
+}
+
+div.incaseofemergency {
+	font-size: 130%;
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
+
+span.incaseofemergencynumber {
+	font-weight: bold;
+	color: red;
 }

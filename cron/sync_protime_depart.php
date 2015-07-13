@@ -17,11 +17,10 @@ echo "Start time: " . date("Y-m-d H:i:s") . "<br>\n";
 
 // sync
 $sync = new class_syncProtimeMysql();
-$sync->setSourceTable("P_ABSENCE");
-$sync->setSourceCriterium(" BOOKDATE>='" . date("Ymd", mktime(0, 0, 0, date("m")-3, 1, date("Y"))) . "' ");
-$sync->setTargetTable(class_settings::get('protime_tables_prefix') . "P_ABSENCE");
-$sync->setPrimaryKey("REC_NR");
-$sync->addFields( array("REC_NR", "PERSNR", "BOOKDATE", "PERIODETYPE", "ABSENCE", "ABSENCE_VALUE", "ABSENCE_STATUS", "SHIFT", "PAINTABSENCE", "PAINTTIME", "AUTHORISED", "COMMENTS", "REQUEST", "CALCTIME", "FROMTIME") );
+$sync->setSourceTable("DEPART");
+$sync->setTargetTable(class_settings::get('protime_tables_prefix') . "DEPART");
+$sync->setPrimaryKey("DEPART");
+$sync->addFields( array("DEPART", "SHORT_1", "SHORT_2", "CODE_EXTERN", "CUSTOMER") );
 class_syncinfo::save($sync->getTargetTable(), 'start', date("Y-m-d H:i:s"));
 $sync->doSync();
 

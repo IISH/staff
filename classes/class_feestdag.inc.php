@@ -33,7 +33,7 @@ class class_feestdag {
 		$oConn = new class_mysql($this->databases['default']);
 		$oConn->connect();
 
-		$query = "SELECT * FROM Feestdagen WHERE ID=" . $this->getId();
+		$query = "SELECT * FROM Staff_feestdagen WHERE ID=" . $this->getId();
 
 		$res = mysql_query($query, $oConn->getConnection());
 		if ($r = mysql_fetch_assoc($res)) {
@@ -126,7 +126,7 @@ class class_feestdag {
 		$oConn = new class_mysql($this->databases['default']);
 		$oConn->connect();
 
-		$query = "INSERT INTO Feestdagen (ID, datum, omschrijving, vooreigenrekening, isdeleted, last_refresh) VALUES (
+		$query = "INSERT INTO Staff_feestdagen (ID, datum, omschrijving, vooreigenrekening, isdeleted, last_refresh) VALUES (
 			" . $this->id . "
 			, '" . addslashes($this->date) . "'
 			, '" . addslashes($this->description) . "'
@@ -142,7 +142,7 @@ class class_feestdag {
 		$oConn = new class_mysql($this->databases['default']);
 		$oConn->connect();
 
-		$query = "UPDATE Feestdagen
+		$query = "UPDATE Staff_feestdagen
 			SET datum = '" . addslashes($this->date) . "'
 				, omschrijving = '" . addslashes($this->description) . "'
 				, vooreigenrekening = " . $this->vooreigenrekening . "

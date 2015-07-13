@@ -23,6 +23,7 @@ echo $oPage->getPage();
 function createBrandContent( ) {
 	global $databases;
 
+	$total_of_present_employees = 0;
 	$title = 'BRAND / Calamiteitenlijst';
 	$ret = "<h2>$title</h2>
 Overzicht van " . date("d-m-Y") . " om " . date("H:i:s") . "<br><br>";
@@ -34,15 +35,15 @@ Overzicht van " . date("d-m-Y") . " om " . date("H:i:s") . "<br><br>";
 	$loop = array();
 	$loop[] = array(
 			'label' => 'Medewerkers'
-			, 'query' => "SELECT * FROM PROTIME_CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) AND " . $oBeoMedewerker->getQuery() . " ORDER BY NAME, FIRSTNAME "
+			, 'query' => "SELECT * FROM " . class_settings::get('protime_tables_prefix') . "CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) AND " . $oBeoMedewerker->getQuery() . " ORDER BY NAME, FIRSTNAME "
 		);
 	$loop[] = array(
 			'label' => 'Ontruimers'
-			, 'query' => "SELECT * FROM PROTIME_CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) AND " . $oBeoOntruimer->getQuery() . " ORDER BY NAME, FIRSTNAME "
+			, 'query' => "SELECT * FROM " . class_settings::get('protime_tables_prefix') . "CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) AND " . $oBeoOntruimer->getQuery() . " ORDER BY NAME, FIRSTNAME "
 		);
 	$loop[] = array(
 			'label' => 'BHV'
-			, 'query' => "SELECT * FROM PROTIME_CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) AND " . $oBeoBhv->getQuery() . " ORDER BY NAME, FIRSTNAME "
+			, 'query' => "SELECT * FROM " . class_settings::get('protime_tables_prefix') . "CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) AND " . $oBeoBhv->getQuery() . " ORDER BY NAME, FIRSTNAME "
 		);
 
 	//
@@ -72,6 +73,8 @@ Overzicht van " . date("d-m-Y") . " om " . date("H:i:s") . "<br><br>";
 			$status = getStatusColor($rowSelect["PERSNR"], date("Ymd"));
 
 			if ( $status["aanwezig"] == 1 ) {
+				$total_of_present_employees++;
+
 				$totaal["aanwezig"]++;
 
 				$tmp = "
@@ -95,7 +98,10 @@ Overzicht van " . date("d-m-Y") . " om " . date("H:i:s") . "<br><br>";
 ";
 	}
 
+	$ret .= '<br>Totaal aantal medewerkers: ' . $total_of_present_employees . "<br><br>";
+
 	$ret .= "
+
 <SCRIPT LANGUAGE=\"JavaScript\">
 <!--
 window.print();

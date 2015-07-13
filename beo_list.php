@@ -13,26 +13,29 @@ if ( !isset($settings) ) {
 
 $oWebuser->checkLoggedIn();
 
-$retval = "<h2>" . $oBeo->getLabel() . "</h2>";
+$retval = "
+<h2>" . $oBeo->getLabel() . "</h2>
+<div class='incaseofemergency'>In case of emergency please call alarm number <span class='incaseofemergencynumber'>400</span></div>
+";
 
-$oEmployee = new class_employee($oWebuser->getUser());
-$checkInOutIds = implode(',', $oEmployee->getFavourites('checkinout'));
+//
+$checkInOutIds = implode(',', $oWebuser->getFavourites('checkinout'));
 
 $oProtime = new class_mysql($databases['default']);
 $oProtime->connect();
 
 //
-$never_show_persnr = '0,' . preg_replace('/[^0-9]/', ',', trim(class_settings::getSetting("never_show_persnr")));
+$never_show_persnr = '0,' . preg_replace('/[^0-9]/', ',', trim(class_settings::get("never_show_persnr")));
 $never_show_persnr = preg_replace('/,{2,}/', ',', $never_show_persnr);
 
-$querySelect = "SELECT * FROM PROTIME_CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) AND " . $oBeo->getQuery() . " AND PERSNR NOT IN ($never_show_persnr) ORDER BY FIRSTNAME, NAME ";
+$querySelect = "SELECT * FROM " . class_settings::get('protime_tables_prefix') . "CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) AND " . $oBeo->getQuery() . " AND PERSNR NOT IN ($never_show_persnr) ORDER BY FIRSTNAME, NAME ";
 $resultSelect = mysql_query($querySelect, $oProtime->getConnection());
 
 $totaal["aanwezig"] = 0;
 $totaal["afwezig"] = 0;
 
 $ontruimersAanwezigOpVerdieping = array();
-$nrOfLevels = class_settings::getSetting("number_of_levels");
+$nrOfLevels = class_settings::get("number_of_levels");
 if ( $nrOfLevels == '' ) {
 	$nrOfLevels = 6;
 }
@@ -50,7 +53,7 @@ while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
 	$tmp = "
 <tr>
 	<td><div id=\"divCheckInOut" . $rowSelect["PERSNR"] . "\">::CHECKINOUT::</div></td>
-	<td>" . fixBrokenChars(trim($rowSelect["FIRSTNAME"]) . " " . verplaatsTussenvoegselNaarBegin(trim($rowSelect["NAME"]))) . "</td>
+	<td>" . createUrl( array( 'url' => 'staff.php?id=' . $rowSelect["PERSNR"], 'label' => fixBrokenChars(trim($rowSelect["FIRSTNAME"]) . " " . verplaatsTussenvoegselNaarBegin(trim($rowSelect["NAME"]))) ) ) . "</td>
 	<td class=\"presentornot_absence\" style=\"::STATUS_STYLE::\"><A class=\"checkinouttime\" TITLE=\"::STATUS_ALT::\">::STATUS_TEXT::</A></td>
 	<td align=\"center\">" . cleanUpTelephone($rowSelect["USER02"]) . "</td>
 	$verdieping
@@ -60,10 +63,10 @@ while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
 	//
 	if ( strpos(',' . $checkInOutIds . ',', ',' . $rowSelect["PERSNR"] . ',') !== false ) {
 		$alttitle = "Click to remove the 'checked in' email notification";
-		$tmp = str_replace('::CHECKINOUT::', '<a href="#" onClick="checkInOut(' . $rowSelect["PERSNR"] . ', \'r\');" title="' . $alttitle . '" class="nolink"><img src="images/clock-red.png" border=0></a>', $tmp);
+		$tmp = str_replace('::CHECKINOUT::', '<a href="#" onClick="checkInOut(' . $rowSelect["PERSNR"] . ', \'r\');" title="' . $alttitle . '" class="nolink"><img src="images/misc/clock-red.png" border=0></a>', $tmp);
 	} else {
 		$alttitle = "Click to get a 'checked in' email notification when user checks in.";
-		$tmp = str_replace('::CHECKINOUT::', '<a href="#" onClick="checkInOut(' . $rowSelect["PERSNR"] . ', \'a\');" title="' . $alttitle . '" class="nolink"><img src="images/clock-black.png" border=0></a>', $tmp);
+		$tmp = str_replace('::CHECKINOUT::', '<a href="#" onClick="checkInOut(' . $rowSelect["PERSNR"] . ', \'a\');" title="' . $alttitle . '" class="nolink"><img src="images/misc/clock-black.png" border=0></a>', $tmp);
 	}
 
 	//

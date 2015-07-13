@@ -1,0 +1,14 @@
+CHANGELOG
+
+November 2014
+- modified green/red (in/out) fields to be better visible for color blind people (and black and white printers)
+
+October 2014
+- changed authorisation level functionality
+- added Brand/Fire page
+- added BHV page (Bedrijfshulpverlening/Emergency Response Team)
+- added EHBO page (First Aid)
+- added Ontruimer page (Evacuator)
+
+August 2014
+- added sync Protime data

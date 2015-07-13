@@ -1,7 +1,7 @@
 <?php
 require_once "../classes/start.inc.php";
 
-$path_parts['filename'] = 'timecard_national_holidays';
+$path_parts['filename'] = 'Staff_feestdagen';
 
 // check cron key
 $cron_key = '';
@@ -10,23 +10,26 @@ if ( isset($_GET["cron_key"]) ) {
 } elseif ( isset($_POST["cron_key"]) ) {
 	$cron_key = $_POST["cron_key"];
 }
-if ( trim( $cron_key ) != class_settings::getSetting('cron_key') ) {
+if ( trim( $cron_key ) != class_settings::get('cron_key') ) {
 	die('Error: Incorrect cron key');
 }
 
 // show time
 echo "Start time: " . date("Y-m-d H:i:s") . "<br>\n";
-class_settings::saveSetting('cron_' . $path_parts['filename'] . '_start', date("Y-m-d H:i:s"), 'Settings');
+class_syncinfo::save($path_parts['filename'], 'start', date("Y-m-d H:i:s"));
 
 // download holidays from website source
-$url = class_settings::getSetting("download_url_national_holidays");
+$url = class_settings::get("download_url_national_holidays");
 $source = file_get_contents( $url );
 
 // decode data
 $holidays = json_decode( $source );
 
+$counter = 0;
+
 // loop through all holidays
 foreach ( $holidays as $holiday ) {
+	$counter++;
 	echo $holiday->description . " (" . $holiday->date . ")<br>";
 	$f = new class_feestdag( $holiday->id );
 	$f->setDate( $holiday->date );
@@ -38,7 +41,8 @@ foreach ( $holidays as $holiday ) {
 }
 
 // save sync last run
-class_settings::saveSetting('cron_' . $path_parts['filename'] . '_end', date("Y-m-d H:i:s"), 'Settings');
+class_syncinfo::save($path_parts['filename'], 'counter', $counter);
+class_syncinfo::save($path_parts['filename'], 'end', date("Y-m-d H:i:s"));
 
 // show time
 echo "End time: " . date("Y-m-d H:i:s") . "<br>\n";
