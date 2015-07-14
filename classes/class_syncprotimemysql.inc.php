@@ -1,7 +1,7 @@
 <?php
 // modified: 2014-07-03
 
-require_once dirname(__FILE__) . "/../sites/default/presentornot.settings.php";
+require_once dirname(__FILE__) . "/../sites/default/staff.settings.php";
 require_once "class_mysql.inc.php";
 require_once "class_mssql.inc.php";
 

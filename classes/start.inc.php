@@ -10,7 +10,7 @@ if ( !isset($_SESSION["loginname"]) ) {
 }
 
 //
-require_once dirname(__FILE__) . "/../sites/default/presentornot.settings.php";
+require_once dirname(__FILE__) . "/../sites/default/staff.settings.php";
 require_once dirname(__FILE__) . "/colors.inc.php";
 require_once dirname(__FILE__) . "/_misc_functions.inc.php";
 

@@ -1,6 +1,7 @@
 settings.inc.php
 settings.php
-presentornot.settings.php
+sites/default/staff.settings.php
+staff.settings.php
 *.ipr
 *.iml
 .idea
