@@ -208,6 +208,7 @@ div.checkedInOut {
 .presentornot_absence {
 	font-size: 80%;
 	text-align: center;
+	border-color: black;
 }
 
 a.checkinouttime {
