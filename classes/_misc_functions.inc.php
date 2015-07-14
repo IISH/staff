@@ -11,8 +11,8 @@ function checkImageExists( $photo, $imageIfNotExists = '' ) {
 	error_log("DEBUG: " . "5. : " . $_SERVER['DOCUMENT_ROOT'] . '/' . $photo);
 	error_log("DEBUG: " . "6. : " . class_settings::get('path_public_html') . $photo);
 
-//	if ( !file_exists ( $_SERVER['DOCUMENT_ROOT'] . '/' . $photo ) ) {
 	if ( !file_exists ( class_settings::get('path_public_html') . $photo ) ) {
+//	if ( !file_exists ( $_SERVER['DOCUMENT_ROOT'] . '/' . $photo ) ) {
 		$photo = $imageIfNotExists;
 	}
 
