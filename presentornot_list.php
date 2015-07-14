@@ -96,7 +96,7 @@ while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
 		$photo = str_replace(' ', '.', $photo);
 		$photo = strtolower( $photo . '.jpg' );
 		$photo = checkImageExists( class_settings::get('staff_images_directory') . $photo, class_settings::get('noimage_file') );
-		$photo = "<img src=\"$photo\">";
+		$photo = "<img src=\"$photo\"  style=\"height:140px;\">";
 
 		$tmp = str_replace('::PHOTO::', $photo, $tmp);
 	}
