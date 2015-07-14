@@ -85,7 +85,7 @@ class class_protime_user {
 			$this->room =  trim($row[class_settings::get('curric_room')]);
 			$this->telephone =  trim($row[class_settings::get('curric_telephone')]);
 			$this->beo =  trim($row[class_settings::get('curric_beo')]);
-			$this->authorisation =  trim($row[class_settings::get('curric_authorisation')]);
+//			$this->authorisation =  trim($row[class_settings::get('curric_authorisation')]);
 
 			$this->department = new class_department( $row["DEPART"] );
 

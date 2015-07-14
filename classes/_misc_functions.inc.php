@@ -4,12 +4,12 @@ function valueOr( $value, $or = '?' ) {
 }
 
 function checkImageExists( $photo, $imageIfNotExists = '' ) {
-	error_log("DEBUG: " . "1. server document root: " . $_SERVER['DOCUMENT_ROOT']);
-	error_log("DEBUG: " . "2. path_public_html: " . class_settings::get('path_public_html'));
-	error_log("DEBUG: " . "3. photo: " . $photo);
-	error_log("DEBUG: " . "4. noimage: " . $imageIfNotExists);
-	error_log("DEBUG: " . "5. : " . $_SERVER['DOCUMENT_ROOT'] . '/' . $photo);
-	error_log("DEBUG: " . "6. : " . class_settings::get('path_public_html') . $photo);
+	error_log("\nDEBUG: " . "1. server document root: " . $_SERVER['DOCUMENT_ROOT']);
+	error_log("\nDEBUG: " . "2. path_public_html: " . class_settings::get('path_public_html'));
+	error_log("\nDEBUG: " . "3. photo: " . $photo);
+	error_log("\nDEBUG: " . "4. noimage: " . $imageIfNotExists);
+	error_log("\nDEBUG: " . "5. : " . $_SERVER['DOCUMENT_ROOT'] . '/' . $photo);
+	error_log("\nDEBUG: " . "6. : " . class_settings::get('path_public_html') . $photo);
 
 	if ( !file_exists ( class_settings::get('path_public_html') . $photo ) ) {
 //	if ( !file_exists ( $_SERVER['DOCUMENT_ROOT'] . '/' . $photo ) ) {
