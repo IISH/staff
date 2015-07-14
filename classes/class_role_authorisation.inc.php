@@ -1,8 +1,7 @@
 <?php
 require_once "class_mysql.inc.php";
 
-class class_roles {
-	private $id = 0;
+class class_role_authorisation {
 	private $role = '';
 	private $description_lang1 = '';
 	private $description_lang2 = '';
@@ -14,24 +13,23 @@ class class_roles {
 	private $tab_fire = 0;
 
 	// TODOEXPLAIN
-	function __construct($id) {
+	function __construct($role) {
 		global $databases;
 		$this->databases = $databases;
 
-		$this->initValues( $id );
+		$this->initValues( $role );
 	}
 
 	// TODOEXPLAIN
-	private function initValues( $id ) {
+	private function initValues( $role ) {
 		$oConn = new class_mysql($this->databases['default']);
 		$oConn->connect();
 
-		$query = "SELECT * FROM Staff_roles WHERE ID=" . $id;
+		$query = "SELECT * FROM Staff_role_authorisation WHERE role='" . $role . "' ";
 
 		$res = mysql_query($query, $oConn->getConnection());
 		if ($r = mysql_fetch_assoc($res)) {
-			$this->id = $id;
-			$this->role = $r["role"];
+			$this->role = $role;
 			$this->description_lang1 = $r["description_lang1"];
 			$this->description_lang2 = $r["description_lang2"];
 			$this->field_inout_time = $r["field_inout_time"];
@@ -42,10 +40,6 @@ class class_roles {
 			$this->tab_fire = $r["tab_fire"];
 		}
 		mysql_free_result($res);
-	}
-
-	public function getId() {
-		return $this->id;
 	}
 
 	public function getRole() {

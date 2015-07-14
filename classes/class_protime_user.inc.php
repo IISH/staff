@@ -1,5 +1,5 @@
 <?php
-require_once "class_roles.inc.php";
+require_once "class_role_authorisation.inc.php";
 
 // TODOEXPLAIN
 class static_protime_user {
@@ -101,11 +101,11 @@ class class_protime_user {
 		$oConn = new class_mysql($this->databases['default']);
 		$oConn->connect();
 
-		$query = "SELECT * FROM Staff_roles WHERE isdeleted=0 ";
+		$query = "SELECT * FROM Staff_role_authorisation WHERE isdeleted=0 ";
 
 		$res = mysql_query($query, $oConn->getConnection());
 		while ($r = mysql_fetch_assoc($res)) {
-			$this->all_roles[] = new class_roles( $r["ID"] );
+			$this->all_roles[] = new class_role_authorisation( $r["role"] );
 		}
 		mysql_free_result($res);
 	}
