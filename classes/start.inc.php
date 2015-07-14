@@ -25,7 +25,7 @@ require_once dirname(__FILE__) . "/class_mysql.inc.php";
 require_once dirname(__FILE__) . "/class_page.inc.php";
 require_once dirname(__FILE__) . "/class_protime_user.inc.php";
 require_once dirname(__FILE__) . "/class_protime_user_schedule.inc.php";
-require_once dirname(__FILE__) . "/class_roles.inc.php";
+require_once dirname(__FILE__) . "/class_role_authorisation.inc.php";
 require_once dirname(__FILE__) . "/class_settings.inc.php";
 require_once dirname(__FILE__) . "/class_syncinfo.inc.php";
 require_once dirname(__FILE__) . "/class_syncprotimemysql.inc.php";
