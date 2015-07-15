@@ -89,30 +89,33 @@ ORDER BY CAST(PROTIME_CYC_DP.DAYNR AS UNSIGNED) ASC
 
 		switch ( $i ) {
 			case 0:
-				$dow = "Su";
+				$dow = "Sunday";
 				break;
 			case 1:
-				$dow = "Mo";
+				$dow = "Monday";
 				break;
 			case 2:
-				$dow = "Tu";
+				$dow = "Tuesday";
 				break;
 			case 3:
-				$dow = "We";
+				$dow = "Wednesday";
 				break;
 			case 4:
-				$dow = "Th";
+				$dow = "Thursday";
 				break;
 			case 5:
-				$dow = "Fr";
+				$dow = "Friday";
 				break;
 			case 6:
-				$dow = "Sa";
+				$dow = "Saturday";
 				break;
 			case 7:
-				$dow = "Su";
+				$dow = "Sunday";
 				break;
 		}
+
+		// TODO
+		$dow = substr($dow, 0, 1);
 
 		return $dow;
 	}

@@ -9,7 +9,7 @@ if ( !isset($settings) ) {
 $oWebuser->checkLoggedIn();
 
 if ( !$oWebuser->hasAuthorisationTabAbsences() ) {
-	die('Access denied.');
+	die('Access denied.<br><a href="index.php">Go back</a>');
 }
 
 //

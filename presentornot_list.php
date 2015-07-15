@@ -60,12 +60,16 @@ $retvalArray = array();
 while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
 	$photo = '';
 
+	$empName = $rowSelect["FIRSTNAME"] . " " . verplaatsTussenvoegselNaarBegin(trim($rowSelect["NAME"]));
+	$empName = removeJobFunctionFromName($empName);
+	$empName = trim($empName);
+
 	if ( $layout == 1 ) {
 		$tmp = "
 <tr>
 	<td><div id=\"divAddRemove" . $rowSelect["PERSNR"] . "\">::ADDREMOVE::</div></td>
 	<td><div id=\"divCheckInOut" . $rowSelect["PERSNR"] . "\">::CHECKINOUT::</div></td>
-	<td>" . createUrl( array( 'url' => 'employee.php?id=' . $rowSelect["PERSNR"], 'label' => fixBrokenChars(trim($rowSelect["FIRSTNAME"]) . " " . verplaatsTussenvoegselNaarBegin(trim($rowSelect["NAME"]))) ) ) . "</td>
+	<td>" . createUrl( array( 'url' => 'employee.php?id=' . $rowSelect["PERSNR"], 'label' => fixBrokenChars( $empName ) ) ) . "</td>
 	<td class=\"presentornot_absence\" style=\"::STATUS_STYLE::\"><A class=\"checkinouttime\" TITLE=\"::STATUS_ALT::\">::STATUS_TEXT::</A></td>
 	<td align=\"center\">" . cleanUpTelephone($rowSelect["USER02"]) . "</td>
 	<td align=\"center\">" . $rowSelect[ class_settings::get('curric_room') ]. "</td>
@@ -73,13 +77,14 @@ while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
 </tr>
 ";
 	} else {
+
 		$tmp = "
 <table class=\"photobook\">
 <tr class=\"photobook\">
 	<td  class=\"photobook\" colspan=4>::PHOTO::</td>
 </tr>
 <tr>
-	<td  class=\"photobook\" colspan=4>" . createUrl( array( 'url' => 'employee.php?id=' . $rowSelect["PERSNR"], 'label' => fixBrokenChars(trim($rowSelect["FIRSTNAME"]) . " " . verplaatsTussenvoegselNaarBegin(trim($rowSelect["NAME"]))) ) ) . "</td>
+	<td  class=\"photobook\" colspan=4>" . createUrl( array( 'url' => 'employee.php?id=' . $rowSelect["PERSNR"], 'label' => fixBrokenChars( $empName ) ) ) . "</td>
 </tr>
 <tr>
 	<td class=\"photobook\"><div id=\"divAddRemove" . $rowSelect["PERSNR"] . "\">::ADDREMOVE::</div></td>
@@ -93,6 +98,9 @@ while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
 ";
 
 		$photo = trim(trim($rowSelect["FIRSTNAME"]) . ' ' . trim(verplaatsTussenvoegselNaarBegin($rowSelect["NAME"])));
+		$photo = removeJobFunctionFromName($photo);
+		$photo = fixPhotoCharacters($photo);
+		$photo = replaceDoubleTripleSpaces($photo);
 		$photo = str_replace(' ', '.', $photo);
 		$photo = strtolower( $photo . '.jpg' );
 		$photo = checkImageExists( class_settings::get('staff_images_directory') . $photo, class_settings::get('noimage_file') );

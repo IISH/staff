@@ -52,18 +52,15 @@ function createStaffContent( ) {
 <table border=0 cellpadding=2 cellspacing=0>
 ";
 
-	$photo = trim(trim($staff->getFirstname()) . ' ' . trim(verplaatsTussenvoegselNaarBegin($staff->getLastname())));
-	$photo = str_replace(' ', '.', $photo);
-	$photo = strtolower( $photo . '.jpg' );
+	$photo = $staff->getPhoto();
 	$photo = checkImageExists( class_settings::get('staff_images_directory') . $photo, class_settings::get('noimage_file') );
-
 	$photo = "<img src=\"$photo\">";
 
 	// NAAM
 	$ret .= "
 <tr>
 	<td>Name:</td>
-	<td>" . $staff->getFirstname() . ' ' . verplaatsTussenvoegselNaarBegin($staff->getLastname()) . "</td>
+	<td>" . $staff->getNiceFirstLastname() . "</td>
 	<td width=\"20px\"></td>
 	<td rowspan=10 valign=top>$photo</td>
 </tr>

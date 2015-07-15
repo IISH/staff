@@ -1,4 +1,22 @@
 <?php
+function fixPhotoCharacters( $photo ) {
+	$photo =  iconv('Windows-1252', 'ASCII//TRANSLIT//IGNORE', $photo);
+	$photo = str_replace('`', '', $photo);
+	$photo = str_replace('"', '', $photo);
+	return $photo;
+}
+
+function removeJobFunctionFromName( $string ) {
+	$string = str_replace('(vrijwilliger)', '', $string);
+	$string = str_replace('(vrijwillig)', '', $string);
+
+	return $string;
+}
+
+function replaceDoubleTripleSpaces( $string ) {
+	return preg_replace('!\s+!', ' ', $string);
+}
+
 function valueOr( $value, $or = '?' ) {
 	return ( ( trim($value) != '' ) ? $value : $or );
 }

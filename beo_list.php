@@ -45,17 +45,24 @@ for( $i=0 ; $i <= $nrOfLevels; $i++ ) {
 
 while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
 	$verdieping = '';
+	$telephone = '';
+
+	$oEmployee = new class_protime_user($rowSelect["PERSNR"]);
 
 	if ( $oBeo->getShowLevel() ) {
 		$verdieping = "<td align=\"center\">" . cleanUpVerdieping($rowSelect["USER03"]) . "</td>";
 	}
 
+	if ( $oWebuser->hasAuthorisationBeoTelephone() ) {
+		$telephone = "<td align=\"center\">" . cleanUpTelephone($rowSelect["USER02"]) . "</td>";
+	}
+
 	$tmp = "
 <tr>
 	<td><div id=\"divCheckInOut" . $rowSelect["PERSNR"] . "\">::CHECKINOUT::</div></td>
-	<td>" . createUrl( array( 'url' => 'employee.php?id=' . $rowSelect["PERSNR"], 'label' => fixBrokenChars(trim($rowSelect["FIRSTNAME"]) . " " . verplaatsTussenvoegselNaarBegin(trim($rowSelect["NAME"]))) ) ) . "</td>
+	<td>" . createUrl( array( 'url' => 'employee.php?id=' .  $oEmployee->getId(), 'label' => fixBrokenChars( $oEmployee->getNiceFirstLastname() ) ) ) . "</td>
 	<td class=\"presentornot_absence\" style=\"::STATUS_STYLE::\"><A class=\"checkinouttime\" TITLE=\"::STATUS_ALT::\">::STATUS_TEXT::</A></td>
-	<td align=\"center\">" . cleanUpTelephone($rowSelect["USER02"]) . "</td>
+	$telephone
 	$verdieping
 </tr>
 ";
@@ -94,6 +101,9 @@ if ( $retval != '' ) {
 	if ( $oBeo->getShowLevel() ) {
 		$verdieping = "<td width=100 align=\"center\"><font size=-1><b>Level</b></font></td>";
 	}
+	if ( $oWebuser->hasAuthorisationBeoTelephone() ) {
+		$telephone = "<td width=100 align=\"center\"><font size=-1><b>Telephone</b></font></td>";
+	}
 
 	$retval = "
 <table border=0 cellspacing=1 cellpadding=1>
@@ -101,7 +111,7 @@ if ( $retval != '' ) {
 	<TD width=25></TD>
 	<TD width=250><font size=-1><b>Name</b></font></TD>
 	<td width=100 align=\"center\"><font size=-1><b>Check in/out</b></font></td>
-	<td width=100 align=\"center\"><font size=-1><b>Telephone</b></font></td>
+	$telephone
 	$verdieping
 </TR>
 " . $retval . "
