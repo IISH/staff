@@ -39,12 +39,9 @@ class class_protime_user {
 	protected $email = '';
 	protected $room = '';
 	protected $telephone = '';
-	protected $beo = '';
-	protected $authorisation = '';
+	protected $roles = array();
+	protected $authorisation = array();
 	protected $is_admin = false;
-	protected $is_tab_absences = false;
-	protected $is_tab_fire = false;
-	protected $all_roles = array();
 	protected $department;
 
 	// TODOEXPLAIN
@@ -84,111 +81,62 @@ class class_protime_user {
 
 			$this->room =  trim($row[class_settings::get('curric_room')]);
 			$this->telephone =  trim($row[class_settings::get('curric_telephone')]);
-			$this->beo =  trim($row[class_settings::get('curric_beo')]);
-//			$this->authorisation =  trim($row[class_settings::get('curric_authorisation')]);
 
 			$this->department = new class_department( $row["DEPART"] );
 
 			$this->calculateIsAdmin();
-
-			$this->getAllRoles();
-
+			$this->calculateRoles( $row[class_settings::get('curric_roles')] );
+			$this->calculateAuthorisation();
 		}
 		mysql_free_result($resultReset);
 	}
 
-	private function getAllRoles() {
-		$oConn = new class_mysql($this->databases['default']);
-		$oConn->connect();
+	private function calculateRoles( $roles ) {
+		$roles = trim($roles);
 
-		$query = "SELECT * FROM Staff_role_authorisation WHERE isdeleted=0 ";
+		$arrRoles = array();
 
-		$res = mysql_query($query, $oConn->getConnection());
-		while ($r = mysql_fetch_assoc($res)) {
-			$this->all_roles[] = new class_role_authorisation( $r["role"] );
-		}
-		mysql_free_result($res);
-	}
-
-	private function isAllowed( $authorisation, $field ) {
-		$is_allowed = false;
-
-		$arr = splitStringIntoArray( $authorisation, "/[^a-zA-Z0-9]/" );
-
+		$arr = splitStringIntoArray( $roles, "/[^a-zA-Z0-9]/" );
 		foreach ( $arr as $item ) {
-			if ( !$is_allowed ) {
 
-				foreach ( $this->all_roles as $role ) {
-					if ( !$is_allowed ) {
+			$item = trim($item);
+			$item = strtolower($item);
 
-						if ( strtolower($item) == strtolower($role->getRole()) ) {
-							switch ( $field ) {
-								case "tab_absences":
-									if ( $role->getTabAbsences() == 1 ) {
-										$is_allowed = true;
-									}
-									break;
-								case "tab_fire":
-									if ( $role->getTabFire() == 1 ) {
-										$is_allowed = true;
-									}
-									break;
-								case "tab_ontruimer":
-									if ( $role->getTabOntruimer() == 1 ) {
-										$is_allowed = true;
-									}
-									break;
-							}
-						}
-					}
-				}
+			if ( $item != '' ) {
+				$arrRoles[] = $item;
 			}
 		}
 
-		return $is_allowed;
+		$arrRoles = array_unique( $arrRoles );
+
+		$this->roles = $arrRoles;
 	}
 
-	private function hasRole( $authorisation, $field ) {
-		$is_allowed = false;
+	// TODO
+	private function calculateAuthorisation() {
+//			$this->authorisation =  trim($row[class_settings::get('curric_authorisation')]);
+//		$oConn = new class_mysql($this->databases['default']);
+//		$oConn->connect();
 
-		$arr = splitStringIntoArray( $authorisation, "/[^a-zA-Z0-9]/" );
+//		$query = "SELECT * FROM Staff_role_authorisation WHERE isdeleted=0 ";
 
-		foreach ( $arr as $item ) {
-			if ( !$is_allowed ) {
-
-				if ( strtolower($item) == strtolower($field) ) {
-					$is_allowed = true;
-				}
-
-			}
-		}
-
-		return $is_allowed;
+//		$res = mysql_query($query, $oConn->getConnection());
+//		while ($r = mysql_fetch_assoc($res)) {
+//			$this->all_roles[] = new class_role_authorisation( $r["role"] );
+//		}
+//		mysql_free_result($res);
 	}
 
-	function isTabAbsences() {
-		if ( $this->isAdmin() ) {
-			return true;
-		}
-
-		return $this->isAllowed($this->authorisation, "tab_absences" );
+	function hasAuthorisationTabAbsences() {
+		return ( $this->isAdmin() || in_array('tab_absences', $this->authorisation) );
 	}
 
 	function isBhv() {
-		return $this->hasRole($this->beo, "bhv" );
+		return in_array('bhv', $this->roles);
 	}
 
 	function isEhbo() {
-		$hasRole = false;
-
-		$roles = array('ehbo', 'e');
-		foreach ( $roles as $role ) {
-			if ( !$hasRole ) {
-				$hasRole = $this->hasRole($this->beo, $role );
-			}
-		}
-
-		return $hasRole;
+		return ( in_array('ehbo', $this->roles) || in_array('e', $this->roles) );
 	}
 
 	function isOntruimer() {
@@ -201,27 +149,19 @@ class class_protime_user {
 
 		foreach ( $roles as $role ) {
 			if ( !$hasRole ) {
-				$hasRole = $this->hasRole($this->beo, $role );
+				$hasRole = in_array($role, $this->roles);
 			}
 		}
 
 		return $hasRole;
 	}
 
-	function isTabFire() {
-		if ( $this->isAdmin() ) {
-			return true;
-		}
-
-		return $this->isAllowed($this->authorisation, "tab_fire" );
+	function hasAuthorisationTabFire() {
+		return ( $this->isAdmin() || in_array('tab_fire', $this->authorisation) );
 	}
 
-	function isTabOntruimer() {
-		if ( $this->isAdmin() ) {
-			return true;
-		}
-
-		return $this->isAllowed($this->authorisation, "tab_ontruimer" );
+	function hasAuthorisationTabOntruimer() {
+		return ( $this->isAdmin() || in_array('tab_ontruimer', $this->authorisation) );
 	}
 
 	private function calculateIsAdmin() {
@@ -266,19 +206,15 @@ class class_protime_user {
 
 	//
 	function isAdmin() {
-		// TODO: tijdelijk uitgezet
 		return $this->is_admin;
-		//return false;
 	}
 
-	// TODO
 	function hasInOutTimeAuthorisation() {
-		return false;
+		return ( $this->isAdmin() || in_array('inout_time', $this->authorisation) );
 	}
 
-	// TODO
-	function isHead() {
-		return false;
+	function isHeadOfDepartment() {
+		return in_array('hfd', $this->roles);
 	}
 
 	// TODOEXPLAIN

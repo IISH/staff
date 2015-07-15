@@ -8,7 +8,7 @@ if ( !isset($settings) ) {
 
 $oWebuser->checkLoggedIn();
 
-if ( !$oWebuser->isTabAbsences() ) {
+if ( !$oWebuser->hasAuthorisationTabAbsences() ) {
 	die('Access denied.');
 }
 
@@ -167,7 +167,7 @@ tcRefreshSearchStart();
 		$ret .= "<br>Legenda:<br>";
 		foreach ( $colors["td"] as $a => $b ) {
 			// TODO: hier moet gecontroleerd worden of persoon inout rechten heeft
-			if ( $oWebuser->hasInOutTimeAuthorisation() || $oWebuser->isAdmin() || $oWebuser->isTabAbsences() || $oWebuser->isHead() || in_array($a, array('vandaag', 'brugdag', 'holiday', 'vakantie', 'weekend')) ) {
+			if ( $oWebuser->hasInOutTimeAuthorisation() || $oWebuser->isAdmin() || $oWebuser->hasAuthorisationTabAbsences() || $oWebuser->isHeadOfDepartment() || in_array($a, array('vandaag', 'brugdag', 'holiday', 'vakantie', 'weekend')) ) {
 				if ( $a == 'vakantie' ) {
 					$a = 'afwezig';
 				}

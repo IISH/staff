@@ -30,7 +30,7 @@ foreach ( $protimeUsers as $protimeUser ) {
 	foreach ( $timecardUsers as $timecardUser ) {
 
 		// TODO: hier moet eigenlijk gecontroleerd worden of persoon inout tijden mag zien
-		if ( $timecardUser->hasInOutTimeAuthorisation() || $timecardUser->isAdmin() || $timecardUser->isHead() ) {
+		if ( $timecardUser->hasInOutTimeAuthorisation() || $timecardUser->isAdmin() || $timecardUser->isHeadOfDepartment() ) {
 			$body = trim( $protimeUser["user"]->getFirstname() . ' ' . $protimeUser["user"]->getLastname() ) . " has checked in at " . class_datetime::formatDate( $protimeUser["date"] ) . " " . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes( $protimeUser["time"] ) . " \r\n";
 		} else {
 			$body = trim( $protimeUser["user"]->getFirstname() . ' ' . $protimeUser["user"]->getLastname() ) . " has checked in. \r\n";

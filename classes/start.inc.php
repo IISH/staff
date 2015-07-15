@@ -42,16 +42,16 @@ $oWebuser = static_protime_user::getProtimeUserByLoginName( $_SESSION["loginname
 //
 $menu[] = new class_menuitem('protime.presentornot', 'Present or not', 'presentornot.php');
 $menu[] = new class_menuitem('protime.photobook', 'Photobook', 'photobook.php');
-if ( $oWebuser->isTabAbsences() ) {
+if ( $oWebuser->hasAuthorisationTabAbsences() ) {
 	$menu[] = new class_menuitem('protime.vakantie', 'Absences', 'absences.php');
 }
 $menu[] = new class_menuitem('protime.bhv', 'ERT (BHV)', 'bhv.php');
 $menu[] = new class_menuitem('protime.ehbo', 'First Aid (EHBO)', 'ehbo.php');
-if ( $oWebuser->isTabOntruimer() ) {
+if ( $oWebuser->hasAuthorisationTabOntruimer() ) {
 	$menu[] = new class_menuitem('protime.ontruimer', 'Evacuator (Ontruimer)', 'ontruimer.php');
 }
 $menu[] = new class_menuitem('protime.holidays', 'Nat. holidays', 'nationalholidays.php');
-if ( $oWebuser->isTabFire() ) {
+if ( $oWebuser->hasAuthorisationTabFire() ) {
 	$menu[] = new class_menuitem('protime.brand', 'Fire (Brand)', 'brand.php');
 }
 

@@ -8,7 +8,7 @@ if ( !isset($settings) ) {
 
 $oWebuser->checkLoggedIn();
 
-if ( !$oWebuser->isTabAbsences() ) {
+if ( !$oWebuser->hasAuthorisationTabAbsences() ) {
 	die('Access denied.');
 }
 
@@ -115,7 +115,7 @@ if ( $to_short != 1 ) {
 
 				// if person has no in/out time authorisation, then show only 'absent'
 				// TODO hier controlen op inout rechten
-				if ( !$oWebuser->hasInOutTimeAuthorisation() && !$oWebuser->isAdmin() && !$oWebuser->isTabAbsences() && !$oWebuser->isHead() ) {
+				if ( !$oWebuser->hasInOutTimeAuthorisation() && !$oWebuser->isAdmin() && !$oWebuser->hasAuthorisationTabAbsences() && !$oWebuser->isHeadOfDepartment() ) {
 					$cellStyleAlt = '';
 					$cellStyleHrefStyle = 'color:white;';
 				}
@@ -221,7 +221,7 @@ function getColors($selectedYear, $selectedMonth, $day, $absences = array(), $ho
 		for ($i = 0; $i < count($absences); $i++) {
 			if ( $datum == $absences[$i]["date"] ) {
 				// TODO hier controlen op inout rechten
-				if ( !$oWebuser->hasInOutTimeAuthorisation() && !$oWebuser->isAdmin() && !$oWebuser->isTabAbsences() && !$oWebuser->isHead() ) {
+				if ( !$oWebuser->hasInOutTimeAuthorisation() && !$oWebuser->isAdmin() && !$oWebuser->hasAuthorisationTabAbsences() && !$oWebuser->isHeadOfDepartment() ) {
 					$tdStyle = 'background-color: #C62431;';
 					$hrefStyle = 'color:white';
 					$alt = 'Absent';

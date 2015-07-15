@@ -92,7 +92,7 @@ function getStatusColor( $persnr, $date ) {
 			$status_alt .= 'In: ' . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes($row["BOOKTIME"]);
 			$aanwezig = 1;
 			// TODO: hier moet gecontroleerd worden of persoon check inout rechten heeft
-			if ( $oWebuser->hasInOutTimeAuthorisation() || $oWebuser->isAdmin() || $oWebuser->isHead() || $oWebuser->getId() == $persnr ) {
+			if ( $oWebuser->hasInOutTimeAuthorisation() || $oWebuser->isAdmin() || $oWebuser->isHeadOfDepartment() || $oWebuser->getId() == $persnr ) {
 				$status_text = 'In: ' . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes($row["BOOKTIME"]);
 			} else {
 				$status_text = 'In';
@@ -103,7 +103,7 @@ function getStatusColor( $persnr, $date ) {
 			$status_alt .= ' - Out: ' . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes($row["BOOKTIME"]) . "\n";
 			$aanwezig = 0;
 			// TODO: hier moet gecontroleerd worden of persoon check inout rechten heeft
-			if ( $oWebuser->hasInOutTimeAuthorisation() || $oWebuser->isAdmin() || $oWebuser->isHead() || $oWebuser->getId() == $persnr ) {
+			if ( $oWebuser->hasInOutTimeAuthorisation() || $oWebuser->isAdmin() || $oWebuser->isHeadOfDepartment() || $oWebuser->getId() == $persnr ) {
 				$status_text = 'Out: ' . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes($row["BOOKTIME"]);
 			} else {
 				$status_text = 'Out';
