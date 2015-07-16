@@ -1,4 +1,14 @@
 <?php
+function getLanguage() {
+	$language = 1;
+
+	if ( isset( $_SESSION['language'] ) && $_SESSION['language'] == '2' ) {
+		$language = $_SESSION['language'];
+	}
+
+	return $language;
+}
+
 function fixPhotoCharacters( $photo ) {
 	$photo =  iconv('Windows-1252', 'ASCII//TRANSLIT//IGNORE', $photo);
 	$photo = str_replace('`', '', $photo);
@@ -107,24 +117,27 @@ function getStatusColor( $persnr, $date ) {
 		if ( $status == 1 ) {
 			// green cell
 			$status_color = 'background-color:green;color:white;';
-			$status_alt .= 'In: ' . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes($row["BOOKTIME"]);
+			$status_alt .= class_translations::get('in') . ': ' . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes($row["BOOKTIME"]);
 			$aanwezig = 1;
-			// TODO: hier moet gecontroleerd worden of persoon check inout rechten heeft
+			// check if user has inout_tme rights
+			// TODO: check if headOfDepartment and if so, check if current user, one of his subemployees is
+			//
 			if ( $oWebuser->hasInOutTimeAuthorisation() || $oWebuser->isAdmin() || $oWebuser->isHeadOfDepartment() || $oWebuser->getId() == $persnr ) {
-				$status_text = 'In: ' . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes($row["BOOKTIME"]);
+				$status_text = class_translations::get('in') . ': ' . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes($row["BOOKTIME"]);
 			} else {
-				$status_text = 'In';
+				$status_text = class_translations::get('in');
 			}
 		} else {
 			// red cell
 			$status_color = 'background-color:#C62431;color:white;';
-			$status_alt .= ' - Out: ' . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes($row["BOOKTIME"]) . "\n";
+			$status_alt .= ' - ' . class_translations::get('out') . ': ' . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes($row["BOOKTIME"]) . "\n";
 			$aanwezig = 0;
-			// TODO: hier moet gecontroleerd worden of persoon check inout rechten heeft
+			// check if user has inout_tme rights
+			// TODO: check if headOfDepartment and if so, check if current user, one of his subemployees is
 			if ( $oWebuser->hasInOutTimeAuthorisation() || $oWebuser->isAdmin() || $oWebuser->isHeadOfDepartment() || $oWebuser->getId() == $persnr ) {
-				$status_text = 'Out: ' . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes($row["BOOKTIME"]);
+				$status_text = class_translations::get('out') . ': ' . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes($row["BOOKTIME"]);
 			} else {
-				$status_text = 'Out';
+				$status_text = class_translations::get('out');
 			}
 		}
 
@@ -144,7 +157,7 @@ function getStatusColor( $persnr, $date ) {
 
 		// SHORT_1 - dutch, SHORT_2 - english
 		$query = "
-SELECT DISTINCT ${prefix}ABSENCE.SHORT_2
+SELECT DISTINCT ${prefix}ABSENCE.SHORT_" . getLanguage() . "
 FROM ${prefix}P_ABSENCE
 	INNER JOIN ${prefix}ABSENCE ON ${prefix}P_ABSENCE.ABSENCE = ${prefix}ABSENCE.ABSENCE
 WHERE ${prefix}P_ABSENCE.PERSNR = " . $persnr . " AND ${prefix}P_ABSENCE.BOOKDATE = '" . $date . "'
@@ -153,7 +166,14 @@ WHERE ${prefix}P_ABSENCE.PERSNR = " . $persnr . " AND ${prefix}P_ABSENCE.BOOKDAT
 		$status_separator = '';
 		while ( $row = mysql_fetch_assoc($result) ) {
 			// SHORT_1 - dutch, SHORT_2 - english
-			$status_text .= $status_separator . $row["SHORT_2"];
+// TODO: controleer of persoon wel de status mag zien
+			$reasonAbsence = $row["SHORT_" . getLanguage()];
+			if ( !$oWebuser->hasAuthorisationReasonAbsence() ) {
+				if ( !class_allowed_visible_absences::in_array($reasonAbsence) ) {
+					$reasonAbsence = class_translations::get('default_absent_value');
+				}
+			}
+			$status_text .= $status_separator . $reasonAbsence;
 			$status_separator = ', ';
 		}
 		mysql_free_result($result);

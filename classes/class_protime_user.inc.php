@@ -54,6 +54,7 @@ class static_protime_user {
 // TODOEXPLAIN
 class class_protime_user {
 	protected $protime_id = 0;
+	protected $isLoaded_loginname = false;
 	protected $loginname = '';
 	protected $databases;
 	protected $firstname = '';
@@ -68,6 +69,8 @@ class class_protime_user {
 	protected $is_admin = false;
 	protected $department;
 	protected $oDepartment;
+//	protected $arrAllowedVisibleAbsences = array();
+//	protected $isLoaded_arrAllowedVisibleAbsences = false;
 
 	// TODOEXPLAIN
 	function __construct($protime_id) {
@@ -103,12 +106,13 @@ class class_protime_user {
 			$this->oDepartment = new class_department( $row["DEPART"] );
 			$this->roles = $row[class_settings::get('curric_roles')];
 
-			$this->calculateIsAdmin();
 			$this->calculateRoles();
 			$this->calculateAuthorisation();
 			$this->fixLoginName();
+			$this->calculateIsAdmin();
 		}
 		mysql_free_result($resultReset);
+
 	}
 
 	private function fixLoginName() {
@@ -122,6 +126,7 @@ class class_protime_user {
 		$new = strtolower($new);
 
 		$this->loginname = $new;
+		$this->isLoaded_loginname = true;
 	}
 
 	private function calculateRoles() {
@@ -232,6 +237,11 @@ class class_protime_user {
 		return ( $this->isAdmin() || in_array('tab_fire', $this->arrAuthorisation) );
 	}
 
+	function hasAuthorisationReasonAbsence() {
+		return false;
+		//return ( $this->isAdmin() || in_array('reason_absence', $this->arrAuthorisation) );
+	}
+
 	function hasAuthorisationBeoTelephone() {
 		return ( $this->isAdmin() || in_array('beo_telephone', $this->arrAuthorisation) );
 	}
@@ -241,6 +251,10 @@ class class_protime_user {
 	}
 
 	private function calculateIsAdmin() {
+		if ( !$this->isLoaded_loginname ) {
+			$this->fixLoginName();
+		}
+
 		// check if and set is_admin
 		$arr = splitStringIntoArray(class_settings::get('superadmin'), "/[^a-zA-Z0-9\.]/");
 		if ( in_array( $this->loginname, $arr ) ) {
@@ -310,7 +324,7 @@ class class_protime_user {
 	}
 
 	function isHeadOfDepartment() {
-		return in_array('hfd', $this->arrRoles);
+		return ( $this->isAdmin() || in_array('hfd', $this->arrRoles) );
 	}
 
 	// TODOEXPLAIN
@@ -351,4 +365,5 @@ class class_protime_user {
 
 		return $ids;
 	}
+
 }

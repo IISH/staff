@@ -13,7 +13,7 @@ $date = class_datetime::get_date($protect);
 
 // create webpage
 $oPage = new class_page('design/page.php', $settings);
-$oPage->setTitle('Staff | Brand');
+$oPage->setTitle('Staff | ' . class_translations::get('menu_fire'));
 $oPage->setContent(createBrandContent( ));
 
 // show page
@@ -24,25 +24,25 @@ function createBrandContent( ) {
 	global $databases;
 
 	$total_of_present_employees = 0;
-	$title = 'BRAND / Calamiteitenlijst';
+	$title = class_translations::get('header_fire');
 	$ret = "<h2>$title</h2>
 Overzicht van " . date("d-m-Y") . " om " . date("H:i:s") . "<br><br>";
 
 	//
-	$oBeoMedewerker = new class_beo( 'mnotonotb' );
-	$oBeoOntruimer = new class_beo( 'o' );
-	$oBeoBhv = new class_beo( 'b' );
+	$oBeoMedewerker = new class_beo( 'mnotonotb', class_translations::get('employees') );
+	$oBeoOntruimer = new class_beo( 'o',  class_translations::get('menu_evacuator'));
+	$oBeoBhv = new class_beo( 'b', class_translations::get('menu_ert'));
 	$loop = array();
 	$loop[] = array(
-			'label' => 'Medewerkers'
+			'label' => class_translations::get('employees')
 			, 'query' => "SELECT * FROM " . class_settings::get('protime_tables_prefix') . "CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) AND " . $oBeoMedewerker->getQuery() . " ORDER BY NAME, FIRSTNAME "
 		);
 	$loop[] = array(
-			'label' => 'Ontruimers'
+			'label' => class_translations::get('menu_evacuator')
 			, 'query' => "SELECT * FROM " . class_settings::get('protime_tables_prefix') . "CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) AND " . $oBeoOntruimer->getQuery() . " ORDER BY NAME, FIRSTNAME "
 		);
 	$loop[] = array(
-			'label' => 'BHV'
+			'label' => class_translations::get('menu_ert')
 			, 'query' => "SELECT * FROM " . class_settings::get('protime_tables_prefix') . "CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) AND " . $oBeoBhv->getQuery() . " ORDER BY NAME, FIRSTNAME "
 		);
 

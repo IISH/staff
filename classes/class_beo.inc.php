@@ -1,6 +1,8 @@
 <?php
 class class_beo {
 	var $type = '';
+	var $label = '';
+
 	var $typeOfBeo = array(
 			'b' => array(
 					'label' => '<a title="Emergency Response Team">ERT</a> (<a title="Bedrijfshulpverlening">BHV</a>)'
@@ -29,8 +31,9 @@ class class_beo {
 		);
 
 	// TODOEXPLAIN
-	function __construct( $beo ) {
+	function __construct( $beo, $label ) {
 		$this->type = strtolower($beo);
+		$this->label = $label;
 		$this->protectTypeOfBeo();
 	}
 
@@ -41,7 +44,8 @@ class class_beo {
 
 	// TODOEXPLAIN
 	function getLabel() {
-		return $this->typeOfBeo[$this->type]['label'];
+//		return $this->typeOfBeo[$this->type]['label'];
+		return $this->label;
 	}
 
 	// TODOEXPLAIN

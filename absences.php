@@ -16,7 +16,7 @@ $date = class_datetime::get_date($protect);
 
 // create webpage
 $oPage = new class_page('design/page.php', $settings);
-$oPage->setTitle('Staff | Absences');
+$oPage->setTitle('Staff | ' . class_translations::get('menu_absences'));
 $oPage->setContent(createPresentContent( ));
 
 // show page
@@ -32,7 +32,7 @@ function createPresentContent( ) {
 	$s = getAndProtectSearch();
 
 	$ret = "
-<h2>Absences</h2>
+<h2>" . class_translations::get('menu_absences') . "</h2>
 
 <script type=\"text/javascript\">
 <!--

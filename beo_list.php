@@ -4,7 +4,7 @@ require_once "classes/start.inc.php";
 require_once "classes/class_beo.inc.php";
 
 //
-$oBeo = new class_beo( isset($type_of_beo) ? $type_of_beo : '' );
+$oBeo = new class_beo( (isset($type_of_beo) ? $type_of_beo : ''), $label );
 
 //
 if ( !isset($settings) ) {

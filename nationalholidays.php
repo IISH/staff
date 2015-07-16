@@ -8,7 +8,7 @@ if ( !isset($settings) ) {
 
 // create webpage
 $oPage = new class_page('design/page.php', $settings);
-$oPage->setTitle('Staff | National holidays');
+$oPage->setTitle('Staff | ' . class_translations::get('menu_nationalholidays'));
 $oPage->setContent(createNationalHolidaysContent( ));
 
 // show page
@@ -18,7 +18,7 @@ echo $oPage->getPage();
 function createNationalHolidaysContent( ) {
     global $databases;
 
-	$ret = "<h2>National holidays</h2><br>";
+	$ret = "<h2>" . class_translations::get('menu_nationalholidays') . "</h2><br>";
 
 	require_once("./classes/class_mysql.inc.php");
 	require_once("./classes/class_view/class_view.inc.php");
