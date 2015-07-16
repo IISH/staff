@@ -40,13 +40,7 @@ class class_page {
 		$welcome = class_translations::get('welcome');
 		$logout = '';
 		if ( $oWebuser->isLoggedIn() ) {
-			$welcome .= ', ';
-
-            if ( trim($oWebuser->getFirstname() . ' ' . $oWebuser->getLastname()) != '' ) {
-                $welcome .= $oWebuser->getFirstname() . ' ' . $oWebuser->getLastname();
-            } else {
-                $welcome .= $oWebuser->getUser();
-            }
+			$welcome .= ', ' . $oWebuser->getNiceFirstLastname();
 
 			$logout = '<a href="logout.php" onclick="if (!confirm(\'' . class_translations::get('confirm') . '\')) return false;">(' . class_translations::get('logout') . ')</a>';
 		}

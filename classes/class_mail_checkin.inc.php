@@ -76,11 +76,12 @@ class class_mail_checkin {
 	}
 
 	// TODOEXPLAIN
-	function deleteNotification( $user, $protime_id ) {
+//	function deleteNotification( $user, $protime_id ) {
+	function deleteNotification( $protime_id ) {
 		$oConn = new class_mysql($this->databases['default']);
 		$oConn->connect();
 
-		$query = 'DELETE FROM Staff_favourites WHERE user=\'' . $user . '\' AND ProtimeID=' . $protime_id . ' AND type=\'checkinout\' ';
+		$query = 'DELETE FROM Staff_favourites WHERE ProtimeID=' . $protime_id . ' AND type=\'checkinout\' ';
 		mysql_query($query, $oConn->getConnection());
 	}
 }

@@ -38,9 +38,10 @@ foreach ( $protimeUsers as $protimeUser ) {
 		$body .= "E-mail sent at " . date("d-m-Y H:i");
 
         if ( $timecardUser->getEmail() != '' ) {
-            mail( $timecardUser->getEmail(), $subject, $body, $headers );
-		    $oMail->deleteNotification( $timecardUser->getUser(), $protimeUser["user"]->getId() );
+	        mail( $timecardUser->getEmail(), $subject, $body, $headers );
+	        //$oMail->deleteNotification( $timecardUser->getUser(), $protimeUser["user"]->getId() );
         }
 	}
+	$oMail->deleteNotification( $protimeUser["user"]->getId() );
 }
 ?>Done <em>(<?php echo date("Y-m-d H:i:s"); ?>)</em>
