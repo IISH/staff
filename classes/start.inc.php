@@ -13,7 +13,6 @@ if ( !isset($_SESSION["loginname"]) ) {
 require_once dirname(__FILE__) . "/../sites/default/staff.settings.php";
 require_once dirname(__FILE__) . "/colors.inc.php";
 require_once dirname(__FILE__) . "/_misc_functions.inc.php";
-
 require_once dirname(__FILE__) . "/class_allowed_visible_absences.inc.php";
 require_once dirname(__FILE__) . "/class_authentication.inc.php";
 require_once dirname(__FILE__) . "/class_date.inc.php";

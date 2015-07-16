@@ -1,4 +1,6 @@
-<?php 
+<?php
+require_once "classes/_misc_functions.inc.php";
+
 /**
  * Class for loading and getting translations from the database
  * @version 0.1 2015-07-12
@@ -13,6 +15,7 @@ class class_translations {
 	 */
 	private static function load() {
 		global $databases;
+		$language = getLanguage();
 
 		$oConn = new class_mysql($databases['default']);
 		$oConn->connect();
@@ -20,11 +23,6 @@ class class_translations {
 		$arr = array();
 
 		// which language are we using (protime has only 2 languages)
-		$language = 1;
-		if ( isset( $_SESSION['language'] ) && $_SESSION['language'] == '2' ) {
-			$language = $_SESSION['language'];
-		}
-
 		$result = mysql_query('SELECT * FROM ' . self::$settings_table, $oConn->getConnection());
 		if ( mysql_num_rows($result) > 0 ) {
 

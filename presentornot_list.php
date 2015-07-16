@@ -1,5 +1,6 @@
 <?php 
 //
+require_once "classes/class_translations.inc.php";
 require_once "classes/start.inc.php";
 
 //
