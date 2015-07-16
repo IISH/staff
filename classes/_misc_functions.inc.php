@@ -3,8 +3,10 @@ function getLanguage() {
 	$language = 1;
 
 	if ( isset( $_SESSION['language'] ) && $_SESSION['language'] == 2 ) {
-		$language = $_SESSION['language'];
+		$language = 2;
 	}
+
+	$_SESSION['language'] = $language;
 
 	return $language;
 }

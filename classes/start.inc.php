@@ -1,16 +1,15 @@
-<?php 
-session_start(); ///////////////
+<?php
+session_start();
 
 //
 $settings = array();
-$menu = array();
+require_once dirname(__FILE__) . "/../sites/default/staff.settings.php";
 
 if ( !isset($_SESSION["loginname"]) ) {
 	$_SESSION["loginname"] = '';
 }
 
 //
-require_once dirname(__FILE__) . "/../sites/default/staff.settings.php";
 require_once dirname(__FILE__) . "/colors.inc.php";
 require_once dirname(__FILE__) . "/_misc_functions.inc.php";
 require_once dirname(__FILE__) . "/class_allowed_visible_absences.inc.php";
@@ -40,6 +39,7 @@ $protect = new class_website_protection();
 $oWebuser = static_protime_user::getProtimeUserByLoginName( $_SESSION["loginname"] );
 
 //
+$menu = array();
 $menu[] = new class_menuitem('protime.presentornot', class_translations::get('menu_presentornot'), 'presentornot.php');
 $menu[] = new class_menuitem('protime.photobook', class_translations::get('menu_photobook'), 'photobook.php');
 if ( $oWebuser->hasAuthorisationTabAbsences() ) {
