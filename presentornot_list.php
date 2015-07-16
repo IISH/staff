@@ -40,7 +40,7 @@ if ( $s == '-a-' ) {
     $title = 'Your favourites';
 } else {
 	// search
-	$queryCriterium = Generate_Query(array("NAME", "FIRSTNAME", "EMAIL", "USER02"), explode(' ', $s));
+	$queryCriterium = Generate_Query(array("NAME", "FIRSTNAME", "EMAIL", "USER02", class_settings::get('curric_room')), explode(' ', $s));
     $title = 'Search: ' . $s;
 }
 

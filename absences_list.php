@@ -34,7 +34,7 @@ if ( $s == '' ) {
 		$queryCriterium = ' AND 1=0 ';
 	} else {
 		// search
-		$queryCriterium = Generate_Query(array("NAME", "FIRSTNAME", "EMAIL", "USER02"), explode(' ', $s));
+		$queryCriterium = Generate_Query(array("NAME", "FIRSTNAME", "EMAIL", "USER02", class_settings::get('curric_room')), explode(' ', $s));
 	}
 }
 
@@ -73,10 +73,15 @@ if ( $to_short != 1 ) {
 	$resultSelect = mysql_query($querySelect, $oProtime->getConnection());
 
 	while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
+
+		$empName = $rowSelect["FIRSTNAME"] . " " . verplaatsTussenvoegselNaarBegin(trim($rowSelect["NAME"]));
+		$empName = removeJobFunctionFromName($empName);
+		$empName = trim($empName);
+
 		$tmp = "
 <TR>
 	<TD><div id=\"divAddRemove" . $rowSelect["PERSNR"] . "\">::ADDREMOVE::</div></TD>
-	<TD>" . createUrl( array( 'url' => 'employee.php?id=' . $rowSelect["PERSNR"], 'label' => fixBrokenChars(trim($rowSelect["FIRSTNAME"]) . " " . verplaatsTussenvoegselNaarBegin(trim($rowSelect["NAME"]))) ) ) . "</TD>
+	<TD>" . createUrl( array( 'url' => 'employee.php?id=' . $rowSelect["PERSNR"], 'label' => fixBrokenChars( $empName ) ) ) . "</TD>
 	<td class=\"presentornot_absence\" style=\"::STATUS_STYLE::\"><A class=\"checkinouttime\" TITLE=\"::STATUS_ALT::\">::STATUS_TEXT::</A></td>
 	<TD></TD>
 	<TD align=\"center\">::VAKANTIE::</TD>

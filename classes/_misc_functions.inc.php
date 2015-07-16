@@ -19,8 +19,9 @@ function fixPhotoCharacters( $photo ) {
 }
 
 function removeJobFunctionFromName( $string ) {
-	$string = str_replace('(vrijwilliger)', '', $string);
-	$string = str_replace('(vrijwillig)', '', $string);
+	$string = str_ireplace('(vrijwilliger)', '', $string);
+	$string = str_ireplace('(vrijwillig)', '', $string);
+	$string = str_ireplace('(stz)', '', $string);
 
 	return $string;
 }
@@ -278,8 +279,10 @@ function Generate_Query($arrField, $arrSearch) {
 		$separatorBetweenFields = '';
 		$retval .= $separatorBetweenValues . " ( ";
 		foreach ( $arrField as $field) {
-			$retval .= $separatorBetweenFields . $field . " LIKE '%" . $value . "%' ";
-			$separatorBetweenFields = " OR ";
+			if ( trim($field) != '' ) {
+				$retval .= $separatorBetweenFields . $field . " LIKE '%" . $value . "%' ";
+				$separatorBetweenFields = " OR ";
+			}
 		}
 		$retval .= " ) ";
 		$separatorBetweenValues = " AND ";

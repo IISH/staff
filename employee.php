@@ -30,7 +30,7 @@ function createStaffContent( ) {
 	$staff = new class_protime_user($id);
 
 	// header
-	$ret = '<h2>' . $staff->getFirstname() . ' ' . verplaatsTussenvoegselNaarBegin($staff->getLastname()) . '</h2>';
+	$ret = '<h2>' . $staff->getNiceFirstLastname() . '</h2>';
 
 	// go back
 	$goback = getReferer();
