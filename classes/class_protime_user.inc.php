@@ -238,8 +238,7 @@ class class_protime_user {
 	}
 
 	function hasAuthorisationReasonAbsence() {
-		return false;
-		//return ( $this->isAdmin() || in_array('reason_absence', $this->arrAuthorisation) );
+		return ( $this->isAdmin() || in_array('reason_absence', $this->arrAuthorisation) );
 	}
 
 	function hasAuthorisationBeoTelephone() {
