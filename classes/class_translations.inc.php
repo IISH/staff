@@ -1,10 +1,11 @@
 <?php
-require_once "classes/_misc_functions.inc.php";
-
 /**
  * Class for loading and getting translations from the database
  * @version 0.1 2015-07-12
  */
+
+require_once dirname(__FILE__) . "/../classes/_misc_functions.inc.php";
+
 class class_translations {
 	private static $is_loaded = false;
 	private static $settings = null;
