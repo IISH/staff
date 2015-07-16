@@ -11,7 +11,7 @@ if ( isset($_GET["cron_key"]) ) {
 } elseif ( isset($_POST["cron_key"]) ) {
 	$cron_key = $_POST["cron_key"];
 }
-if ( trim( $cron_key ) != class_settings::getSetting('cron_key') ) {
+if ( trim( $cron_key ) != class_settings::get('cron_key') ) {
 	die('Error: Incorrect cron key...');
 }
 

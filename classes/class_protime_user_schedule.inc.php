@@ -27,10 +27,12 @@ FROM PROTIME_LNK_CURRIC_PROFILE
 	LEFT JOIN PROTIME_CYC_DP ON PROTIME_LNK_CURRIC_PROFILE.PROFILE = PROTIME_CYC_DP.CYCLIQ
 	LEFT JOIN PROTIME_DAYPROG ON PROTIME_CYC_DP.DAYPROG = PROTIME_DAYPROG.DAYPROG
 WHERE PROFILETYPE = '4'
-	AND PERSNR = '" . $this->persnr . "'
+	AND PROTIME_LNK_CURRIC_PROFILE.PERSNR = '" . $this->persnr . "'
 	AND PROTIME_LNK_CURRIC_PROFILE.DATEFROM < '" . ($this->last_year+1)  . "'
 ORDER BY CAST(PROTIME_CYC_DP.DAYNR AS UNSIGNED) ASC
 ";
+
+//echo $query . ' ++++<br>';
 
 		$result = mysql_query($query, $oConn->getConnection());
 		while ($row = mysql_fetch_assoc($result)) {
