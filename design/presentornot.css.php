@@ -284,3 +284,36 @@ td.photobook {
 	border-style: solid;
 	border-width: thin;
 }
+
+table.employee_schedule {
+	border-spacing: 0;
+	border-collapse: collapse;
+}
+
+tr.employee_schedule {
+}
+
+th.employee_schedule {
+	border-style: solid;
+	border-width: thin;
+	border-color: lightgrey;
+	font-size: 90%;
+	width: 28px;
+	text-align: center;
+}
+
+td.employee_schedule {
+	border-style: solid;
+	border-width: thin;
+	border-color: lightgrey;
+	font-size: 90%;
+	text-align: center;
+}
+
+th.employee_schedule_accentuate {
+	background-color: yellow;
+}
+
+td.employee_schedule_accentuate {
+	background-color: yellow;
+}

@@ -29,10 +29,8 @@ FROM PROTIME_LNK_CURRIC_PROFILE
 WHERE PROFILETYPE = '4'
 	AND PROTIME_LNK_CURRIC_PROFILE.PERSNR = '" . $this->persnr . "'
 	AND PROTIME_LNK_CURRIC_PROFILE.DATEFROM < '" . ($this->last_year+1)  . "'
-ORDER BY CAST(PROTIME_CYC_DP.DAYNR AS UNSIGNED) ASC
+ORDER BY PROTIME_LNK_CURRIC_PROFILE.DATEFROM DESC, CAST(PROTIME_CYC_DP.DAYNR AS UNSIGNED) ASC
 ";
-
-//echo $query . ' ++++<br>';
 
 		$result = mysql_query($query, $oConn->getConnection());
 		while ($row = mysql_fetch_assoc($result)) {
@@ -61,21 +59,56 @@ ORDER BY CAST(PROTIME_CYC_DP.DAYNR AS UNSIGNED) ASC
 		$separator = '';
 		$lastWeekday = 0;
 
-		foreach ( $this->arr as $element ) {
-			if ( $lastDate == '' || $lastDate == $element['date'] ) {
-				if ( $element['dayOfWeek'] < $lastWeekday ) {
-					$separator = '<br>';
-				}
+		if ( count( $this->arr ) > 0 ) {
 
-				// TODO: show when 1-5, or > 0, or persmuseum
-				if ( ( $element['dayOfWeek'] >= 1 && $element['dayOfWeek'] <= 5 ) || $element['minutes'] > 0 || $show_all_weekdays ) {
-					$ret .=  $separator . $this->dow($element['dayOfWeek']) . ': ' . number_format(($element['minutes']/60),1);
-					$separator = ', ';
+			// calculate how many days in a week should we show
+			$nrOfDays = 5;
+			foreach ( $this->arr as $element ) {
+				if ( $element['dayOfWeek'] >= 6 && $element['minutes'] > 0 ) {
+					$nrOfDays = 7;
+					break;
 				}
-
-				$lastDate = $element['date'];
-				$lastWeekday = $element['dayOfWeek'];
 			}
+
+			//
+			$currentDayOfWeek = date('N');
+
+			//
+			$ret .= "
+<table class=\"employee_schedule\">
+<tr class=\"employee_schedule\">
+";
+			$ret .= '';
+
+			for ( $i = 1; $i <= $nrOfDays; $i++ ) {
+				$backgroundColor = ( ( $currentDayOfWeek == $i ) ? 'employee_schedule_accentuate' : '' );
+				$ret .= "   <th class=\"employee_schedule $backgroundColor\">" . $this->dow($i) . "</th>\n";
+			}
+			$ret .= "</tr>
+<tr>
+";
+			foreach ( $this->arr as $element ) {
+				if ( $lastDate == '' || $lastDate == $element['date'] ) {
+
+					if ( $element['dayOfWeek'] < $lastWeekday ) {
+						$ret .= "</tr>
+";
+					}
+
+					if ( $element['dayOfWeek'] <= $nrOfDays ) {
+						$backgroundColor = ( ( $currentDayOfWeek == $element['dayOfWeek'] ) ? 'employee_schedule_accentuate' : '' );
+						$value = $element['minutes'];
+						$value = ( $value == 0 ) ? '&nbsp;' : number_format(($value/60),1);
+						$ret .=  "  <td class=\"employee_schedule $backgroundColor\">" . $value . "</td>\n";
+					}
+
+					$lastDate = $element['date'];
+					$lastWeekday = $element['dayOfWeek'];
+				}
+			}
+			$ret .= "</tr>
+</table>
+";
 		}
 
 		return $ret;

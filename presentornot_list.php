@@ -176,8 +176,8 @@ if ( count($retvalArray) > 0 ) {
 	<TD width=25></TD>
 	<TD width=250><font size=-1><b>Name</b></font></TD>
 	<td width=100 align=\"center\"><font size=-1><b>Check in/out</b></font></td>
-	<td width=80 align=\"center\"><font size=-1><b>Telephone</b></font></td>
-	<td width=60 align=\"center\"><font size=-1><b>Room</b></font></td>
+	<td width=100 align=\"center\"><font size=-1><b>Telephone</b></font></td>
+	<td width=100 align=\"center\"><font size=-1><b>Room</b></font></td>
 </TR>";
 
 		foreach ( $retvalArray as $item ) {
