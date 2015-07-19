@@ -15,16 +15,15 @@ if ( !$oWebuser->hasAuthorisationTabAbsences() ) {
 $date = class_datetime::get_date($protect);
 
 // create webpage
-$oPage = new class_page('design/page.php', $settings);
-$oPage->setTitle('Staff | ' . class_translations::get('menu_absences'));
+$oPage = new Page('design/page.php', $settings);
+$oPage->setTitle('Staff | ' . Translations::get('menu_absences'));
 $oPage->setContent(createPresentContent( ));
 
 // show page
 echo $oPage->getPage();
 
-// TODOEXPLAIN
 function createPresentContent( ) {
-	global $colors, $oWebuser;
+	global $oWebuser;
 
 	$refreshAfterXSeconds = 60;
 
@@ -32,7 +31,7 @@ function createPresentContent( ) {
 	$s = getAndProtectSearch();
 
 	$ret = "
-<h2>" . class_translations::get('menu_absences') . "</h2>
+<h2>" . Translations::get('menu_absences') . "</h2>
 
 <script type=\"text/javascript\">
 <!--
@@ -69,7 +68,6 @@ if (!xmlhttpAddRemove && window.createRequest) {
 	}
 }
 
-// TODOEXPLAIN
 function setYearMonth(year, month) {
 	document.getElementById('fldMonth').value = month;
 	document.getElementById('fldYear').value = year;
@@ -78,7 +76,6 @@ function setYearMonth(year, month) {
 	tcRefreshSearch();
 }
 
-// TODOEXPLAIN
 function setMonth(value) {
 	var month = parseInt(document.getElementById('fldMonth').value,10);
 	var year = parseInt(document.getElementById('fldYear').value,10);
@@ -92,14 +89,11 @@ function setMonth(value) {
 	}
 
 	setYearMonth(year, month);
-	//document.getElementById('fldMonth').value = month;
-	//document.getElementById('fldYear').value = year;
 }
 
-// TODOEXPLAIN
 function tcRefreshSearch() {
-	var strZoek = document.getElementById('fldZoek').value;
-	xmlhttpSearch.open(\"GET\", \"absences_list.php?s=\" + escape(document.getElementById('fldZoek').value) + \"&y=\" + escape(document.getElementById('fldYear').value) + \"&m=\" + escape(document.getElementById('fldMonth').value), true);
+	var strSearch = document.getElementById('fldSearch').value;
+	xmlhttpSearch.open(\"GET\", \"absences_list.php?s=\" + escape(strSearch) + \"&y=\" + escape(document.getElementById('fldYear').value) + \"&m=\" + escape(document.getElementById('fldMonth').value), true);
 	xmlhttpSearch.onreadystatechange=function() {
 		if (xmlhttpSearch.readyState==4) {
 			document.getElementById('tcContentSearch').innerHTML = xmlhttpSearch.responseText;
@@ -108,7 +102,6 @@ function tcRefreshSearch() {
 	xmlhttpSearch.send(null);
 }
 
-// TODOEXPLAIN
 function tcRefreshSearchStart() {
 	tcRefreshSearch();
 
@@ -116,7 +109,6 @@ function tcRefreshSearchStart() {
 	var t = setTimeout(\"tcRefreshSearchStart()\", " . $refreshAfterXSeconds . " * 1000);
 }
 
-// TODOEXPLAIN
 function addRemove(pid, dowhat) {
 	document.getElementById('divAddRemove'+pid).innerHTML = '';
 	xmlhttpAddRemove.open(\"GET\", \"addremove_favourite.php?id=\" + pid + \"&dowhat=\" + dowhat + \"&fav=vakantie\", true);
@@ -128,9 +120,8 @@ function addRemove(pid, dowhat) {
 	xmlhttpAddRemove.send(null);
 }
 
-// TODOEXPLAIN
 function setSearchField(fldValue) {
-	document.getElementById('fldZoek').value = fldValue;
+	document.getElementById('fldSearch').value = fldValue;
 	tcRefreshSearch();
 	return false;
 }
@@ -141,16 +132,16 @@ function setSearchField(fldValue) {
 <TR>
 	<TD>
 
-Quick search: <input type=\"\" name=\"fldZoek\" id=\"fldZoek\" maxlength=\"20\" onkeyup=\"tcRefreshSearch();\" value=\"" . $s . "\">
-<em>(min. 3 characters)</em> &nbsp; <a href=\"#\" onclick=\"javascript:setSearchField('');\">Show favourites</a> &nbsp; <font size=-2></font>
+" . Translations::get('lbl_quick_search') . ": <input type=\"\" name=\"fldSearch\" id=\"fldSearch\" maxlength=\"20\" onkeyup=\"tcRefreshSearch();\" value=\"" . $s . "\">
+<em>" . Translations::get('min_x_characters') . "</em> &nbsp; <a href=\"#\" onclick=\"javascript:setSearchField('');\">" . Translations::get('lbl_show_favourites') . "</a> &nbsp; <font size=-2></font>
 	</TD>
 	<TD align=\"right\">
 <input type=\"hidden\" name=\"fldYear\" id=\"fldYear\" value=\"" . date("Y") . "\">
 <input type=\"hidden\" name=\"fldMonth\" id=\"fldMonth\" value=\"" . date("m") . "\">
-Go to &nbsp; &nbsp;
-<a href=\"#\" onclick=\"javascript:setYearMonth(" . date("Y") . ", " . date("m") . ");\" title=\"Go to current month\">*</a> &nbsp; &nbsp; 
-<a href=\"#\" onclick=\"javascript:setMonth(-1);\" title=\"Go to previous month\">Prev</a> &nbsp; 
-<a href=\"#\" onclick=\"javascript:setMonth(+1);\" title=\"Go to next month\">Next</a>
+" . Translations::get('go_to') . " &nbsp; &nbsp;
+<a href=\"#\" onclick=\"javascript:setYearMonth(" . date("Y") . ", " . date("m") . ");\" title=\"" . Translations::get('go_to_current_month') . "\">*</a> &nbsp; &nbsp;
+<a href=\"#\" onclick=\"javascript:setMonth(-1);\" title=\"" . Translations::get('go_to_previous_month') . "\">" . Translations::get('prev') . "</a> &nbsp;
+<a href=\"#\" onclick=\"javascript:setMonth(+1);\" title=\"" . Translations::get('go_to_next_month') . "\">" . Translations::get('next') . "</a>
 	</TD>
 </TR>
 </table>
@@ -164,16 +155,25 @@ tcRefreshSearchStart();
 </script>
 ";
 
-		$ret .= "<br>Legenda:<br>";
-		foreach ( $colors["td"] as $a => $b ) {
-			// TODO: hier moet gecontroleerd worden of persoon inout rechten heeft
-			if ( $oWebuser->hasInOutTimeAuthorisation() || $oWebuser->isAdmin() || $oWebuser->hasAuthorisationTabAbsences() || $oWebuser->isHeadOfDepartment() || in_array($a, array('vandaag', 'brugdag', 'holiday', 'vakantie', 'weekend')) ) {
-				if ( $a == 'vakantie' ) {
-					$a = 'afwezig';
-				}
-				$ret .= "<span align=\"center\" style=\"" . $b . "display:inline-block;margin-bottom:5px;margin-right:5px;\">&nbsp;" . $a . "&nbsp;</span>";
-			}
+	// Legenda
+	$arrLegenda = array();
+	$ret .= "<br>" . Translations::get('lbl_legenda') . ":<br>";
+
+	$legenda = new Legenda();
+	// create array of legenda items
+	foreach ( $legenda->getAll() as $item ) {
+		if ( $oWebuser->isAdmin() || $oWebuser->isHeadOfDepartment() || $oWebuser->hasAuthorisationReasonAbsence() || $item->isForEveryoneVisible() ) {
+			$arrLegenda[strtolower($item->getDescriptin())] = "<span align=\"center\" style=\"" . $item->getBackgroundColor() . "display:inline-block;margin-bottom:5px;margin-right:5px;\">&nbsp;" . strtolower($item->getDescriptin()) . "&nbsp;</span>";
 		}
+	}
+
+	// sort the legenda array on 'description'
+	ksort($arrLegenda);
+
+	//
+	foreach ( $arrLegenda as $item ) {
+		$ret .= $item;
+	}
 
 	return $ret;
 }

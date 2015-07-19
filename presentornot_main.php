@@ -11,14 +11,13 @@ $oWebuser->checkLoggedIn();
 $date = class_datetime::get_date($protect);
 
 // create webpage
-$oPage = new class_page('design/page.php', $settings);
+$oPage = new Page('design/page.php', $settings);
 $oPage->setTitle('Staff | ' . $pageSettings['title']);
 $oPage->setContent(createPresentContent( $pageSettings ));
 
 // show page
 echo $oPage->getPage();
 
-// TODOEXPLAIN
 function createPresentContent( $pageSettings ) {
 	$refreshAfterXSeconds = 60;
 
@@ -79,10 +78,9 @@ if (!xmlhttpCheckInOut && window.createRequest) {
 	}
 }
 
-// TODOEXPLAIN
 function tcRefreshSearch() {
-	var strZoek = document.getElementById('fldZoek').value;
-	xmlhttpSearch.open(\"GET\", \"presentornot_list.php?l=" . $pageSettings['layout'] . "&s=\" + escape(document.getElementById('fldZoek').value), true);
+	var strSearch = document.getElementById('fldSearch').value;
+	xmlhttpSearch.open(\"GET\", \"presentornot_list.php?l=" . $pageSettings['layout'] . "&s=\" + escape(strSearch), true);
 	xmlhttpSearch.onreadystatechange=function() {
 		if (xmlhttpSearch.readyState==4) {
 			document.getElementById('tcContentSearch').innerHTML = xmlhttpSearch.responseText;
@@ -91,7 +89,6 @@ function tcRefreshSearch() {
 	xmlhttpSearch.send(null);
 }
 
-// TODOEXPLAIN
 function tcRefreshSearchStart() {
 	tcRefreshSearch();
 
@@ -99,7 +96,6 @@ function tcRefreshSearchStart() {
 	var t = setTimeout(\"tcRefreshSearchStart()\", " . $refreshAfterXSeconds . " * 1000);
 }
 
-// TODOEXPLAIN
 function addRemove(pid, dowhat) {
 	document.getElementById('divAddRemove'+pid).innerHTML = '';
 	xmlhttpAddRemove.open(\"GET\", \"addremove_favourite.php?id=\" + pid + \"&dowhat=\" + dowhat + \"&fav=present\", true);
@@ -109,9 +105,10 @@ function addRemove(pid, dowhat) {
 		}
 	}
 	xmlhttpAddRemove.send(null);
+
+	return false;
 }
 
-// TODOEXPLAIN
 function checkInOut(pid, dowhat) {
 	document.getElementById('divCheckInOut'+pid).innerHTML = '';
 	xmlhttpCheckInOut.open(\"GET\", \"addremove_favourite.php?id=\" + pid + \"&dowhat=\" + dowhat + \"&fav=checkinout\", true);
@@ -121,22 +118,23 @@ function checkInOut(pid, dowhat) {
 		}
 	}
 	xmlhttpCheckInOut.send(null);
+
+	return false;
 }
 
-// TODOEXPLAIN
 function setSearchField(fldValue) {
-	document.getElementById('fldZoek').value = fldValue;
+	document.getElementById('fldSearch').value = fldValue;
 	tcRefreshSearch();
 	return false;
 }
 // -->
 </script>
 <form name=\"frmTc\" method=\"GET\" onsubmit=\"return false;\">
-Quick search: <input type=\"\" name=\"fldZoek\" id=\"fldZoek\" maxlength=\"20\" onkeyup=\"tcRefreshSearch();\" value=\"" . $s . "\">
- &nbsp; <a href=\"#\" onclick=\"javascript:setSearchField('');\">Show favourites</a>
- &nbsp; <a href=\"#\" onclick=\"javascript:setSearchField('-g-');\">Show present</a>
- &nbsp; <a href=\"#\" onclick=\"javascript:setSearchField('-r-');\">Show absent</a>
- &nbsp; <a href=\"#\" onclick=\"javascript:setSearchField('-a-');\">Show all</a>
+" . Translations::get('lbl_quick_search') . ": <input type=\"\" name=\"fldSearch\" id=\"fldSearch\" maxlength=\"20\" onkeyup=\"tcRefreshSearch();\" value=\"" . $s . "\">
+ &nbsp; <a href=\"#\" onclick=\"javascript:setSearchField('');\">" . Translations::get('lbl_show_favourites') . "</a>
+ &nbsp; <a href=\"#\" onclick=\"javascript:setSearchField('-g-');\">" . Translations::get('lbl_show_present') . "</a>
+ &nbsp; <a href=\"#\" onclick=\"javascript:setSearchField('-r-');\">" . Translations::get('lbl_show_absent') . "</a>
+ &nbsp; <a href=\"#\" onclick=\"javascript:setSearchField('-a-');\">" . Translations::get('lbl_show_all') . "</a>
 </form>
 <br>
 <div id=\"tcContentSearch\"></div>

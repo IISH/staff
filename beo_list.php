@@ -1,10 +1,10 @@
 <?php 
 //
 require_once "classes/start.inc.php";
-require_once "classes/class_beo.inc.php";
+require_once "classes/beo.inc.php";
 
 //
-$oBeo = new class_beo( (isset($type_of_beo) ? $type_of_beo : ''), $label );
+$oBeo = new Beo( (isset($type_of_beo) ? $type_of_beo : ''), $label );
 
 //
 if ( !isset($settings) ) {
@@ -15,7 +15,7 @@ $oWebuser->checkLoggedIn();
 
 $retval = "
 <h2>" . $oBeo->getLabel() . "</h2>
-<div class='incaseofemergency'>In case of emergency please call alarm number <span class='incaseofemergencynumber'>400</span></div>
+<div class='incaseofemergency'>" . Translations::get('in_case_of_emergency_call') . " <span class='incaseofemergencynumber'>" . Settings::get('emergency_number') . "</span></div>
 ";
 
 //
@@ -25,17 +25,17 @@ $oProtime = new class_mysql($databases['default']);
 $oProtime->connect();
 
 //
-$never_show_persnr = '0,' . preg_replace('/[^0-9]/', ',', trim(class_settings::get("never_show_persnr")));
+$never_show_persnr = '0,' . preg_replace('/[^0-9]/', ',', trim(Settings::get("never_show_persnr")));
 $never_show_persnr = preg_replace('/,{2,}/', ',', $never_show_persnr);
 
-$querySelect = "SELECT * FROM " . class_settings::get('protime_tables_prefix') . "CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) AND " . $oBeo->getQuery() . " AND PERSNR NOT IN ($never_show_persnr) ORDER BY FIRSTNAME, NAME ";
+$querySelect = "SELECT * FROM " . Settings::get('protime_tables_prefix') . "CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) AND " . $oBeo->getQuery() . " AND PERSNR NOT IN ($never_show_persnr) ORDER BY FIRSTNAME, NAME ";
 $resultSelect = mysql_query($querySelect, $oProtime->getConnection());
 
 $totaal["aanwezig"] = 0;
 $totaal["afwezig"] = 0;
 
 $ontruimersAanwezigOpVerdieping = array();
-$nrOfLevels = class_settings::get("number_of_levels");
+$nrOfLevels = Settings::get("number_of_levels");
 if ( $nrOfLevels == '' ) {
 	$nrOfLevels = 6;
 }
@@ -47,7 +47,7 @@ while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
 	$verdieping = '';
 	$telephone = '';
 
-	$oEmployee = new class_protime_user($rowSelect["PERSNR"]);
+	$oEmployee = new ProtimeUser($rowSelect["PERSNR"]);
 
 	if ( $oBeo->getShowLevel() ) {
 		$verdieping = "<td align=\"center\">" . cleanUpVerdieping($rowSelect["USER03"]) . "</td>";
@@ -69,15 +69,15 @@ while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
 
 	//
 	if ( strpos(',' . $checkInOutIds . ',', ',' . $rowSelect["PERSNR"] . ',') !== false ) {
-		$alttitle = "Click to remove the 'checked in' email notification";
-		$tmp = str_replace('::CHECKINOUT::', '<a href="#" onClick="checkInOut(' . $rowSelect["PERSNR"] . ', \'r\');" title="' . $alttitle . '" class="nolink"><img src="images/misc/clock-red.png" border=0></a>', $tmp);
+		$alttitle = Translations::get('lbl_click_to_not_get_email_notification');
+		$tmp = str_replace('::CHECKINOUT::', '<a href="#" onClick="return checkInOut(' . $rowSelect["PERSNR"] . ', \'r\');" title="' . $alttitle . '" class="nolink"><img src="images/misc/clock-red.png" border=0></a>', $tmp);
 	} else {
-		$alttitle = "Click to get a 'checked in' email notification when user checks in.";
-		$tmp = str_replace('::CHECKINOUT::', '<a href="#" onClick="checkInOut(' . $rowSelect["PERSNR"] . ', \'a\');" title="' . $alttitle . '" class="nolink"><img src="images/misc/clock-black.png" border=0></a>', $tmp);
+		$alttitle = Translations::get('lbl_click_to_get_email_notification');
+		$tmp = str_replace('::CHECKINOUT::', '<a href="#" onClick="return checkInOut(' . $rowSelect["PERSNR"] . ', \'a\');" title="' . $alttitle . '" class="nolink"><img src="images/misc/clock-black.png" border=0></a>', $tmp);
 	}
 
 	//
-	$status = getStatusColor($rowSelect["PERSNR"], date("Ymd"));
+	$status = getCurrentDayCheckInoutState($rowSelect["PERSNR"]);
 
 	if ( $status["aanwezig"] == 1 ) {
 		$totaal["aanwezig"]++;
@@ -99,18 +99,18 @@ mysql_free_result($resultSelect);
 if ( $retval != '' ) {
 	$verdieping = '';
 	if ( $oBeo->getShowLevel() ) {
-		$verdieping = "<td width=100 align=\"center\"><font size=-1><b>Level</b></font></td>";
+		$verdieping = "<td width=100 align=\"center\"><font size=-1><b>" . Translations::get('lbl_level') . "</b></font></td>";
 	}
 	if ( $oWebuser->hasAuthorisationBeoTelephone() ) {
-		$telephone = "<td width=100 align=\"center\"><font size=-1><b>Telephone</b></font></td>";
+		$telephone = "<td width=100 align=\"center\"><font size=-1><b>" . Translations::get('lbl_telephone') . "</b></font></td>";
 	}
 
 	$retval = "
 <table border=0 cellspacing=1 cellpadding=1>
 <TR>
 	<TD width=25></TD>
-	<TD width=250><font size=-1><b>Name</b></font></TD>
-	<td width=100 align=\"center\"><font size=-1><b>Check in/out</b></font></td>
+	<TD width=250><font size=-1><b>" . Translations::get('lbl_name') . "</b></font></TD>
+	<td width=100 align=\"center\"><font size=-1><b>" . Translations::get('lbl_check_inout') . "</b></font></td>
 	$telephone
 	$verdieping
 </TR>
@@ -123,7 +123,7 @@ if ( $oBeo->getShowLevel() ) {
 	$retval .= "<br>
 	<table>
 	<tr>
-		<td><font size=-1><b>Level: </b></font></td>
+		<td><font size=-1><b>" . Translations::get('lbl_level') . ": </b></font></td>
 	";
 
 		for( $i=0 ; $i <= $nrOfLevels; $i++ ) {
@@ -142,6 +142,8 @@ if ( $oBeo->getShowLevel() ) {
 }
 
 //
-$retval .= "<br><font size=-1><i>Present: " . $totaal["aanwezig"] . "<br>Not present: " . $totaal["afwezig"] . "<br><br>Page refreshes every minute, last refresh at: " . date("H:i:s") . "</i></font>";
+$retval .= "<br><font size=-1><i>" . Translations::get('lbl_present') . ": " . $totaal["aanwezig"] . "
+	<br>" . Translations::get('lbl_not_present') . ": " . $totaal["afwezig"] . "<br><br>
+	" . Translations::get('lbl_page_refreshes_every') . " " . date("H:i:s") . "</i></font>";
 
 echo $retval;

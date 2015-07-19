@@ -10,25 +10,22 @@ $oWebuser->checkLoggedIn();
 
 $date = class_datetime::get_date($protect);
 
+$id = substr(trim($protect->requestPositiveNumberOrEmpty('get', "id")), 0, 4);
+
+$oProtime = new class_mysql($databases['default']);
+$oProtime->connect();
+
+$staff = new ProtimeUser($id);
+
 // create webpage
-$oPage = new class_page('design/page.php', $settings);
-$oPage->setTitle('Staff | Employee');
-$oPage->setContent(createStaffContent( ));
+$oPage = new Page('design/page.php', $settings);
+$oPage->setTitle(Translations::get('iisg_employee') . ' | ' . $staff->getNiceFirstLastname());
+$oPage->setContent(createStaffContent( $staff ));
 
 // show page
 echo $oPage->getPage();
 
-// TODOEXPLAIN
-function createStaffContent( ) {
-	global $protect, $databases;
-
-	$id = substr(trim($protect->request_positive_number_or_empty('get', "id")), 0, 4);
-
-	$oProtime = new class_mysql($databases['default']);
-	$oProtime->connect();
-
-	$staff = new class_protime_user($id);
-
+function createStaffContent( $staff ) {
 	// header
 	$ret = '<h2>' . $staff->getNiceFirstLastname() . '</h2>';
 
@@ -39,11 +36,11 @@ function createStaffContent( ) {
 	} else {
 		$goback = stripDomainnameFromUrl( $goback );
 	}
-	$goback = createUrl( array( 'url' => $goback, 'label' => 'Go back' ) );
+	$goback = createUrl( array( 'url' => $goback, 'label' => Translations::get('go_back') ) );
 	$ret .= $goback . '<br><br>';
 
 	// get check in/out status
-	$status = getStatusColor($staff->getId(), date("Ymd"));
+	$status = getCurrentDayCheckInoutState($staff->getId());
 	if ( $status["status_text"] == '' ) {
 		$status["status_text"] = '&nbsp;';
 	}
@@ -53,13 +50,13 @@ function createStaffContent( ) {
 ";
 
 	$photo = $staff->getPhoto();
-	$photo = checkImageExists( class_settings::get('staff_images_directory') . $photo, class_settings::get('noimage_file') );
+	$photo = checkImageExists( Settings::get('staff_images_directory') . $photo, Settings::get('noimage_file') );
 	$photo = "<img src=\"$photo\">";
 
 	// NAAM
 	$ret .= "
 <tr>
-	<td>Name:</td>
+	<td>" . Translations::get('lbl_name') . ":</td>
 	<td>" . $staff->getNiceFirstLastname() . "</td>
 	<td width=\"20px\"></td>
 	<td rowspan=10 valign=top>$photo</td>
@@ -69,7 +66,7 @@ function createStaffContent( ) {
 	// CHECK IN/OUT
 	$ret .= "
 <tr>
-	<td>Check in/out:</td>
+	<td>" . Translations::get('lbl_check_inout') . ":</td>
 	<td>
 		<table border=0 cellpadding=0 cellspacing=0>
 		<tr>
@@ -83,15 +80,15 @@ function createStaffContent( ) {
 	// ROOM
 	$ret .= "
 <tr>
-	<td>Room:</td>
-	<td>" . $staff->getRoom() . "</td>
+	<td>" . Translations::get('lbl_room') . ":</td>
+	<td>" . static_Room::createRoomUrl($staff->getRoom()) . "</td>
 </tr>
 ";
 
 	// TELEPHONE
 	$ret .= "
 <tr>
-	<td>Telephone:</td>
+	<td>" . Translations::get('lbl_telephone') . ":</td>
 	<td>" . $staff->getTelephone() . "</td>
 </tr>
 ";
@@ -99,7 +96,7 @@ function createStaffContent( ) {
 	// EMAIL
 	$ret .= "
 <tr>
-	<td>E-mail:</td>
+	<td>" . Translations::get('lbl_email') . ":</td>
 	<td><a href=\"mailto:" . $staff->getEmail() . "\">" . $staff->getEmail() . "</a></td>
 </tr>
 ";
@@ -107,46 +104,41 @@ function createStaffContent( ) {
 	// DEPARTMENT
 	$ret .= "
 <tr>
-	<td>Department:</td>
-	<td>" . $staff->getDepartment()->getShort1() . "</td>
+	<td>" . Translations::get('lbl_department') . ":</td>
+	<td>" . $staff->getDepartment()->getShort() . "</td>
 </tr>
 ";
 
 	// BHV
 	$ret .= "
 <tr>
-	<td>" . createUrl( array( 'url' => 'bhv.php', 'label' => 'BHV' ) ) . ":</td>
-	<td>" . ( $staff->isBhv() ? 'yes' : 'no' ) . "</td>
+	<td>" . createUrl( array( 'url' => 'ert.php', 'label' => Translations::get('lbl_ert') ) ) . ":</td>
+	<td>" . ( $staff->isBhv() ? Translations::get('yes') : Translations::get('no') ) . "</td>
 </tr>
 ";
 
 	// EHBO
 	$ret .= "
 <tr>
-	<td>" . createUrl( array( 'url' => 'ehbo.php', 'label' => 'EHBO' ) ) . ":</td>
-	<td>" . ( $staff->isEhbo() ? 'yes' : 'no' ) . "</td>
+	<td>" . createUrl( array( 'url' => 'firstaid.php', 'label' => Translations::get('lbl_firstaid') ) ) . ":</td>
+	<td>" . ( $staff->isEhbo() ? Translations::get('yes') : Translations::get('no') ) . "</td>
 </tr>
 ";
 
 	// ONTRUIMER
 	$ret .= "
 <tr>
-	<td>Ontruimer:</td>
-	<td>" . ( $staff->isOntruimer() ? 'yes' : 'no' ) . "</td>
+	<td>" . Translations::get('lbl_evacuator') . ":</td>
+	<td>" . ( $staff->isOntruimer() ? Translations::get('yes') : Translations::get('no') ) . "</td>
 </tr>
 ";
 
 	// SCHEDULE
-	$currentSchedule = new class_protime_user_schedule($staff->getId(), 2015);
-	$show_all_weekdays = false;
-	// TODO: move persmueum to settings table
-	if (strpos($staff->getEmail(), "@persmuseum.nl") !== false ) {
-		$show_all_weekdays = true;
-	}
+	$currentSchedule = new ProtimeUserSchedule($staff->getId(), 2015);
 	$ret .= "
 <tr>
-	<td valign=top>Schedule:</td>
-	<td>" . $currentSchedule->getCurrentSchedule( $show_all_weekdays ) . "</td>
+	<td valign=top>" . Translations::get('lbl_schedule') . ":</td>
+	<td>" . $currentSchedule->getCurrentSchedule() . "</td>
 </tr>
 ";
 

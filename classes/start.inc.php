@@ -10,49 +10,52 @@ if ( !isset($_SESSION["loginname"]) ) {
 }
 
 //
-require_once dirname(__FILE__) . "/colors.inc.php";
 require_once dirname(__FILE__) . "/_misc_functions.inc.php";
-require_once dirname(__FILE__) . "/class_allowed_visible_absences.inc.php";
-require_once dirname(__FILE__) . "/class_authentication.inc.php";
-require_once dirname(__FILE__) . "/class_date.inc.php";
-require_once dirname(__FILE__) . "/class_datetime.inc.php";
-require_once dirname(__FILE__) . "/class_department.inc.php";
-require_once dirname(__FILE__) . "/class_feestdag.inc.php";
-require_once dirname(__FILE__) . "/class_holiday.inc.php";
-require_once dirname(__FILE__) . "/class_menu.inc.php";
-require_once dirname(__FILE__) . "/class_mysql.inc.php";
-require_once dirname(__FILE__) . "/class_page.inc.php";
-require_once dirname(__FILE__) . "/class_protime_user.inc.php";
-require_once dirname(__FILE__) . "/class_protime_user_schedule.inc.php";
-require_once dirname(__FILE__) . "/class_role_authorisation.inc.php";
-require_once dirname(__FILE__) . "/class_settings.inc.php";
-require_once dirname(__FILE__) . "/class_syncinfo.inc.php";
-require_once dirname(__FILE__) . "/class_syncprotimemysql.inc.php";
-require_once dirname(__FILE__) . "/class_tcdatetime.inc.php";
-require_once dirname(__FILE__) . "/class_translations.inc.php";
-require_once dirname(__FILE__) . "/class_website_protection.inc.php";
+require_once dirname(__FILE__) . "/allowed_visible_absences.inc.php";
+require_once dirname(__FILE__) . "/authentication.inc.php";
+require_once dirname(__FILE__) . "/color.inc.php";
+require_once dirname(__FILE__) . "/colors.inc.php";
+require_once dirname(__FILE__) . "/date.inc.php";
+require_once dirname(__FILE__) . "/datetime.inc.php";
+require_once dirname(__FILE__) . "/department.inc.php";
+require_once dirname(__FILE__) . "/feestdag.inc.php";
+require_once dirname(__FILE__) . "/holiday.inc.php";
+require_once dirname(__FILE__) . "/legenda.inc.php";
+require_once dirname(__FILE__) . "/menu.inc.php";
+require_once dirname(__FILE__) . "/mysql.inc.php";
+require_once dirname(__FILE__) . "/page.inc.php";
+require_once dirname(__FILE__) . "/protime_user.inc.php";
+require_once dirname(__FILE__) . "/protime_user_schedule.inc.php";
+require_once dirname(__FILE__) . "/role_authorisation.inc.php";
+require_once dirname(__FILE__) . "/room.inc.php";
+require_once dirname(__FILE__) . "/settings.inc.php";
+require_once dirname(__FILE__) . "/syncinfo.inc.php";
+require_once dirname(__FILE__) . "/syncprotimemysql.inc.php";
+require_once dirname(__FILE__) . "/tcdatetime.inc.php";
+require_once dirname(__FILE__) . "/translations.inc.php";
+require_once dirname(__FILE__) . "/website_protection.inc.php";
 
 //
-$protect = new class_website_protection();
+$protect = new WebsiteProtection();
 
 //
 $oWebuser = static_protime_user::getProtimeUserByLoginName( $_SESSION["loginname"] );
 
 //
 $menu = array();
-$menu[] = new class_menuitem('protime.presentornot', class_translations::get('menu_presentornot'), 'presentornot.php');
-$menu[] = new class_menuitem('protime.photobook', class_translations::get('menu_photobook'), 'photobook.php');
+$menu[] = new MenuItem(Translations::get('menu_presentornot'), 'presentornot.php');
+$menu[] = new MenuItem(Translations::get('menu_photobook'), 'photobook.php');
 if ( $oWebuser->hasAuthorisationTabAbsences() ) {
-	$menu[] = new class_menuitem('protime.vakantie', class_translations::get('menu_absences'), 'absences.php');
+	$menu[] = new MenuItem(Translations::get('menu_absences'), 'absences.php');
 }
-$menu[] = new class_menuitem('protime.bhv', class_translations::get('menu_ert'), 'bhv.php');
-$menu[] = new class_menuitem('protime.ehbo', class_translations::get('menu_firstaid'), 'ehbo.php');
+$menu[] = new MenuItem(Translations::get('menu_ert'), 'ert.php');
+$menu[] = new MenuItem(Translations::get('menu_firstaid'), 'firstaid.php');
 if ( $oWebuser->hasAuthorisationTabOntruimer() ) {
-	$menu[] = new class_menuitem('protime.ontruimer', class_translations::get('menu_evacuator'), 'ontruimer.php');
+	$menu[] = new MenuItem(Translations::get('menu_evacuator'), 'evacuators.php');
 }
-$menu[] = new class_menuitem('protime.holidays', class_translations::get('menu_nationalholidays'), 'nationalholidays.php');
+$menu[] = new MenuItem(Translations::get('menu_nationalholidays'), 'nationalholidays.php');
 if ( $oWebuser->hasAuthorisationTabFire() ) {
-	$menu[] = new class_menuitem('protime.brand', class_translations::get('menu_fire'), 'brand.php');
+	$menu[] = new MenuItem(Translations::get('menu_fire'), 'fire.php');
 }
 
 //

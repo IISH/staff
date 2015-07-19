@@ -34,7 +34,7 @@ if ( $s == '' ) {
 		$queryCriterium = ' AND 1=0 ';
 	} else {
 		// search
-		$queryCriterium = Generate_Query(array("NAME", "FIRSTNAME", "EMAIL", "USER02", class_settings::get('curric_room')), explode(' ', $s));
+		$queryCriterium = Generate_Query(array("NAME", "FIRSTNAME", "EMAIL", "USER02", Settings::get('curric_room'), "SHORT_" . getLanguage()), explode(' ', $s));
 	}
 }
 
@@ -59,7 +59,8 @@ if ( $selectedYear < date("Y")-1 ) {
 
 $daysInCurrentMonth = cal_days_in_month(CAL_GREGORIAN, $selectedMonth, $selectedYear);
 
-$cellWidth = 18;
+//$cellWidth = 18;
+$cellWidth = 23;
 
 $arrHolidays = getNationalHolidays($selectedYear, $selectedMonth );
 
@@ -69,7 +70,12 @@ if ( $to_short != 1 ) {
 	$oProtime->connect();
 
 	// loop employees
-	$querySelect = "SELECT * FROM " . class_settings::get('protime_tables_prefix') . "CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) " . $queryCriterium . " ORDER BY FIRSTNAME, NAME ";
+	$querySelect = "
+SELECT *
+FROM " . Settings::get('protime_tables_prefix') . "CURRIC
+	LEFT JOIN " . Settings::get('protime_tables_prefix') . "DEPART ON " . Settings::get('protime_tables_prefix') . "CURRIC.DEPART = " . Settings::get('protime_tables_prefix') . "DEPART.DEPART
+WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) " . $queryCriterium . " ORDER BY FIRSTNAME, NAME
+";
 	$resultSelect = mysql_query($querySelect, $oProtime->getConnection());
 
 	while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
@@ -89,7 +95,7 @@ if ( $to_short != 1 ) {
 ";
 
 		//
-		$status = getStatusColor($rowSelect["PERSNR"], date("Ymd"));
+		$status = getCurrentDayCheckInoutState($rowSelect["PERSNR"]);
 
 		//
 		$tmp = str_replace('::STATUS_STYLE::', $status["status_color"], $tmp);
@@ -98,12 +104,13 @@ if ( $to_short != 1 ) {
 
 		//
 		if ( strpos(',' . $favIds . ',', ',' . $rowSelect["PERSNR"] . ',') !== false ) {
-			$tmp = str_replace('::ADDREMOVE::', '<a href="#" onClick="addRemove(' . $rowSelect["PERSNR"] . ', \'r\');" title="Click to remove the person to your favourites" class="nolink favourites_on">&#9733;</a>', $tmp);
+			$tmp = str_replace('::ADDREMOVE::', '<a href="#" onClick="return addRemove(' . $rowSelect["PERSNR"] . ', \'r\');" title="' . Translations::get('lbl_click_to_remove_from_favourites') . '" class="nolink favourites_on">&#9733;</a>', $tmp);
 		} else {
-			$tmp = str_replace('::ADDREMOVE::', '<a href="#" onClick="addRemove(' . $rowSelect["PERSNR"] . ', \'a\');" title="Click to add the person to your favourites" class="nolink favourites_off">&#9733;</a>', $tmp);
+			$tmp = str_replace('::ADDREMOVE::', '<a href="#" onClick="return addRemove(' . $rowSelect["PERSNR"] . ', \'a\');" title="' . Translations::get('lbl_click_to_add_to_favourites') . '" class="nolink favourites_off">&#9733;</a>', $tmp);
 		}
 
-		$arrVakantie = getAbsencesAndHolidays($rowSelect["PERSNR"], $selectedYear, $selectedMonth, 120 );
+		//
+		$arrVakantie = getAbsencesAndHolidays($rowSelect["PERSNR"], $selectedYear, $selectedMonth );
 
 		$vak = '';
 
@@ -112,15 +119,15 @@ if ( $to_short != 1 ) {
 			//
 			$celValue = '&nbsp;&nbsp;';
 
-			$cellStyle = getColors($selectedYear, $selectedMonth, $i, $arrVakantie, $arrHolidays);
+			$cellStyle = getStyle($selectedYear, $selectedMonth, $i, $arrVakantie, $arrHolidays);
+
 			$style .= $cellStyle["tdStyle"];
 			if ( $cellStyle["alt"] != '' ) {
 				$cellStyleAlt = $cellStyle["alt"];
 				$cellStyleHrefStyle = $cellStyle["hrefStyle"];
 
-				// if person has no in/out time authorisation, then show only 'absent'
-				// TODO hier controlen op inout rechten
-				if ( !$oWebuser->hasInOutTimeAuthorisation() && !$oWebuser->isAdmin() && !$oWebuser->hasAuthorisationTabAbsences() && !$oWebuser->isHeadOfDepartment() ) {
+				//
+				if ( !$oWebuser->isAdmin() && !$oWebuser->isHeadOfDepartment() && !$oWebuser->hasAuthorisationReasonAbsence() && !$oWebuser->hasInOutTimeAuthorisation() ) {
 					$cellStyleAlt = '';
 					$cellStyleHrefStyle = 'color:white;';
 				}
@@ -151,7 +158,7 @@ if ( $to_short != 1 ) {
 
 		$celValue = $i;
 
-		$cellStyle = getColors($selectedYear, $selectedMonth, $i, array(), $arrHolidays);
+		$cellStyle = getStyle($selectedYear, $selectedMonth, $i, array(), $arrHolidays);
 
 		$extrastyle .= $cellStyle["tdStyle"];
 
@@ -169,10 +176,10 @@ if ( $to_short != 1 ) {
 <TABLE border=0 cellspacing=1 cellpadding=0>
 <TR>
 	<TD width=25></TD>
-	<TD width=180><font size=-1><b>Name</b></font></TD>
-	<TD width=90 align=\"center\"><font size=-1><b>Today</b></font></TD>
+	<TD width=190><font size=-1><b>" . Translations::get('lbl_name') . "</b></font></TD>
+	<TD width=100 align=\"center\"><font size=-1><b>" . Translations::get('lbl_today') . "</b></font></TD>
 	<TD width=18 align=\"center\"></TD>
-	<TD style=\"width:" . $vakantieWidth . "px;\" align=\"center\"><font size=-1><b>Holidays/absences " . date("F Y", mktime(0,0,0,$selectedMonth, 1, $selectedYear)) . "</b></font></TD>
+	<TD style=\"width:" . $vakantieWidth . "px;\" align=\"center\"><font size=-1><b>" . Translations::get('lbl_holidayabsences') . " " . Translations::get('month' . ($selectedMonth+0)) . ' ' . $selectedYear . "</b></font></TD>
 </TR>
 <TR>
 	<TD></TD>
@@ -189,13 +196,15 @@ if ( $to_short != 1 ) {
 </table><br>";
 	}
 }
+
+//
 echo $retval;
 
 function calculateNrOfDaysForMonth($year, $month) {
 	return cal_days_in_month(CAL_GREGORIAN, $month, $year);
 }
 
-function getColors($selectedYear, $selectedMonth, $day, $absences = array(), $holidays = array()) {
+function getStyle($selectedYear, $selectedMonth, $day, $absences = array(), $holidays = array()) {
 	global $oWebuser;
 
 	$tdStyle = '';
@@ -205,16 +214,16 @@ function getColors($selectedYear, $selectedMonth, $day, $absences = array(), $ho
 	$datum = createDateAsString($selectedYear, $selectedMonth, $day);
 	$dayOfWeek = date("w", mktime(0,0,0,$selectedMonth, $day, $selectedYear));
 
-	//
+	// if
 	if ( $tdStyle == '' && $dayOfWeek != 0 && $dayOfWeek != 6 ) {
 		for ($i = 0; $i < count($holidays); $i++) {
 			if ( $datum == str_replace('-', '', $holidays[$i]->getDate()) ) {
-				if ( strtolower($holidays[$i]->getDescription()) == 'brugdag' ) {
-					$tdStyle = getColor("td", "brugdag");
-					$hrefStyle = getColor("href", "brugdag");
+				if ( strtolower($holidays[$i]->getDescription()) == 'bridgeday' ) {
+					$tdStyle = class_colors::get('bridgeday')->getBackgroundColor();
+					$hrefStyle = class_colors::get('bridgeday')->getFontColor();
 				} else {
-					$tdStyle = getColor("td", "holiday");
-					$hrefStyle = getColor("href", "holiday");
+					$tdStyle = class_colors::get('fst')->getBackgroundColor();
+					$hrefStyle = class_colors::get('fst')->getFontColor();
 				}
 				$alt = $holidays[$i]->getDescription();
 			}
@@ -225,14 +234,14 @@ function getColors($selectedYear, $selectedMonth, $day, $absences = array(), $ho
 	if ( $tdStyle == '' && $dayOfWeek != 0 && $dayOfWeek != 6 ) {
 		for ($i = 0; $i < count($absences); $i++) {
 			if ( $datum == $absences[$i]["date"] ) {
-				// TODO hier controlen op inout rechten
-				if ( !$oWebuser->hasInOutTimeAuthorisation() && !$oWebuser->isAdmin() && !$oWebuser->hasAuthorisationTabAbsences() && !$oWebuser->isHeadOfDepartment() ) {
+				//
+				if ( !$oWebuser->hasInOutTimeAuthorisation() && !$oWebuser->isAdmin() && !$oWebuser->hasAuthorisationTabAbsences() && !$oWebuser->isHeadOfDepartment() && !$oWebuser->hasInOutTimeAuthorisation() ) {
 					$tdStyle = 'background-color: #C62431;';
 					$hrefStyle = 'color:white';
-					$alt = 'Absent';
+					$alt = 'Leave';
 				} else {
-					$tdStyle = getColor("td", strtolower($absences[$i]["description"]));
-					$hrefStyle = getColor("href", strtolower($absences[$i]["description"]));
+					$tdStyle = class_colors::get(strtolower($absences[$i]["code"]))->getBackgroundColor();
+					$hrefStyle = class_colors::get(strtolower($absences[$i]["code"]))->getFontColor();
 					$alt = $absences[$i]["description"];
 				}
 			}
@@ -242,12 +251,12 @@ function getColors($selectedYear, $selectedMonth, $day, $absences = array(), $ho
 	if ( $tdStyle == '' ) {
 		if ( $day == date("d") && $selectedMonth == date("m") && $selectedYear == date("Y") ) {
 			// current day
-			$tdStyle = getColor("td", "vandaag");
-			$hrefStyle = getColor("href", "vandaag");
+			$tdStyle = class_colors::get(strtolower('today'))->getBackgroundColor();
+			$hrefStyle = class_colors::get(strtolower('today'))->getFontColor();
 		} elseif ( $dayOfWeek == 0 || $dayOfWeek == 6 ) {
 			// weekend
-			$tdStyle = getColor("td", "weekend");
-			$hrefStyle = getColor("href", "weekend");
+			$tdStyle = class_colors::get(strtolower('weekend'))->getBackgroundColor();
+			$hrefStyle = class_colors::get(strtolower('weekend'))->getFontColor();
 		}
 	}
 
@@ -279,7 +288,7 @@ function getNationalHolidays($year, $month) {
     $query = "SELECT * FROM Staff_feestdagen WHERE datum LIKE '" . $year . '-' . substr("0" . $month,-2) . "-%' AND isdeleted=0 ";
    	$result = mysql_query($query, $oConn->getConnection());
     while ($row = mysql_fetch_assoc($result)) {
-   		$arr[] = new class_holiday($row["ID"]);
+   		$arr[] = new Holiday($row["ID"]);
     }
    	mysql_free_result($result);
 

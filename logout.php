@@ -1,7 +1,8 @@
 <?php 
 require_once "classes/start.inc.php";
 
-$_SESSION["loginname"] = '';
+session_unset();
+session_destroy();
 
 Header("Location: login.php");
 die();

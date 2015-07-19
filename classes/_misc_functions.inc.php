@@ -22,6 +22,7 @@ function removeJobFunctionFromName( $string ) {
 	$string = str_ireplace('(vrijwilliger)', '', $string);
 	$string = str_ireplace('(vrijwillig)', '', $string);
 	$string = str_ireplace('(stz)', '', $string);
+	$string = str_ireplace('(rec)', '', $string);
 
 	return $string;
 }
@@ -35,15 +36,8 @@ function valueOr( $value, $or = '?' ) {
 }
 
 function checkImageExists( $photo, $imageIfNotExists = '' ) {
-	error_log("\nDEBUG: " . "1. server document root: " . $_SERVER['DOCUMENT_ROOT']);
-	error_log("\nDEBUG: " . "2. path_public_html: " . class_settings::get('path_public_html'));
-	error_log("\nDEBUG: " . "3. photo: " . $photo);
-	error_log("\nDEBUG: " . "4. noimage: " . $imageIfNotExists);
-	error_log("\nDEBUG: " . "5. : " . $_SERVER['DOCUMENT_ROOT'] . '/' . $photo);
-	error_log("\nDEBUG: " . "6. : " . class_settings::get('path_public_html') . $photo);
-
-	if ( !file_exists ( class_settings::get('path_public_html') . $photo ) ) {
-//	if ( !file_exists ( $_SERVER['DOCUMENT_ROOT'] . '/' . $photo ) ) {
+//	if ( !file_exists ( Settings::get('path_public_html') . $photo ) ) {
+	if ( !file_exists ( $_SERVER['DOCUMENT_ROOT'] . '/' . $photo ) ) {
 		$photo = $imageIfNotExists;
 	}
 
@@ -93,9 +87,10 @@ function goBack() {
 	Header("Location: " . $url);
 }
 
-// TODOEXPLAIN
-function getStatusColor( $persnr, $date ) {
+function getCurrentDayCheckInoutState( $persnr ) {
 	global $databases, $oWebuser;
+
+	$date = date("Ymd");
 
 	$retval = array();
 
@@ -120,27 +115,24 @@ function getStatusColor( $persnr, $date ) {
 		if ( $status == 1 ) {
 			// green cell
 			$status_color = 'background-color:green;color:white;';
-			$status_alt .= class_translations::get('in') . ': ' . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes($row["BOOKTIME"]);
 			$aanwezig = 1;
-			// check if user has inout_tme rights
-			// TODO: check if headOfDepartment and if so, check if current user, one of his subemployees is
-			//
-			if ( $oWebuser->hasInOutTimeAuthorisation() || $oWebuser->isAdmin() || $oWebuser->isHeadOfDepartment() || $oWebuser->getId() == $persnr ) {
-				$status_text = class_translations::get('in') . ': ' . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes($row["BOOKTIME"]);
+			// check if user has inout_time rights
+			if ( $oWebuser->isAdmin() || $oWebuser->hasInOutTimeAuthorisation() || ( $oWebuser->isHeadOfDepartment() && $oWebuser->isHeadOfEmployee($persnr) ) || $oWebuser->getId() == $persnr ) {
+				$status_text = Translations::get('in') . ': ' . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes($row["BOOKTIME"]);
+				$status_alt .= Translations::get('in') . ': ' . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes($row["BOOKTIME"]);
 			} else {
-				$status_text = class_translations::get('in');
+				$status_text = Translations::get('in');
 			}
 		} else {
 			// red cell
 			$status_color = 'background-color:#C62431;color:white;';
-			$status_alt .= ' - ' . class_translations::get('out') . ': ' . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes($row["BOOKTIME"]) . "\n";
 			$aanwezig = 0;
-			// check if user has inout_tme rights
-			// TODO: check if headOfDepartment and if so, check if current user, one of his subemployees is
-			if ( $oWebuser->hasInOutTimeAuthorisation() || $oWebuser->isAdmin() || $oWebuser->isHeadOfDepartment() || $oWebuser->getId() == $persnr ) {
-				$status_text = class_translations::get('out') . ': ' . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes($row["BOOKTIME"]);
+			// check if user has inout_time rights
+			if ( $oWebuser->isAdmin() || $oWebuser->hasInOutTimeAuthorisation() || ( $oWebuser->isHeadOfDepartment() && $oWebuser->isHeadOfEmployee($persnr) ) || $oWebuser->getId() == $persnr ) {
+				$status_text = Translations::get('out') . ': ' . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes($row["BOOKTIME"]);
+				$status_alt .= ' - ' . Translations::get('out') . ': ' . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes($row["BOOKTIME"]) . "\n";
 			} else {
-				$status_text = class_translations::get('out');
+				$status_text = Translations::get('out');
 			}
 		}
 
@@ -156,24 +148,29 @@ function getStatusColor( $persnr, $date ) {
 	if ( $status_text == '' && $found == 0 ) {
 		$oProtime->connect();
 
-		$prefix = class_settings::get('protime_tables_prefix');
+		$prefix = Settings::get('protime_tables_prefix');
 
-		// SHORT_1 - dutch, SHORT_2 - english
 		$query = "
-SELECT DISTINCT ${prefix}ABSENCE.SHORT_" . getLanguage() . "
+SELECT DISTINCT CODE, ${prefix}ABSENCE.SHORT_" . getLanguage() . "
 FROM ${prefix}P_ABSENCE
 	INNER JOIN ${prefix}ABSENCE ON ${prefix}P_ABSENCE.ABSENCE = ${prefix}ABSENCE.ABSENCE
 WHERE ${prefix}P_ABSENCE.PERSNR = " . $persnr . " AND ${prefix}P_ABSENCE.BOOKDATE = '" . $date . "'
 ";
+
 		$result = mysql_query($query, $oProtime->getConnection());
 		$status_separator = '';
 		while ( $row = mysql_fetch_assoc($result) ) {
-			// SHORT_1 - dutch, SHORT_2 - english
-// TODO: controleer of persoon wel de status mag zien
 			$reasonAbsence = $row["SHORT_" . getLanguage()];
+			$codeAbsence = strtolower($row["CODE"]);
+
+			// check if user has the right to see the reason of absence
 			if ( !$oWebuser->hasAuthorisationReasonAbsence() ) {
-				if ( !class_allowed_visible_absences::in_array($reasonAbsence) ) {
-					$reasonAbsence = class_translations::get('default_absent_value');
+				// no, user has no rights
+
+				// is the absence allowed to be seen
+				if ( !AllowedVisibleAbsences::in_array($codeAbsence) ) {
+					// no, use default absence
+					$reasonAbsence = Translations::get('default_absent_value');
 				}
 			}
 			$status_text .= $status_separator . $reasonAbsence;
@@ -190,23 +187,6 @@ WHERE ${prefix}P_ABSENCE.PERSNR = " . $persnr . " AND ${prefix}P_ABSENCE.BOOKDAT
 	return $retval;
 }
 
-// TODOEXPLAIN
-function getColor( $value, $value2 ) {
-	global $colors;
-
-	$value = trim(strtolower($value));
-	$value2 = trim(strtolower($value2));
-
-	if ( !isset( $colors[$value][$value2] ) ) {
-		$ret = $colors[$value]["no color defined"];
-	} else {
-		$ret = $colors[$value][$value2];
-	}
-
-	return $ret;
-}
-
-// TODOEXPLAIN
 function fillTemplate($template, $data) {
 	foreach ( $data as $a => $b ) {
 		$template = str_replace('{' . $a . '}', $b, $template);
@@ -215,7 +195,6 @@ function fillTemplate($template, $data) {
 	return $template;
 }
 
-// TODOEXPLAIN
 function getAndProtectSearch($field = 's') {
 	$s = '';
 
@@ -233,19 +212,20 @@ function getAndProtectSearch($field = 's') {
 	return $s;
 }
 
-// TODOEXPLAIN
-function getAbsencesAndHolidays($eid, $year, $month, $min_minutes = 0) {
+function getAbsencesAndHolidays($eid, $year, $month ) {
 	global $databases;
+	$language = getLanguage();
+	$min_minutes = 120;
 
 	$ret = array();
 
 	$yearMonth = createDateAsString($year, $month);
 
-	$prefix = class_settings::get('protime_tables_prefix');
+	$prefix = Settings::get('protime_tables_prefix');
 
 	// SHORT_1 - dutch, SHORT_2 - english
 	$query = "
-SELECT ${prefix}P_ABSENCE.REC_NR, ${prefix}P_ABSENCE.PERSNR, ${prefix}P_ABSENCE.BOOKDATE, ${prefix}P_ABSENCE.ABSENCE_VALUE, ${prefix}P_ABSENCE.ABSENCE_STATUS, ${prefix}ABSENCE.SHORT_2, ${prefix}P_ABSENCE.ABSENCE
+SELECT CODE, ${prefix}P_ABSENCE.REC_NR, ${prefix}P_ABSENCE.PERSNR, ${prefix}P_ABSENCE.BOOKDATE, ${prefix}P_ABSENCE.ABSENCE_VALUE, ${prefix}P_ABSENCE.ABSENCE_STATUS, ${prefix}ABSENCE.SHORT_" . $language . ", ${prefix}P_ABSENCE.ABSENCE
 FROM ${prefix}P_ABSENCE
 	LEFT OUTER JOIN ${prefix}ABSENCE ON ${prefix}P_ABSENCE.ABSENCE = ${prefix}ABSENCE.ABSENCE
 WHERE ${prefix}P_ABSENCE.PERSNR=" . $eid . " AND ${prefix}P_ABSENCE.BOOKDATE LIKE '" . $yearMonth . "%' AND ${prefix}P_ABSENCE.ABSENCE NOT IN (5, 19)
@@ -261,7 +241,7 @@ ORDER BY ${prefix}P_ABSENCE.BOOKDATE, ${prefix}P_ABSENCE.REC_NR
 	if ( $num ) {
 		while ( $row = mysql_fetch_assoc($result) ) {
 			// SHORT_1 - dutch, SHORT_2 - english
-			$ret[] = array( 'date' => $row["BOOKDATE"], 'description' => $row["SHORT_2"] );
+			$ret[] = array( 'code' => $row["CODE"], 'date' => $row["BOOKDATE"], 'description' => strtolower($row["SHORT_" . $language]) );
 		}
 	}
 
@@ -270,7 +250,6 @@ ORDER BY ${prefix}P_ABSENCE.BOOKDATE, ${prefix}P_ABSENCE.REC_NR
 	return $ret;
 }
 
-//TODOEXPLAIN
 function Generate_Query($arrField, $arrSearch) {
 	$retval = '';
 	$separatorBetweenValues = '';
@@ -295,7 +274,6 @@ function Generate_Query($arrField, $arrSearch) {
 	return $retval;
 }
 
-// TODOEXPLAIN
 function createDateAsString($year, $month, $day = '') {
 	$ret = $year;
 
@@ -308,7 +286,6 @@ function createDateAsString($year, $month, $day = '') {
 	return $ret;
 }
 
-// TODOEXPLAIN
 function getBackUrl() {
 	global $protect;
 
@@ -343,20 +320,6 @@ function getBackUrl() {
 	return $ret;
 }
 
-// TODOEXPLAIN
-function debug($text = "", $extra = '') {
-	echo "<span style=\"color:red;\">";
-	if ( is_array($text) ) {
-		echo "<pre>" . date("H:i:s ") . $extra;
-		print_r($text);
-		echo " +</pre><br>";
-	} else {
-		echo date("H:i:s ") . $extra . $text . " +<br>";
-	}
-	echo "</span>";
-}
-
-// TODOEXPLAIN
 function cleanUpTelephone($telephone) {
 	$retval = $telephone;
 
@@ -374,7 +337,6 @@ function cleanUpTelephone($telephone) {
 	return $retval;
 }
 
-// TODOEXPLAIN
 function cleanUpVerdieping($verdieping) {
 	$retval = strtolower($verdieping);
 
@@ -387,12 +349,10 @@ function cleanUpVerdieping($verdieping) {
 	return $retval;
 }
 
-// TODOEXPLAIN
 function fixBrokenChars($text) {
 	return htmlentities($text, ENT_COMPAT | ENT_XHTML, 'ISO-8859-1', true);
 }
 
-// TODOEXPLAIN
 function verplaatsTussenvoegselNaarBegin( $text ) {
 	$array = array( ' van den', ' van der', ' van', ' de', ' el' );
 

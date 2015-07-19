@@ -1,9 +1,9 @@
 <?php
 require_once "classes/start.inc.php";
-require_once "classes/class_beo.inc.php";
+require_once "classes/beo.inc.php";
 
 //
-$oBeo = new class_beo( (isset($type_of_beo) ? $type_of_beo : ''), $label );
+$oBeo = new Beo( (isset($type_of_beo) ? $type_of_beo : ''), $label );
 
 //
 if ( !isset($settings) ) {
@@ -15,14 +15,13 @@ $oWebuser->checkLoggedIn();
 $date = class_datetime::get_date($protect);
 
 // create webpage
-$oPage = new class_page('design/page.php', $settings);
+$oPage = new Page('design/page.php', $settings);
 $oPage->setTitle('Staff | ' . strip_tags($oBeo->getLabel()));
 $oPage->setContent(createBhvEhboContent( $oBeo ));
 
 // show page
 echo $oPage->getPage();
 
-// TODOEXPLAIN
 function createBhvEhboContent( $oBeo ) {
 	$refreshAfterXSeconds = 60;
 
@@ -62,9 +61,8 @@ if (!xmlhttpCheckInOut && window.createRequest) {
 	}
 }
 
-// TODOEXPLAIN
 function tcRefreshSearch() {
-	xmlhttpSearch.open(\"GET\", \"" . $oBeo->getScriptName() . "_list.php\", true);
+	xmlhttpSearch.open(\"GET\", \"" . $oBeo->getScriptName() . "\", true);
 	xmlhttpSearch.onreadystatechange=function() {
 		if (xmlhttpSearch.readyState==4) {
 			document.getElementById('tcContentSearch').innerHTML = xmlhttpSearch.responseText;
@@ -73,7 +71,6 @@ function tcRefreshSearch() {
 	xmlhttpSearch.send(null);
 }
 
-// TODOEXPLAIN
 function tcRefreshSearchStart() {
 	tcRefreshSearch();
 
@@ -81,7 +78,6 @@ function tcRefreshSearchStart() {
 	var t = setTimeout(\"tcRefreshSearchStart()\", " . $refreshAfterXSeconds . " * 1000);
 }
 
-// TODOEXPLAIN
 function checkInOut(pid, dowhat) {
 	document.getElementById('divCheckInOut'+pid).innerHTML = '';
 	xmlhttpCheckInOut.open(\"GET\", \"addremove_favourite.php?id=\" + pid + \"&dowhat=\" + dowhat + \"&fav=checkinout\", true);
@@ -91,6 +87,8 @@ function checkInOut(pid, dowhat) {
 		}
 	}
 	xmlhttpCheckInOut.send(null);
+
+	return false;
 }
 
 // -->

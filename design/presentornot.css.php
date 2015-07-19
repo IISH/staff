@@ -1,13 +1,13 @@
 <?php 
 header('Content-type: text/css');
-require_once "../classes/class_misc.inc.php";
-require_once "../classes/class_website_protection.inc.php";
+require_once "../classes/misc.inc.php";
+require_once "../classes/website_protection.inc.php";
 
 // number of tabs
 $t = 10;
 
 // menu/footer color (only 6 char/digit allowed)
-$protect = new class_website_protection();
+$protect = new WebsiteProtection();
 $c = $protect->request('get', 'c', '/^[0-9a-zA-Z]{6,6}$/');
 if ( $c == '' ) {
 	$c = '#73A0C9';
@@ -108,7 +108,8 @@ div {
 }
 
 div.main {
-	width: 960px;
+	xxxwidth: 960px;
+	width: 1200px;
 	margin-left: auto;
 	margin-right: auto;
 }
@@ -147,7 +148,8 @@ span.logout {
 }
 
 div.content {
-	width: 950px;
+	xxxwidth: 950px;
+	width: 1190px;
 	border: 1px solid #AAAAAA;
 	margin-top: 5px;
 	margin-bottom: 5px;
@@ -283,6 +285,7 @@ tr.photobook {
 td.photobook {
 	border-style: solid;
 	border-width: thin;
+	border-color: #AAAAAA;
 }
 
 table.employee_schedule {
@@ -316,4 +319,17 @@ th.employee_schedule_accentuate {
 
 td.employee_schedule_accentuate {
 	background-color: yellow;
+}
+
+.divImage {
+	display: none;
+	justify-content: center; /* align horizontal */
+	align-items: center; /* align vertical */
+	position:absolute;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	z-index:1000;
+	background: rgba(211,211,211,0.8);
 }

@@ -7,27 +7,26 @@ if ( !isset($settings) ) {
 }
 
 // create webpage
-$oPage = new class_page('design/page.php', $settings);
-$oPage->setTitle('Staff | ' . class_translations::get('menu_nationalholidays'));
+$oPage = new Page('design/page.php', $settings);
+$oPage->setTitle('Staff | ' . Translations::get('header_nationalholidays'));
 $oPage->setContent(createNationalHolidaysContent( ));
 
 // show page
 echo $oPage->getPage();
 
-// TODOEXPLAIN
 function createNationalHolidaysContent( ) {
     global $databases;
 
-	$ret = "<h2>" . class_translations::get('menu_nationalholidays') . "</h2><br>";
+	$ret = "<h2>" . Translations::get('header_nationalholidays') . "</h2><br>";
 
-	require_once("./classes/class_mysql.inc.php");
-	require_once("./classes/class_view/class_view.inc.php");
-	require_once("./classes/class_view/fieldtypes/class_field_date.inc.php");
-	require_once("./classes/class_view/fieldtypes/class_field.inc.php");
-	require_once("./classes/class_view/fieldtypes/class_field_bit.inc.php");
+	require_once("./classes/mysql.inc.php");
+	require_once("./classes/class_view/view.inc.php");
+	require_once("./classes/class_view/fieldtypes/field_date.inc.php");
+	require_once("./classes/class_view/fieldtypes/field.inc.php");
+	require_once("./classes/class_view/fieldtypes/field_bit.inc.php");
 
 	$oDb = new class_mysql($databases['default']);
-	$oView = new class_view($oDb);
+	$oView = new View($oDb);
 
 	$oView->set_view( array(
 		'query' => 'SELECT * FROM Staff_feestdagen WHERE 1=1 AND isdeleted=0 AND datum >= \'' . date('Y-m-d') . '\' ORDER BY datum ASC '
@@ -35,30 +34,30 @@ function createNationalHolidaysContent( ) {
 		, 'table_parameters' => ' cellspacing="0" cellpadding="0" border="0" '
 		));
 
-	$oView->add_field( new class_field_date ( array(
+	$oView->add_field( new FieldDate ( array(
 		'fieldname' => 'datum'
-		, 'fieldlabel' => 'Date'
+		, 'fieldlabel' => Translations::get('lbl_date')
 		, 'format' => 'D j F Y'
 		)));
 
-	$oView->add_field( new class_field ( array(
+	$oView->add_field( new Field ( array(
 		'fieldname' => 'omschrijving'
-		, 'fieldlabel' => 'Description'
+		, 'fieldlabel' => Translations::get('lbl_description')
 		)));
 
-	$oView->add_field( new class_field_bit ( array(
+	$oView->add_field( new FieldBit ( array(
 		'fieldname' => 'vooreigenrekening'
-		, 'fieldlabel' => ''
+		, 'fieldlabel' => Translations::get('lbl_bridgeday')
 		, 'show_different_values' => 1
-		, 'different_true_value' => 'brugdag'
-		, 'different_false_value' => ''
+		, 'different_true_value' => Translations::get('lbl_bridgeday_yes')
+		, 'different_false_value' => Translations::get('lbl_bridgeday_no')
 		)));
 
 	// calculate and show view
 	$ret .= $oView->generate_view();
 
 	// add source
-	$ret .= "<br>Source: <a href=\"https://intranet.iisg.nl/nl/manual/feest-en-sluitingsdagen\" target=\"_blank\">https://intranet.iisg.nl/nl/manual/feest-en-sluitingsdagen</a>";
+	$ret .= "<br>" . Translations::get('lbl_source') . ": <a href=\"https://intranet.iisg.nl/nl/manual/feest-en-sluitingsdagen\" target=\"_blank\">https://intranet.iisg.nl/nl/manual/feest-en-sluitingsdagen</a>";
 
 	return $ret;
 }

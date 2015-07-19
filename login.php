@@ -7,30 +7,26 @@ if ( !isset($settings) ) {
 }
 
 // create webpage
-$oPage = new class_page('design/page.php', $settings);
+$oPage = new Page('design/page.php', $settings);
 $oPage->setTitle('Staff | Login');
 $oPage->setContent(createLoginPage());
 
 // show page
 echo $oPage->getPage();
 
-// TODOEXPLAIN
 function createLoginPage() {
 	global $protect, $settings;
 
 	$fldLogin = '';
 	$error = '';
 
-	if ( $protect->request_positive_number_or_empty('post', 'issubmitted') == '1' ) {
+	if ( $protect->requestPositiveNumberOrEmpty('post', 'issubmitted') == '1' ) {
 		// get values
 		$fldLogin = $protect->request('post', 'fldLogin');
 		$fldPassword = $protect->request('post', 'fldPassword');
 
 		// quick protect
 		$fldLogin = str_replace(array(';', ':', '!', '<', '>', '(', ')', '%'), ' ', $fldLogin);
-
-		// remove domainnames
-		$fldLogin = str_replace(array('@iisg.nl', '@iisg.net', 'iisgnet\\'), ' ', $fldLogin);
 
 		// trim
 		$fldLogin = trim($fldLogin);
@@ -42,7 +38,7 @@ function createLoginPage() {
 		// check if both field are entered
 		if ( $fldLogin != '' && $fldPassword != '' ) {
 
-			$result_login_check = class_authentication::authenticate($fldLogin, $fldPassword);
+			$result_login_check = Authentication::authenticate($fldLogin, $fldPassword);
 
 			if ( $result_login_check == 1 ) {
 				// retain login name
@@ -51,7 +47,7 @@ function createLoginPage() {
 				//
 				$burl = 'presentornot.php';
 				Header("Location: " . $burl);
-				die("Go to <a href=\"" . $burl . "\">next</a>");
+				die(Translations::get('go_to') . " <a href=\"" . $burl . "\">next</a>");
 			} else {
 				// show error
 				$error .= "User/Password combination incorrect.";
@@ -63,7 +59,7 @@ function createLoginPage() {
 	}
 
 	$ret = "
-<h2>Please log in</h2>
+<h2>" . Translations::get('please_log_in') . "</h2>
 ";
 
 	if ( $error != '' ) {
@@ -75,19 +71,19 @@ function createLoginPage() {
 <form name=\"frmA\" method=\"POST\">
 <input type=\"hidden\" name=\"issubmitted\" value=\"1\">
 <tr>
-	<td>Login name:</td>
-	<td><input type=\"text\" name=\"fldLogin\" class=\"login\" maxlength=\"50\" value=\"" . $fldLogin . "\"> <i>(firstname.lastname)</i></td>
+	<td>" . Translations::get('loginname') . ":</td>
+	<td><input type=\"text\" name=\"fldLogin\" class=\"login\" maxlength=\"50\" value=\"" . $fldLogin . "\"> <i>" . Translations::get('loginname_help') . "</i></td>
 </tr>
 <tr>
-	<td>Password:&nbsp;</td>
+	<td>" . Translations::get('password') . ":&nbsp;</td>
 	<td><input type=\"password\" name=\"fldPassword\" class=\"password\" maxlength=\"50\" value=\"\"></td>
 </tr>
 <tr>
 	<td>&nbsp;</td>
 </tr>
 <tr>
-	<td align=\"right\"><input class=\"button_login\" type=\"reset\" name=\"btnReset\" value=\"Clear\">&nbsp;</td>
-	<td>&nbsp;<input class=\"button_login\" type=\"submit\" name=\"btnSubmit\" value=\"Submit\"></td>
+	<td align=\"right\"><input class=\"button_login\" type=\"reset\" name=\"btnReset\" value=\"" . Translations::get('btn_clear') . "\">&nbsp;</td>
+	<td>&nbsp;<input class=\"button_login\" type=\"submit\" name=\"btnSubmit\" value=\"" . Translations::get('btn_login') . "\"></td>
 </tr>
 </form>
 </table>
