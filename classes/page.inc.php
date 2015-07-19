@@ -24,7 +24,6 @@ class Page {
 		$oFile = new class_file();
 		$page = $oFile->getFileSource($this->page_template);
 		$page = str_replace('{url}', $this->getUrl(), $page);
-		$page = str_replace('{lastmodified}', $this->getLastModified(), $page);
 
 		$page = str_replace('{content}', $this->getContent(), $page);
 
@@ -46,7 +45,6 @@ class Page {
 		$page = str_replace('{website_name}', Translations::get('website_name'), $page);
 		$page = str_replace('{contact}', Translations::get('contact'), $page);
 		$page = str_replace('{click_to_close_image}', Translations::get('click_to_close_image'), $page);
-		$page = str_replace('{last_modified}', Translations::get('last_modified'), $page);
 
 		// als laatste
 		$page = str_replace('{date}', class_datetime::getQueryDate(), $page);
@@ -54,7 +52,7 @@ class Page {
 		return $page;
 	}
 
-	public function createMenu() {
+	private function createMenu() {
 		global $menu;
 
 		$sMenu = "<ul>";
@@ -73,10 +71,6 @@ class Page {
 		return 'https://' . ( isset($_SERVER["HTTP_X_FORWARDED_HOST"]) && $_SERVER["HTTP_X_FORWARDED_HOST"] != '' ? $_SERVER["HTTP_X_FORWARDED_HOST"] : $_SERVER["SERVER_NAME"] ) . $_SERVER["SCRIPT_NAME"];
 	}
 
-	public function getLastModified( $dateformat = "j F Y") {
-		return date($dateformat, strtotime(Settings::get("last_modified")));
-	}
-
 	public function setContent( $content ) {
 		$this->content = $content;
 	}
@@ -91,10 +85,6 @@ class Page {
 
 	public function getTitle() {
 		return $this->title;
-	}
-
-	public function setColor( $color ) {
-		$this->color = $color;
 	}
 
 	public function getColor() {
