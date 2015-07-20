@@ -10,7 +10,7 @@ class Beo {
 					, 'scriptname' => 'ert_list.php'
 				)
 			, 'e' => array(
-					'query' => " USER03 LIKE '%EHBO%' "
+					'query' => " ( USER03 LIKE '%EHBO%' OR USER03 LIKE '%+E%' ) "
 					, 'show_level' => false
 					, 'scriptname' => 'firstaid_list.php'
 				)

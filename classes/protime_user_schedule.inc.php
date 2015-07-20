@@ -99,7 +99,8 @@ ORDER BY ${prefix}LNK_CURRIC_PROFILE.DATEFROM DESC, CAST(${prefix}CYC_DP.DAYNR A
 					if ( $element['dayOfWeek'] <= $nrOfDays ) {
 						$backgroundColor = ( ( $currentDayOfWeek == $element['dayOfWeek'] ) ? 'employee_schedule_accentuate' : '' );
 						$value = $element['minutes'];
-						$value = ( $value == 0 ) ? '&nbsp;' : number_format(($value/60),1);
+
+						$value = ( $value == 0 ) ? '&nbsp;' : date('G:i', mktime(0,$value));
 						$ret .=  "  <td class=\"employee_schedule $backgroundColor\">" . $value . "</td>\n";
 					}
 

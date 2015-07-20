@@ -38,7 +38,6 @@ a
 , a:hover {
 	color: <?php echo $c; ?>;
 	text-decoration: none;
-	border-bottom: 1px blue dotted;
 }
 
 a.PT
@@ -108,7 +107,6 @@ div {
 }
 
 div.main {
-	xxxwidth: 960px;
 	width: 1200px;
 	margin-left: auto;
 	margin-right: auto;
@@ -148,7 +146,6 @@ span.logout {
 }
 
 div.content {
-	xxxwidth: 950px;
 	width: 1190px;
 	border: 1px solid #AAAAAA;
 	margin-top: 5px;
@@ -311,6 +308,10 @@ td.employee_schedule {
 	border-color: lightgrey;
 	font-size: 90%;
 	text-align: center;
+	padding-left: 6px;
+	padding-right: 6px;
+	padding-top: 2px;
+	padding-bottom: 2px;
 }
 
 th.employee_schedule_accentuate {

@@ -1,8 +1,8 @@
 <?php 
 /**
- * Class for loading and getting translations from the database
+ * Class for loading and getting absence colors from the database
  */
-class AllowedVisibleAbsences {
+class ForEveryoneVisibleAbsences {
 	private static $is_loaded = false;
 	private static $settings = null;
 

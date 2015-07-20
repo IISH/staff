@@ -18,6 +18,7 @@ class Legenda {
 		$prefix = Settings::get('protime_tables_prefix');
 		$min_minutes = 120;
 
+/*
 		$query = "
 SELECT ID, ABSENCE, SHORT_" . $language . ", CODE, background_color, font_color, everyone, show_always, substitute_" . $language . "
 FROM ${prefix}ABSENCE
@@ -30,9 +31,16 @@ WHERE ABSENCE IN (
 	GROUP BY ABSENCE
 )
 OR show_always = 1
-ORDER BY SHORT_" . getLanguage() . " ";
+*/
+		$query = "
+SELECT DISTINCT ID, ${prefix}ABSENCE.ABSENCE, SHORT_" . $language . ", CODE, background_color, font_color, everyone, show_always, substitute_" . $language . "
+FROM ${prefix}ABSENCE
+	RIGHT JOIN Staff_colors ON ${prefix}ABSENCE.CODE = Staff_colors.absence_code
+	LEFT JOIN ${prefix}P_ABSENCE ON ${prefix}ABSENCE.ABSENCE = ${prefix}P_ABSENCE.ABSENCE
+WHERE ( BOOKDATE LIKE '" . date("Y") . "%' AND ${prefix}P_ABSENCE.ABSENCE NOT IN (5, 19) AND ( ${prefix}P_ABSENCE.ABSENCE_VALUE>=" . $min_minutes . " OR ${prefix}P_ABSENCE.ABSENCE_VALUE=0 ) ) OR show_always = 1
+";
 
-		// which language are we using (protime has only 2 languages)
+		//
 		$result = mysql_query($query, $oConn->getConnection());
 		if ( mysql_num_rows($result) > 0 ) {
 

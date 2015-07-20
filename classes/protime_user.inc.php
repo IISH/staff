@@ -103,25 +103,10 @@ class ProtimeUser {
 
 			$this->calculateRoles();
 			$this->calculateAuthorisation();
-			$this->fixLoginName();
 			$this->calculateIsAdmin();
 			$this->findSubEmployees();
 		}
 		mysql_free_result($resultReset);
-	}
-
-	private function fixLoginName() {
-		if ( $this->loginname != '' ) {
-			return;
-		}
-
-		$new = $this->firstname . '.' . verplaatsTussenvoegselNaarBegin($this->lastname);
-		$new = removeJobFunctionFromName($new);
-		$new = str_replace(' ', '', $new);
-		$new = strtolower($new);
-
-		$this->loginname = $new;
-		$this->isLoaded_loginname = true;
 	}
 
 	private function calculateRoles() {
@@ -214,7 +199,7 @@ class ProtimeUser {
 
 		// make list of all possible ontruimers
 		for ( $i = 0; $i <= Settings::get('number_of_levels'); $i++ ) {
-			$roles[] = 'O'.$i;
+			$roles[] = 'o'.$i;
 		}
 
 		// check for each ontruimer is has role
@@ -244,13 +229,9 @@ class ProtimeUser {
 	}
 
 	private function calculateIsAdmin() {
-		if ( !$this->isLoaded_loginname ) {
-			$this->fixLoginName();
-		}
-
 		// check if and set is_admin
 		$arr = splitStringIntoArray(Settings::get('superadmin'), "/[^a-zA-Z0-9\.]/");
-		if ( in_array( $this->loginname, $arr ) ) {
+		if ( in_array( $this->getLoginname(), $arr ) ) {
 			$this->is_admin = true;
 		}
 	}
@@ -260,13 +241,14 @@ class ProtimeUser {
 	}
 
 	public function getFirstname() {
-		return $this->firstname;
+		return $this->fixBrokenChars($this->firstname);
 	}
 
 	public function getNiceFirstLastname() {
-		$ret = $this->firstname . ' ' . verplaatsTussenvoegselNaarBegin($this->lastname);
-		$ret = removeJobFunctionFromName($ret);
+		$ret = $this->firstname . ' ' . $this->verplaatsTussenvoegselNaarBegin($this->lastname);
+		$ret = $this->removeJobFunctionFromName($ret);
 		$ret = replaceDoubleTripleSpaces($ret);
+		$ret = $this->fixBrokenChars($ret);
 
 		return $ret;
 	}
@@ -274,12 +256,12 @@ class ProtimeUser {
 	public function getPhoto() {
 		$ret = trim($this->loginname);
 		if ( $ret == '' ) {
-			$ret = $this->firstname . ' ' . verplaatsTussenvoegselNaarBegin($this->lastname);
+			$ret = $this->firstname . '.' . $this->verplaatsTussenvoegselNaarBegin($this->lastname);
 		}
-		$ret = removeJobFunctionFromName($ret);
-		$ret = fixPhotoCharacters($ret);
-		$ret = replaceDoubleTripleSpaces($ret);
-		$ret = str_replace(' ', '.', $ret);
+		$ret = $this->removeJobFunctionFromName($ret);
+		$ret = $this->fixPhotoCharacters($ret);
+
+		$ret = str_replace(' ', '', $ret);
 		$ret .= '.jpg';
 		$ret = strtolower($ret);
 
@@ -287,11 +269,20 @@ class ProtimeUser {
 	}
 
 	public function getLastname() {
-		return $this->lastname;
+		return $this->fixBrokenChars($this->lastname);
 	}
 
 	public function getLoginname() {
-		return $this->loginname;
+		$ret = trim($this->loginname);
+
+		if ( $ret == '' ) {
+			$ret = $this->firstname . '.' . $this->verplaatsTussenvoegselNaarBegin($this->lastname);
+			$ret = $this->removeJobFunctionFromName($ret);
+			$ret = str_replace(' ', '', $ret);
+			$ret = strtolower($ret);
+		}
+
+		return $ret;
 	}
 
 	public function getRoom() {
@@ -299,7 +290,7 @@ class ProtimeUser {
 	}
 
 	public function getTelephone() {
-		return $this->telephone;
+		return $this->cleanUpTelephone($this->telephone);
 	}
 
 	public function getEmail() {
@@ -349,7 +340,7 @@ class ProtimeUser {
 		$ids = array();
 		$ids[] = '0';
 
-		$query = 'SELECT * FROM Staff_favourites WHERE user=\'' . $this->loginname . '\' AND type=\'' . $type . '\' ';
+		$query = 'SELECT * FROM Staff_favourites WHERE user=\'' . $this->getLoginname() . '\' AND type=\'' . $type . '\' ';
 		$result = mysql_query($query, $oConn->getConnection());
 		while ( $row = mysql_fetch_assoc($result) ) {
 			$ids[] = $row["ProtimeID"];
@@ -381,5 +372,96 @@ class ProtimeUser {
 
 	public function isHeadOfEmployee($subEmployeeId) {
 		return in_array($subEmployeeId, $this->arrSubEmployees);
+	}
+
+	private function cleanUpTelephone($telephone) {
+		$retval = $telephone;
+
+		// remove some dirty data from telephone
+		$retval = str_replace(array("/", "(", ")", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"), ' ', $retval);
+
+		//
+		while ( strpos($retval, '  ') !== false ) {
+			$retval = str_replace('  ',' ', $retval);
+		}
+
+		//
+		$retval = trim($retval);
+
+		return $retval;
+	}
+
+	private function removeJobFunctionFromName( $string ) {
+		$string = str_ireplace('(vrijwilliger)', '', $string);
+		$string = str_ireplace('(vrijwillig)', '', $string);
+		$string = str_ireplace('(stz)', '', $string);
+		$string = str_ireplace('(rec)', '', $string);
+
+		return $string;
+	}
+
+	private function fixPhotoCharacters( $photo ) {
+		$photo =  iconv('Windows-1252', 'ASCII//TRANSLIT//IGNORE', $photo);
+		$photo = str_replace('`', '', $photo);
+		$photo = str_replace('"', '', $photo);
+		return $photo;
+	}
+
+	private function fixBrokenChars($text) {
+		return htmlentities($text, ENT_COMPAT | ENT_XHTML, 'ISO-8859-1', true);
+	}
+
+	private function verplaatsTussenvoegselNaarBegin( $text ) {
+		$array = array( ' van den', ' van der', ' van', ' de', ' el' );
+
+		foreach ( $array as $t ) {
+			if ( strtolower(substr($text, -strlen($t))) == strtolower($t) ) {
+				$text = trim($t . ' ' . substr($text, 0, strlen($text)-strlen($t)));
+			}
+		}
+
+		return $text;
+	}
+
+	public function getOntruimerVerdieping() {
+		$retval = '';
+
+		//
+		$arrRole = $this->arrRoles;
+
+		// loop
+		foreach ( $arrRole as $item ) {
+			// check if o<level>
+			if ( strlen($item) == 2 && substr($item, 0, 1) == 'o' ) {
+				// get level
+				$retval .= ' ' . substr($item, -1);
+			}
+		}
+
+		//
+		$retval = trim($retval);
+
+		return $retval;
+	}
+
+	public function getRolesForFirePage() {
+		$ret = '';
+		$separator = '';
+
+		if ( $this->isBhv() ) {
+			$ret .= $separator . Translations::get('lbl_ert');
+			$separator = ', ';
+		}
+
+		if ( $this->isEhbo() ) {
+			$ret .= $separator . Translations::get('lbl_firstaid');
+			$separator = ', ';
+		}
+
+		if ( $this->isOntruimer() ) {
+			$ret .= $separator . Translations::get('lbl_evacuator_short') . $this->getOntruimerVerdieping();
+		}
+
+		return $ret;
 	}
 }

@@ -78,16 +78,14 @@ WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) " . $queryCriterium . 
 ";
 	$resultSelect = mysql_query($querySelect, $oProtime->getConnection());
 
-	while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
+	while ( $row = mysql_fetch_assoc($resultSelect) ) {
 
-		$empName = $rowSelect["FIRSTNAME"] . " " . verplaatsTussenvoegselNaarBegin(trim($rowSelect["NAME"]));
-		$empName = removeJobFunctionFromName($empName);
-		$empName = trim($empName);
+		$oEmployee = new ProtimeUser($row["PERSNR"]);
 
 		$tmp = "
 <TR>
-	<TD><div id=\"divAddRemove" . $rowSelect["PERSNR"] . "\">::ADDREMOVE::</div></TD>
-	<TD>" . createUrl( array( 'url' => 'employee.php?id=' . $rowSelect["PERSNR"], 'label' => fixBrokenChars( $empName ) ) ) . "</TD>
+	<TD><div id=\"divAddRemove" . $oEmployee->getId() . "\">::ADDREMOVE::</div></TD>
+	<TD>" . createUrl( array( 'url' => 'employee.php?id=' . $oEmployee->getId(), 'label' => $oEmployee->getNiceFirstLastname() ) ) . "</TD>
 	<td class=\"presentornot_absence\" style=\"::STATUS_STYLE::\"><A class=\"checkinouttime\" TITLE=\"::STATUS_ALT::\">::STATUS_TEXT::</A></td>
 	<TD></TD>
 	<TD align=\"center\">::VAKANTIE::</TD>
@@ -95,7 +93,7 @@ WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) " . $queryCriterium . 
 ";
 
 		//
-		$status = getCurrentDayCheckInoutState($rowSelect["PERSNR"]);
+		$status = getCurrentDayCheckInoutState($oEmployee->getId());
 
 		//
 		$tmp = str_replace('::STATUS_STYLE::', $status["status_color"], $tmp);
@@ -103,14 +101,14 @@ WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) " . $queryCriterium . 
 		$tmp = str_replace('::STATUS_ALT::', $status["status_alt"], $tmp);
 
 		//
-		if ( strpos(',' . $favIds . ',', ',' . $rowSelect["PERSNR"] . ',') !== false ) {
-			$tmp = str_replace('::ADDREMOVE::', '<a href="#" onClick="return addRemove(' . $rowSelect["PERSNR"] . ', \'r\');" title="' . Translations::get('lbl_click_to_remove_from_favourites') . '" class="nolink favourites_on">&#9733;</a>', $tmp);
+		if ( strpos(',' . $favIds . ',', ',' . $oEmployee->getId() . ',') !== false ) {
+			$tmp = str_replace('::ADDREMOVE::', '<a href="#" onClick="return addRemove(' . $oEmployee->getId() . ', \'r\');" title="' . Translations::get('lbl_click_to_remove_from_favourites') . '" class="nolink favourites_on">&#9733;</a>', $tmp);
 		} else {
-			$tmp = str_replace('::ADDREMOVE::', '<a href="#" onClick="return addRemove(' . $rowSelect["PERSNR"] . ', \'a\');" title="' . Translations::get('lbl_click_to_add_to_favourites') . '" class="nolink favourites_off">&#9733;</a>', $tmp);
+			$tmp = str_replace('::ADDREMOVE::', '<a href="#" onClick="return addRemove(' . $oEmployee->getId() . ', \'a\');" title="' . Translations::get('lbl_click_to_add_to_favourites') . '" class="nolink favourites_off">&#9733;</a>', $tmp);
 		}
 
 		//
-		$arrVakantie = getAbsencesAndHolidays($rowSelect["PERSNR"], $selectedYear, $selectedMonth );
+		$arrVakantie = getAbsencesAndHolidays($oEmployee->getId(), $selectedYear, $selectedMonth );
 
 		$vak = '';
 

@@ -1,4 +1,4 @@
-<?php 
+<?php
 require_once "classes/start.inc.php";
 
 //
@@ -60,22 +60,20 @@ $totaal["afwezig"] = 0;
 
 $retvalArray = array();
 
-while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
+while ( $row = mysql_fetch_assoc($resultSelect) ) {
 	$photo = '';
 
-	$empName = $rowSelect["FIRSTNAME"] . " " . verplaatsTussenvoegselNaarBegin(trim($rowSelect["NAME"]));
-	$empName = removeJobFunctionFromName($empName);
-	$empName = trim($empName);
+	$oEmployee = new ProtimeUser( $row["PERSNR"] );
 
 	if ( $layout == 1 ) {
 		$tmp = "
 <tr>
-	<td><div id=\"divAddRemove" . $rowSelect["PERSNR"] . "\">::ADDREMOVE::</div></td>
-	<td><div id=\"divCheckInOut" . $rowSelect["PERSNR"] . "\">::CHECKINOUT::</div></td>
-	<td>" . createUrl( array( 'url' => 'employee.php?id=' . $rowSelect["PERSNR"], 'label' => fixBrokenChars( $empName ) ) ) . "</td>
+	<td><div id=\"divAddRemove" . $oEmployee->getId() . "\">::ADDREMOVE::</div></td>
+	<td><div id=\"divCheckInOut" . $oEmployee->getId() . "\">::CHECKINOUT::</div></td>
+	<td>" . createUrl( array( 'url' => 'employee.php?id=' . $oEmployee->getId(), 'label' => $oEmployee->getNiceFirstLastname() ) ) . "</td>
 	<td class=\"presentornot_absence\" style=\"::STATUS_STYLE::\"><A class=\"checkinouttime\" TITLE=\"::STATUS_ALT::\">::STATUS_TEXT::</A></td>
-	<td align=\"center\">" . cleanUpTelephone($rowSelect["USER02"]) . "</td>
-	<td align=\"center\">" . static_Room::createRoomUrl( $rowSelect[ Settings::get('curric_room') ] ) . "</td>
+	<td align=\"center\">" . $oEmployee->getTelephone() . "</td>
+	<td align=\"center\">" . static_Room::createRoomUrl( $oEmployee->getRoom() ) . "</td>
 </td>
 </tr>
 ";
@@ -84,54 +82,48 @@ while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
 		$tmp = "
 <table class=\"photobook\">
 <tr class=\"photobook\">
-	<td  class=\"photobook\" colspan=4>::PHOTO::</td>
+	<td  class=\"photobook\" colspan=4>" . createUrl( array( 'url' => 'employee.php?id=' . $oEmployee->getId(), 'label' => '::PHOTO::' ) ) . "</td>
 </tr>
 <tr>
-	<td  class=\"photobook\" colspan=4>" . createUrl( array( 'url' => 'employee.php?id=' . $rowSelect["PERSNR"], 'label' => fixBrokenChars( $empName ) ) ) . "</td>
+	<td  class=\"photobook\" colspan=4>" . createUrl( array( 'url' => 'employee.php?id=' . $oEmployee->getId(), 'label' => $oEmployee->getNiceFirstLastname() ) ) . "</td>
 </tr>
 <tr>
-	<td class=\"photobook\"><div id=\"divAddRemove" . $rowSelect["PERSNR"] . "\">::ADDREMOVE::</div></td>
-	<td class=\"photobook\"><div id=\"divCheckInOut" . $rowSelect["PERSNR"] . "\">::CHECKINOUT::</div></td>
+	<td class=\"photobook\"><div id=\"divAddRemove" . $oEmployee->getId() . "\">::ADDREMOVE::</div></td>
+	<td class=\"photobook\"><div id=\"divCheckInOut" . $oEmployee->getId() . "\">::CHECKINOUT::</div></td>
 	<td class=\"photobook presentornot_absence\" colspan=2 width=\"100px\" style=\"::STATUS_STYLE::\"><A class=\"checkinouttime\" TITLE=\"::STATUS_ALT::\">::STATUS_TEXT::</A></td>
 </tr>
 <tr>
-	<td class=\"photobook\" colspan=4>" . Translations::get('lbl_telephone_short') . ": " . valueOr(cleanUpTelephone($rowSelect["USER02"])) . ", " . Translations::get('lbl_room_short') . ": " . valueOr( static_Room::createRoomUrl( $rowSelect[Settings::get('curric_room')] ) ) . "</td>
+	<td class=\"photobook\" colspan=4>" . Translations::get('lbl_telephone_short') . ": " . valueOr($oEmployee->getTelephone()) . ", " . Translations::get('lbl_room_short') . ": " . valueOr( static_Room::createRoomUrl( $oEmployee->getRoom() ) ) . "</td>
 </tr>
 </table>
 ";
 
-		$photo = trim(trim($rowSelect["FIRSTNAME"]) . ' ' . trim(verplaatsTussenvoegselNaarBegin($rowSelect["NAME"])));
-		$photo = removeJobFunctionFromName($photo);
-		$photo = fixPhotoCharacters($photo);
-		$photo = replaceDoubleTripleSpaces($photo);
-		$photo = str_replace(' ', '.', $photo);
-		$photo = strtolower( $photo . '.jpg' );
+		$photo = $oEmployee->getPhoto();
 		$photo = checkImageExists( Settings::get('staff_images_directory') . $photo, Settings::get('noimage_file') );
 		$photo = "<img src=\"$photo\"  style=\"height:140px;\">";
-
 		$tmp = str_replace('::PHOTO::', $photo, $tmp);
 	}
 
 	//
-	if ( strpos(',' . $favIds . ',', ',' . $rowSelect["PERSNR"] . ',') !== false ) {
+	if ( strpos(',' . $favIds . ',', ',' . $oEmployee->getId() . ',') !== false ) {
 		$alttitle = Translations::get('lbl_click_to_remove_from_favourites');
-		$tmp = str_replace('::ADDREMOVE::', '<a href="#" onClick="return addRemove(' . $rowSelect["PERSNR"] . ', \'r\');" title="' . $alttitle . '" class="nolink favourites_on">&#9733;</a>', $tmp);
+		$tmp = str_replace('::ADDREMOVE::', '<a href="#" onClick="return addRemove(' . $oEmployee->getId() . ', \'r\');" title="' . $alttitle . '" class="nolink favourites_on">&#9733;</a>', $tmp);
 	} else {
 		$alttitle = Translations::get('lbl_click_to_add_to_favourites');
-		$tmp = str_replace('::ADDREMOVE::', '<a href="#" onClick="return addRemove(' . $rowSelect["PERSNR"] . ', \'a\');" title="' . $alttitle . '" class="nolink favourites_off">&#9733;</a>', $tmp);
+		$tmp = str_replace('::ADDREMOVE::', '<a href="#" onClick="return addRemove(' . $oEmployee->getId() . ', \'a\');" title="' . $alttitle . '" class="nolink favourites_off">&#9733;</a>', $tmp);
 	}
 
 	// 
-	if ( strpos(',' . $checkInOutIds . ',', ',' . $rowSelect["PERSNR"] . ',') !== false ) {
+	if ( strpos(',' . $checkInOutIds . ',', ',' . $oEmployee->getId() . ',') !== false ) {
 		$alttitle = Translations::get('lbl_click_to_not_get_email_notification');
-		$tmp = str_replace('::CHECKINOUT::', '<a href="#" onClick="return checkInOut(' . $rowSelect["PERSNR"] . ', \'r\');" title="' . $alttitle . '" class="nolink"><img src="images/misc/clock-red.png" border=0></a>', $tmp);
+		$tmp = str_replace('::CHECKINOUT::', '<a href="#" onClick="return checkInOut(' . $oEmployee->getId() . ', \'r\');" title="' . $alttitle . '" class="nolink"><img src="images/misc/clock-red.png" border=0></a>', $tmp);
 	} else {
 		$alttitle = Translations::get('lbl_click_to_get_email_notification');
-		$tmp = str_replace('::CHECKINOUT::', '<a href="#" onClick="return checkInOut(' . $rowSelect["PERSNR"] . ', \'a\');" title="' . $alttitle . '" class="nolink"><img src="images/misc/clock-black.png" border=0></a>', $tmp);
+		$tmp = str_replace('::CHECKINOUT::', '<a href="#" onClick="return checkInOut(' . $oEmployee->getId() . ', \'a\');" title="' . $alttitle . '" class="nolink"><img src="images/misc/clock-black.png" border=0></a>', $tmp);
 	}
 
 	//
-	$status = getCurrentDayCheckInoutState($rowSelect["PERSNR"]);
+	$status = getCurrentDayCheckInoutState($oEmployee->getId());
 
 	if ( $status["aanwezig"] == 1 ) {
 		$totaal["aanwezig"]++;

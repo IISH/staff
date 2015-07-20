@@ -50,7 +50,7 @@ if ( $oWebuser->hasAuthorisationTabAbsences() ) {
 }
 $menu[] = new MenuItem(Translations::get('menu_ert'), 'ert.php');
 $menu[] = new MenuItem(Translations::get('menu_firstaid'), 'firstaid.php');
-if ( $oWebuser->hasAuthorisationTabOntruimer() ) {
+if ( $oWebuser->hasAuthorisationTabOntruimer() || $oWebuser->isOntruimer() ) {
 	$menu[] = new MenuItem(Translations::get('menu_evacuator'), 'evacuators.php');
 }
 $menu[] = new MenuItem(Translations::get('menu_nationalholidays'), 'nationalholidays.php');

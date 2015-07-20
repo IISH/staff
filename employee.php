@@ -30,7 +30,7 @@ function createStaffContent( $staff ) {
 	$ret = '<h2>' . $staff->getNiceFirstLastname() . '</h2>';
 
 	// go back
-	$goback = getReferer();
+	$goback = ( isset( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : '' );
 	if ( $goback == '' ) {
 		$goback = 'presentornot.php';
 	} else {
@@ -59,7 +59,7 @@ function createStaffContent( $staff ) {
 	<td>" . Translations::get('lbl_name') . ":</td>
 	<td>" . $staff->getNiceFirstLastname() . "</td>
 	<td width=\"20px\"></td>
-	<td rowspan=10 valign=top>$photo</td>
+	<td rowspan=9 valign=top>$photo</td>
 </tr>
 ";
 
@@ -138,7 +138,7 @@ function createStaffContent( $staff ) {
 	$ret .= "
 <tr>
 	<td valign=top>" . Translations::get('lbl_schedule') . ":</td>
-	<td>" . $currentSchedule->getCurrentSchedule() . "</td>
+	<td colspan=3>" . $currentSchedule->getCurrentSchedule() . "</td>
 </tr>
 ";
 

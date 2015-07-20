@@ -43,24 +43,24 @@ for( $i=0 ; $i <= $nrOfLevels; $i++ ) {
     $ontruimersAanwezigOpVerdieping[$i] = 0;
 }
 
-while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
+while ( $row = mysql_fetch_assoc($resultSelect) ) {
 	$verdieping = '';
 	$telephone = '';
 
-	$oEmployee = new ProtimeUser($rowSelect["PERSNR"]);
+	$oEmployee = new ProtimeUser($row["PERSNR"]);
 
 	if ( $oBeo->getShowLevel() ) {
-		$verdieping = "<td align=\"center\">" . cleanUpVerdieping($rowSelect["USER03"]) . "</td>";
+		$verdieping = "<td align=\"center\">" . $oEmployee->getOntruimerVerdieping() . "</td>";
 	}
 
 	if ( $oWebuser->hasAuthorisationBeoTelephone() ) {
-		$telephone = "<td align=\"center\">" . cleanUpTelephone($rowSelect["USER02"]) . "</td>";
+		$telephone = "<td align=\"center\">" . $oEmployee->getTelephone() . "</td>";
 	}
 
 	$tmp = "
 <tr>
-	<td><div id=\"divCheckInOut" . $rowSelect["PERSNR"] . "\">::CHECKINOUT::</div></td>
-	<td>" . createUrl( array( 'url' => 'employee.php?id=' .  $oEmployee->getId(), 'label' => fixBrokenChars( $oEmployee->getNiceFirstLastname() ) ) ) . "</td>
+	<td><div id=\"divCheckInOut" . $oEmployee->getId() . "\">::CHECKINOUT::</div></td>
+	<td>" . createUrl( array( 'url' => 'employee.php?id=' .  $oEmployee->getId(), 'label' => $oEmployee->getNiceFirstLastname() ) ) . "</td>
 	<td class=\"presentornot_absence\" style=\"::STATUS_STYLE::\"><A class=\"checkinouttime\" TITLE=\"::STATUS_ALT::\">::STATUS_TEXT::</A></td>
 	$telephone
 	$verdieping
@@ -68,20 +68,20 @@ while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
 ";
 
 	//
-	if ( strpos(',' . $checkInOutIds . ',', ',' . $rowSelect["PERSNR"] . ',') !== false ) {
+	if ( strpos(',' . $checkInOutIds . ',', ',' . $oEmployee->getId() . ',') !== false ) {
 		$alttitle = Translations::get('lbl_click_to_not_get_email_notification');
-		$tmp = str_replace('::CHECKINOUT::', '<a href="#" onClick="return checkInOut(' . $rowSelect["PERSNR"] . ', \'r\');" title="' . $alttitle . '" class="nolink"><img src="images/misc/clock-red.png" border=0></a>', $tmp);
+		$tmp = str_replace('::CHECKINOUT::', '<a href="#" onClick="return checkInOut(' . $oEmployee->getId() . ', \'r\');" title="' . $alttitle . '" class="nolink"><img src="images/misc/clock-red.png" border=0></a>', $tmp);
 	} else {
 		$alttitle = Translations::get('lbl_click_to_get_email_notification');
-		$tmp = str_replace('::CHECKINOUT::', '<a href="#" onClick="return checkInOut(' . $rowSelect["PERSNR"] . ', \'a\');" title="' . $alttitle . '" class="nolink"><img src="images/misc/clock-black.png" border=0></a>', $tmp);
+		$tmp = str_replace('::CHECKINOUT::', '<a href="#" onClick="return checkInOut(' . $oEmployee->getId() . ', \'a\');" title="' . $alttitle . '" class="nolink"><img src="images/misc/clock-black.png" border=0></a>', $tmp);
 	}
 
 	//
-	$status = getCurrentDayCheckInoutState($rowSelect["PERSNR"]);
+	$status = getCurrentDayCheckInoutState($oEmployee->getId());
 
 	if ( $status["aanwezig"] == 1 ) {
 		$totaal["aanwezig"]++;
-		$ontruimersAanwezigOpVerdieping[cleanUpVerdieping($rowSelect["USER03"])] = 1;
+		$ontruimersAanwezigOpVerdieping[$oEmployee->getOntruimerVerdieping()] = 1;
 	} else {
 		$totaal["afwezig"]++;
 	}

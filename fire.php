@@ -55,7 +55,7 @@ function createBrandContent( ) {
 	<TD width=25 style=\"border: 1px solid black;\">&nbsp;</TD>
 	<TD width=270 style=\"border: 1px solid black;\"><font size=-1><b>" . Translations::get('lbl_name') . "</b></font></TD>
 	<td width=130 align=\"center\" style=\"border: 1px solid black;\"><font size=-1><b>" . Translations::get('lbl_telephone') . "</b></font></td>
-	<td width=130 align=\"center\" style=\"border: 1px solid black;\"><font size=-1><b>" . Translations::get('lbl_roles') . "</b></font></td>
+	<td width=200 align=\"center\" style=\"border: 1px solid black;\"><font size=-1><b>" . Translations::get('lbl_roles') . "</b></font></td>
 </TR>
 ";
 
@@ -64,13 +64,17 @@ function createBrandContent( ) {
 
 		//
 		$querySelect = $item['query'];
+
 		$resultSelect = mysql_query($querySelect, $oProtime->getConnection());
 
 		$totaal["aanwezig"] = 0;
 
-		while ( $rowSelect = mysql_fetch_assoc($resultSelect) ) {
+		while ( $row = mysql_fetch_assoc($resultSelect) ) {
+
+			$oEmployee = new ProtimeUser($row["PERSNR"]);
+
 			//
-			$status = getCurrentDayCheckInoutState($rowSelect["PERSNR"]);
+			$status = getCurrentDayCheckInoutState($oEmployee->getId());
 
 			if ( $status["aanwezig"] == 1 ) {
 				$total_of_present_employees++;
@@ -81,9 +85,9 @@ function createBrandContent( ) {
 <tr>
 	<td style=\"border: 1px solid black;\">&nbsp;</td>
 	<td style=\"border: 1px solid black;\">" . $totaal["aanwezig"] . "</td>
-	<td style=\"border: 1px solid black;\">" . fixBrokenChars(trim($rowSelect["NAME"]) . ', ' . trim($rowSelect["FIRSTNAME"])) . "</td>
-	<td style=\"border: 1px solid black;\">" . cleanUpTelephone($rowSelect["USER02"]) . "&nbsp;</td>
-	<td style=\"border: 1px solid black;\">" . $rowSelect["USER03"] . "&nbsp;</td>
+	<td style=\"border: 1px solid black;\">" . createUrl( array( 'url' => 'employee.php?id=' . $oEmployee->getId(), 'label' => $oEmployee->getNiceFirstLastname() ) ) . "</td>
+	<td style=\"border: 1px solid black;\">" . $oEmployee->getTelephone() . "&nbsp;</td>
+	<td style=\"border: 1px solid black;\">" . $oEmployee->getRolesForFirePage() . "&nbsp;</td>
 </a></td>
 </tr>
 ";

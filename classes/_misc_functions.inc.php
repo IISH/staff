@@ -11,22 +11,6 @@ function getLanguage() {
 	return $language;
 }
 
-function fixPhotoCharacters( $photo ) {
-	$photo =  iconv('Windows-1252', 'ASCII//TRANSLIT//IGNORE', $photo);
-	$photo = str_replace('`', '', $photo);
-	$photo = str_replace('"', '', $photo);
-	return $photo;
-}
-
-function removeJobFunctionFromName( $string ) {
-	$string = str_ireplace('(vrijwilliger)', '', $string);
-	$string = str_ireplace('(vrijwillig)', '', $string);
-	$string = str_ireplace('(stz)', '', $string);
-	$string = str_ireplace('(rec)', '', $string);
-
-	return $string;
-}
-
 function replaceDoubleTripleSpaces( $string ) {
 	return preg_replace('!\s+!', ' ', $string);
 }
@@ -36,7 +20,6 @@ function valueOr( $value, $or = '?' ) {
 }
 
 function checkImageExists( $photo, $imageIfNotExists = '' ) {
-//	if ( !file_exists ( Settings::get('path_public_html') . $photo ) ) {
 	if ( !file_exists ( $_SERVER['DOCUMENT_ROOT'] . '/' . $photo ) ) {
 		$photo = $imageIfNotExists;
 	}
@@ -65,20 +48,10 @@ function stripDomainnameFromUrl( $url ) {
 	return $ret;
 }
 
-function getReferer() {
-	$url = '';
-
-	if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
-		$url = $_SERVER['HTTP_REFERER'];
-	}
-
-	return $url;
-}
-
 function goBack() {
 	$url = 'presentornot.php';
 
-	$referer = getReferer();
+	$referer = ( isset( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : '' );
 	if ( $referer != '' ) {
 		$url = $referer;
 		$url = stripDomainnameFromUrl( $url );
@@ -168,7 +141,7 @@ WHERE ${prefix}P_ABSENCE.PERSNR = " . $persnr . " AND ${prefix}P_ABSENCE.BOOKDAT
 				// no, user has no rights
 
 				// is the absence allowed to be seen
-				if ( !AllowedVisibleAbsences::in_array($codeAbsence) ) {
+				if ( !ForEveryoneVisibleAbsences::in_array($codeAbsence) ) {
 					// no, use default absence
 					$reasonAbsence = Translations::get('default_absent_value');
 				}
@@ -318,49 +291,4 @@ function getBackUrl() {
 	$ret = $protect->get_left_part($ret);
 
 	return $ret;
-}
-
-function cleanUpTelephone($telephone) {
-	$retval = $telephone;
-
-	// remove some dirty data from telephone
-	$retval = str_replace(array("/", "(", ")", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"), ' ', $retval);
-
-	//
-	while ( strpos($retval, '  ') !== false ) {
-		$retval = str_replace('  ',' ', $retval);
-	}
-
-	//
-	$retval = trim($retval);
-
-	return $retval;
-}
-
-function cleanUpVerdieping($verdieping) {
-	$retval = strtolower($verdieping);
-
-	// remove some dirty data from telephone
-	$retval = str_replace(array('bhv', 'ehbo', '+', 'e', 'o'), '', $retval);
-
-	//
-	$retval = trim($retval);
-
-	return $retval;
-}
-
-function fixBrokenChars($text) {
-	return htmlentities($text, ENT_COMPAT | ENT_XHTML, 'ISO-8859-1', true);
-}
-
-function verplaatsTussenvoegselNaarBegin( $text ) {
-	$array = array( ' van den', ' van der', ' van', ' de', ' el' );
-
-	foreach ( $array as $t ) {
-		if ( strtolower(substr($text, -strlen($t))) == strtolower($t) ) {
-			$text = trim($t . ' ' . substr($text, 0, strlen($text)-strlen($t)));
-		}
-	}
-
-	return $text;
 }
