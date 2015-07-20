@@ -21,6 +21,7 @@ function valueOr( $value, $or = '?' ) {
 
 function checkImageExists( $photo, $imageIfNotExists = '' ) {
 	if ( !file_exists ( $_SERVER['DOCUMENT_ROOT'] . '/' . $photo ) ) {
+		error_log("Error: Image does not exist: " . $_SERVER['DOCUMENT_ROOT'] . '/' . $photo);
 		$photo = $imageIfNotExists;
 	}
 
