@@ -125,7 +125,7 @@ WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) " . $queryCriterium . 
 				$cellStyleHrefStyle = $cellStyle["hrefStyle"];
 
 				//
-				if ( !$oWebuser->isAdmin() && !$oWebuser->isHeadOfDepartment() && !$oWebuser->hasAuthorisationReasonAbsence() && !$oWebuser->hasInOutTimeAuthorisation() ) {
+				if ( !$oWebuser->isAdmin() && !$oWebuser->isHeadOfDepartment() && !$oWebuser->hasAuthorisationReasonOfAbsenceAll() && !$oWebuser->hasInOutTimeAuthorisation() ) {
 					$cellStyleAlt = '';
 					$cellStyleHrefStyle = 'color:white;';
 				}

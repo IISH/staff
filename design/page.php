@@ -11,11 +11,13 @@
 <!--
 function showImageDiv( image ) {
 	var elem = document.getElementById("imageDiv");
+	elem.innerHTML = '<a href="#" onclick="return closeImageDiv();"><img src="' + image + '" title="{click_to_close_image}"></a>';
 	elem.style.display = 'flex';
-	elem.innerHTML = '<a href="#" onclick="closeImageDiv();"><img src="' + image + '" title="{click_to_close_image}"></a>';
+	return false;
 }
 function closeImageDiv() {
 	document.getElementById("imageDiv").style.display = 'none';
+	return false;
 }
 // -->
 </script>

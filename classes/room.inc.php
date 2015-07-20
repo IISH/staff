@@ -16,7 +16,7 @@ class static_Room {
 			if ( $item != '' ) {
 
 				if ( preg_match("/^[0-9]{3}/i", $item) || preg_match("/^[0-9]{1}/i", $item) ) {
-					$ret .= $separator . '<a href="#" onClick="showImageDiv(\'' . Settings::get('floorplan_level' . $item[0]) . '\');">' . $item . "</a>";
+					$ret .= $separator . '<a href="#" onClick="return showImageDiv(\'' . Settings::get('floorplan_level' . $item[0]) . '\');">' . $item . "</a>";
 				} elseif ( preg_match("/^[0-9]{1}[^0-9]?/i", $item) ) {
 					$ret .= $separator . '<a href="' . Settings::get('floorplan_level0') . '" target="_blank">' . $item . "</a>";
 				} else {

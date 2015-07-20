@@ -216,8 +216,12 @@ class ProtimeUser {
 		return ( $this->isAdmin() || in_array('tab_fire', $this->arrAuthorisation) );
 	}
 
-	public function hasAuthorisationReasonAbsence() {
-		return ( $this->isAdmin() || in_array('reason_absence', $this->arrAuthorisation) );
+	public function hasAuthorisationReasonOfAbsenceAll() {
+		return ( $this->isAdmin() || in_array('reason_of_absence_all', $this->arrAuthorisation) );
+	}
+
+	public function hasAuthorisationReasonOfAbsenceDepartment() {
+		return ( $this->isAdmin() || in_array('reason_of_absence_department', $this->arrAuthorisation) );
 	}
 
 	public function hasAuthorisationBeoTelephone() {

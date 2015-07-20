@@ -137,7 +137,7 @@ WHERE ${prefix}P_ABSENCE.PERSNR = " . $persnr . " AND ${prefix}P_ABSENCE.BOOKDAT
 			$codeAbsence = strtolower($row["CODE"]);
 
 			// check if user has the right to see the reason of absence
-			if ( !$oWebuser->hasAuthorisationReasonAbsence() ) {
+			if ( !$oWebuser->hasAuthorisationReasonOfAbsenceAll() ) {
 				// no, user has no rights
 
 				// is the absence allowed to be seen

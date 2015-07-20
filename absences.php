@@ -162,7 +162,7 @@ tcRefreshSearchStart();
 	$legenda = new Legenda();
 	// create array of legenda items
 	foreach ( $legenda->getAll() as $item ) {
-		if ( $oWebuser->isAdmin() || $oWebuser->isHeadOfDepartment() || $oWebuser->hasAuthorisationReasonAbsence() || $item->isForEveryoneVisible() ) {
+		if ( $oWebuser->isAdmin() || $oWebuser->isHeadOfDepartment() || $oWebuser->hasAuthorisationReasonOfAbsenceAll() || $item->isForEveryoneVisible() ) {
 			$arrLegenda[strtolower($item->getDescriptin())] = "<span align=\"center\" style=\"" . $item->getBackgroundColor() . "display:inline-block;margin-bottom:5px;margin-right:5px;\">&nbsp;" . strtolower($item->getDescriptin()) . "&nbsp;</span>";
 		}
 	}
