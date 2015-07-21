@@ -174,7 +174,7 @@ WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) " . $queryCriterium . 
 <TABLE border=0 cellspacing=1 cellpadding=0>
 <TR>
 	<TD width=25></TD>
-	<TD width=190><font size=-1><b>" . Translations::get('lbl_name') . "</b></font></TD>
+	<TD width=220><font size=-1><b>" . Translations::get('lbl_name') . "</b></font></TD>
 	<TD width=100 align=\"center\"><font size=-1><b>" . Translations::get('lbl_today') . "</b></font></TD>
 	<TD width=18 align=\"center\"></TD>
 	<TD style=\"width:" . $vakantieWidth . "px;\" align=\"center\"><font size=-1><b>" . Translations::get('lbl_holidayabsences') . " " . Translations::get('month' . ($selectedMonth+0)) . ' ' . $selectedYear . "</b></font></TD>

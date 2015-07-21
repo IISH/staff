@@ -261,9 +261,9 @@ class ProtimeUser {
 		$ret = trim($this->loginname);
 		if ( $ret == '' ) {
 			$ret = $this->firstname . '.' . $this->verplaatsTussenvoegselNaarBegin($this->lastname);
+			$ret = $this->removeJobFunctionFromName($ret);
+			$ret = $this->fixPhotoCharacters($ret);
 		}
-		$ret = $this->removeJobFunctionFromName($ret);
-		$ret = $this->fixPhotoCharacters($ret);
 
 		$ret = str_replace(' ', '', $ret);
 		$ret .= '.jpg';
@@ -408,6 +408,7 @@ class ProtimeUser {
 		$photo =  iconv('Windows-1252', 'ASCII//TRANSLIT//IGNORE', $photo);
 		$photo = str_replace('`', '', $photo);
 		$photo = str_replace('"', '', $photo);
+
 		return $photo;
 	}
 
