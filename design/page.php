@@ -10,13 +10,13 @@
 <script language="JavaScript">
 <!--
 function showImageDiv( image ) {
-	var elem = document.getElementById("imageDiv");
+	var elem = document.getElementById('imageDiv');
 	elem.innerHTML = '<a href="#" onclick="return closeImageDiv();"><img src="' + image + '" title="{click_to_close_image}"></a>';
 	elem.style.display = 'flex';
 	return false;
 }
 function closeImageDiv() {
-	document.getElementById("imageDiv").style.display = 'none';
+	document.getElementById('imageDiv').style.display = 'none';
 	return false;
 }
 // -->
@@ -24,8 +24,7 @@ function closeImageDiv() {
 </head>
 <body>
 
-<div id="imageDiv" class="divImage">
-
+<div name="imageDiv" id="imageDiv" class="divImage">
 </div>
 
 <div class="main">
