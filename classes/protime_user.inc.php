@@ -52,7 +52,6 @@ class static_protime_user {
 
 class ProtimeUser {
 	protected $protime_id = 0;
-	protected $isLoaded_loginname = false;
 	protected $loginname = '';
 	protected $databases;
 	protected $firstname = '';
@@ -62,7 +61,6 @@ class ProtimeUser {
 	protected $telephone = '';
 	protected $roles = '';
 	protected $arrRoles = array();
-	protected $isLoaded_arrRoles = false;
 	protected $arrAuthorisation = array();
 	protected $is_admin = false;
 	protected $department;
@@ -156,9 +154,8 @@ class ProtimeUser {
 		mysql_free_result($res);
 
 		// Roles via user03
-		if ( !$this->isLoaded_arrRoles ) {
-			$this->calculateRoles();
-		}
+		$this->calculateRoles();
+
 		// loop through all roles
 		foreach ( $this->arrRoles as $role ) {
 			$query = "SELECT * FROM Staff_role_authorisation WHERE role='" . $role . "' ";
@@ -282,6 +279,7 @@ class ProtimeUser {
 		if ( $ret == '' ) {
 			$ret = $this->firstname . '.' . $this->verplaatsTussenvoegselNaarBegin($this->lastname);
 			$ret = $this->removeJobFunctionFromName($ret);
+			$ret = str_replace('-', '', $ret);
 			$ret = str_replace(' ', '', $ret);
 			$ret = strtolower($ret);
 		}
@@ -408,6 +406,8 @@ class ProtimeUser {
 		$photo =  iconv('Windows-1252', 'ASCII//TRANSLIT//IGNORE', $photo);
 		$photo = str_replace('`', '', $photo);
 		$photo = str_replace('"', '', $photo);
+		$photo = str_replace('-', '', $photo);
+		$photo = str_replace(' ', '', $photo);
 
 		return $photo;
 	}
