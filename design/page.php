@@ -11,7 +11,9 @@
 <!--
 function showImageDiv( image ) {
 	var elem = document.getElementById('imageDiv');
-	elem.innerHTML = '<a href="#" onclick="return closeImageDiv();"><img src="' + image + '" title="{click_to_close_image}"></a>';
+	elem.innerHTML = '<br><br><a href="#" onclick="return closeImageDiv();"><img src="' + image + '" title="{click_to_close_image}" border="0"></a>';
+	elem.style.width = '100%';
+	elem.style.height = '100%';
 	elem.style.display = 'flex';
 	return false;
 }
@@ -24,8 +26,7 @@ function closeImageDiv() {
 </head>
 <body>
 
-<div name="imageDiv" id="imageDiv" class="divImage">
-</div>
+<div name="imageDiv" id="imageDiv" class="imageDiv"></div>
 
 <div class="main">
 
@@ -37,8 +38,8 @@ function closeImageDiv() {
 			<td align="right">
 				<span class="name">{welcome}</span>
 				<br>
-				<a href="en.php"><img src="images/misc/en.png"></a>
-				<a href="nl.php"><img src="images/misc/nl.png"></a>
+				<a href="en.php"><img src="images/misc/en.png" border="0"></a>
+				<a href="nl.php"><img src="images/misc/nl.png" border="0"></a>
 				<br>
 				<span class="logout">{logout}</span></td>
 		</tr>
@@ -60,6 +61,12 @@ function closeImageDiv() {
 	</div>
 
 </div>
+
+<script language="JavaScript">
+<!--
+closeImageDiv();
+// -->
+</script>
 
 </body>
 </html>

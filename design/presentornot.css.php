@@ -322,8 +322,8 @@ td.employee_schedule_accentuate {
 	background-color: yellow;
 }
 
-.divImage {
-	display: none;
+.imageDiv {
+	display: hidden;
 	justify-content: center; /* align horizontal */
 	align-items: center; /* align vertical */
 	position:absolute;
@@ -333,4 +333,5 @@ td.employee_schedule_accentuate {
 	height:100%;
 	z-index:1000;
 	background: rgba(211,211,211,0.8);
+	text-align: center;
 }
