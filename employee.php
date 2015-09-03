@@ -89,7 +89,7 @@ function createStaffContent( $staff ) {
 	$ret .= "
 <tr>
 	<td>" . Translations::get('lbl_telephone') . ":</td>
-	<td>" . $staff->getTelephone() . "</td>
+	<td>" . $staff->getTelephoneHref() . "</td>
 </tr>
 ";
 

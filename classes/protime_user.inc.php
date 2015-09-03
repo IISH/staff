@@ -295,6 +295,23 @@ class ProtimeUser {
 		return $this->cleanUpTelephone($this->telephone);
 	}
 
+	public function getTelephoneHref() {
+		$tel = $this->cleanUpTelephone($this->telephone);
+
+		$template = trim(Settings::get('short_to_long_company_telephone_number_template'));
+		$max_length = trim(Settings::get('max_length_short_company_telephone_number'));
+		if ( $template != '' && $max_length != '' && $max_length > 0 && strlen($tel) <= $max_length ) {
+			if ( strlen( $template ) >= strlen( $tel ) ) {
+				$label = $tel;
+				$number = substr($template, 0, strlen($template) - strlen($tel) ) . $tel;
+
+				$tel = "<a href=\"tel:$number\">$label</a>";
+			}
+		}
+
+		return $tel;
+	}
+
 	public function getEmail() {
 		return $this->email;
 	}

@@ -72,7 +72,7 @@ while ( $row = mysql_fetch_assoc($resultSelect) ) {
 	<td><div id=\"divCheckInOut" . $oEmployee->getId() . "\">::CHECKINOUT::</div></td>
 	<td>" . createUrl( array( 'url' => 'employee.php?id=' . $oEmployee->getId(), 'label' => $oEmployee->getNiceFirstLastname() ) ) . "</td>
 	<td class=\"presentornot_absence\" style=\"::STATUS_STYLE::\"><A class=\"checkinouttime\" TITLE=\"::STATUS_ALT::\">::STATUS_TEXT::</A></td>
-	<td align=\"center\">" . $oEmployee->getTelephone() . "</td>
+	<td align=\"center\">" . $oEmployee->getTelephoneHref() . "</td>
 	<td align=\"center\">" . static_Room::createRoomUrl( $oEmployee->getRoom() ) . "</td>
 </td>
 </tr>
@@ -93,7 +93,7 @@ while ( $row = mysql_fetch_assoc($resultSelect) ) {
 	<td class=\"photobook presentornot_absence\" colspan=2 width=\"100px\" style=\"::STATUS_STYLE::\"><A class=\"checkinouttime\" TITLE=\"::STATUS_ALT::\">::STATUS_TEXT::</A></td>
 </tr>
 <tr>
-	<td class=\"photobook\" colspan=4>" . Translations::get('lbl_telephone_short') . ": " . valueOr($oEmployee->getTelephone()) . ", " . Translations::get('lbl_room_short') . ": " . valueOr( static_Room::createRoomUrl( $oEmployee->getRoom() ) ) . "</td>
+	<td class=\"photobook\" colspan=4>" . Translations::get('lbl_telephone_short') . ": " . valueOr($oEmployee->getTelephoneHref()) . ", " . Translations::get('lbl_room_short') . ": " . valueOr( static_Room::createRoomUrl( $oEmployee->getRoom() ) ) . "</td>
 </tr>
 </table>
 ";

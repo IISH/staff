@@ -54,7 +54,7 @@ while ( $row = mysql_fetch_assoc($resultSelect) ) {
 	}
 
 	if ( $oWebuser->hasAuthorisationBeoTelephone() ) {
-		$telephone = "<td align=\"center\">" . $oEmployee->getTelephone() . "</td>";
+		$telephone = "<td align=\"center\">" . $oEmployee->getTelephoneHref() . "</td>";
 	}
 
 	$tmp = "
