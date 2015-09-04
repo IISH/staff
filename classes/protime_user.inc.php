@@ -292,11 +292,11 @@ class ProtimeUser {
 	}
 
 	public function getTelephone() {
-		return $this->cleanUpTelephone($this->telephone);
+		return $this->telephone;
 	}
 
 	public function getTelephoneHref() {
-		$tel = $this->cleanUpTelephone($this->telephone);
+		$tel = $this->telephone;
 
 		$template = trim(Settings::get('short_to_long_company_telephone_number_template'));
 		$max_length = trim(Settings::get('max_length_short_company_telephone_number'));
@@ -391,23 +391,6 @@ class ProtimeUser {
 
 	public function isHeadOfEmployee($subEmployeeId) {
 		return in_array($subEmployeeId, $this->arrSubEmployees);
-	}
-
-	private function cleanUpTelephone($telephone) {
-		$retval = $telephone;
-
-		// remove some dirty data from telephone
-		$retval = str_replace(array("/", "(", ")", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"), ' ', $retval);
-
-		//
-		while ( strpos($retval, '  ') !== false ) {
-			$retval = str_replace('  ',' ', $retval);
-		}
-
-		//
-		$retval = trim($retval);
-
-		return $retval;
 	}
 
 	private function removeJobFunctionFromName( $string ) {

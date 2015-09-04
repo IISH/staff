@@ -15,10 +15,13 @@ class static_Room {
 		foreach ( $arrRoom as $item ) {
 			if ( $item != '' ) {
 
+				// 3 digit rooms or a single digit room
 				if ( preg_match("/^[0-9]{3}/i", $item) || preg_match("/^[0-9]{1}/i", $item) ) {
-					$ret .= $separator . '<a href="#" onClick="return showImageDiv(\'' . Settings::get('floorplan_level' . $item[0]) . '\');">' . $item . "</a>";
+					$ret .= $separator . '<a href="#" onClick="return showFloorPlan(\'' . Settings::get('floorplan_level' . $item[0]) . '\', \'' . $item[0] . '\');">' . $item . "</a>";
+				// rooms on level 0, starting with a single digit and then a non-digit character
+				// always level 0
 				} elseif ( preg_match("/^[0-9]{1}[^0-9]?/i", $item) ) {
-					$ret .= $separator . '<a href="' . Settings::get('floorplan_level0') . '" target="_blank">' . $item . "</a>";
+					$ret .= $separator . '<a href="#" onClick="return showFloorPlan(\'' . Settings::get('floorplan_level0') . '\', \'0\');">' . $item . "</a>";
 				} else {
 					$ret .= $separator . $item;
 				}

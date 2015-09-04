@@ -9,12 +9,38 @@
 
 <script language="JavaScript">
 <!--
-function showImageDiv( image ) {
-	var elem = document.getElementById('imageDiv');
-	elem.innerHTML = '<br><br><a href="#" onclick="return closeImageDiv();"><img src="' + image + '" title="{click_to_close_image}" border="0"></a>';
-	elem.style.width = '100%';
-	elem.style.height = '100%';
-	elem.style.display = 'flex';
+// source: http://stackoverflow.com/questions/2400935/browser-detection-in-javascript
+navigator.browser_detection= (function(){
+	var ua= navigator.userAgent, tem,
+		M= ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
+	if(/trident/i.test(M[1])){
+		tem=  /\brv[ :]+(\d+)/g.exec(ua) || [];
+		return 'IE '+(tem[1] || '');
+	}
+	if(M[1]=== 'Chrome'){
+		tem= ua.match(/\b(OPR|Edge)\/(\d+)/);
+		if(tem!= null) return tem.slice(1).join(' ').replace('OPR', 'Opera');
+	}
+	M= M[2]? [M[1], M[2]]: [navigator.appName, navigator.appVersion, '-?'];
+	if((tem= ua.match(/version\/(\d+)/i))!= null) M.splice(1, 1, tem[1]);
+	return M.join(' ');
+})();
+
+function showFloorPlan( image, $floor ) {
+	var browser = navigator.browser_detection;
+	// dirty solution for IE policy problems at work
+	if ( browser.toLowerCase().substring(0,2) == 'ie' ) {
+		// IE
+		window.open('floor.php?f=' + $floor,'_top')
+	} else {
+		// other browsers
+		var elem = document.getElementById('imageDiv');
+		elem.innerHTML = '<br><br><a href="#" onclick="return closeImageDiv();"><img src="' + image + '" title="{click_to_close_image}" border="0"></a>';
+		elem.style.width = '100%';
+		elem.style.height = '100%';
+		elem.style.display = 'flex';
+	}
+
 	return false;
 }
 function closeImageDiv() {
