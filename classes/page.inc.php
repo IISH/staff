@@ -39,6 +39,8 @@ class Page {
 			$welcome .= ', ' . $oWebuser->getNiceFirstLastname();
 
 			$logout = '<a href="logout.php" onclick="if (!confirm(\'' . Translations::get('confirm') . '\')) return false;">(' . Translations::get('logout') . ')</a>';
+		} else {
+			$logout = '<a href="login.php">(' . Translations::get('login') . ')</a>';;
 		}
 		$page = str_replace('{welcome}', $welcome, $page);
 		$page = str_replace('{logout}', $logout, $page);

@@ -6,8 +6,6 @@ if ( !isset($settings) ) {
 	$settings = array();
 }
 
-$oWebuser->checkLoggedIn();
-
 // create webpage
 $oPage = new Page('design/page.php', $settings);
 $oPage->setTitle('Staff | ' . Translations::get('contact'));
@@ -17,8 +15,18 @@ $oPage->setContent(createContactContent( ));
 echo $oPage->getPage();
 
 function createContactContent( ) {
+	global $oWebuser;
+
 	$ret = "<h2>" . Translations::get('contact') . "</h2><br>";
-	$ret .= "Questions, bugs, comments, ideas, ... please contact the functional maintainer of this application <a href=\"mailto:" . Settings::get("email_sender_email") . "\">" . Settings::get("functional_maintainer") . "</a>.";
+
+	$message = Translations::get('questions_bugs_comments');
+	if ( $oWebuser->isLoggedIn() ) {
+		$message = str_replace('::NAME::', "<a href=\"mailto:" . Settings::get("email_sender_email") . "\">" . Settings::get("functional_maintainer") . "</a>", $message);
+	} else {
+		$message = str_replace('::NAME::', Settings::get("functional_maintainer"), $message);
+	}
+
+	$ret .= $message;
 
 	return $ret;
 }
