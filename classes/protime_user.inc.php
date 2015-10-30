@@ -59,6 +59,7 @@ class ProtimeUser {
 	protected $email = '';
 	protected $room = '';
 	protected $telephone = '';
+	protected $photo = '';
 	protected $roles = '';
 	protected $arrRoles = array();
 	protected $arrAuthorisation = array();
@@ -95,6 +96,7 @@ class ProtimeUser {
 			$this->loginname = trim(strtolower($row[Settings::get('curric_loginname')]));
 			$this->room =  trim($row[Settings::get('curric_room')]);
 			$this->telephone =  trim($row[Settings::get('curric_telephone')]);
+			$this->photo = trim($row["PHOTO"]);
 			$this->department = $row["DEPART"];
 			$this->oDepartment = new Department( $row["DEPART"] );
 			$this->roles = $row[Settings::get('curric_roles')];
@@ -255,16 +257,23 @@ class ProtimeUser {
 	}
 
 	public function getPhoto() {
-		$ret = trim($this->loginname);
-		if ( $ret == '' ) {
-			$ret = $this->firstname . '.' . $this->verplaatsTussenvoegselNaarBegin($this->lastname);
-			$ret = $this->removeJobFunctionFromName($ret);
-			$ret = $this->fixPhotoCharacters($ret);
-		}
+		$ret = trim($this->photo);
 
-		$ret = str_replace(' ', '', $ret);
-		$ret .= '.jpg';
-		$ret = strtolower($ret);
+		// if photo empty, try to use loginname
+		if ( $ret == '' ) {
+			$ret = trim($this->loginname);
+
+			// if photo still empty, try to use a combination of firstname and lastname
+			if ( $ret == '' ) {
+				$ret = $this->firstname . '.' . $this->verplaatsTussenvoegselNaarBegin($this->lastname);
+				$ret = $this->removeJobFunctionFromName($ret);
+				$ret = $this->fixPhotoCharacters($ret);
+				$ret = str_replace(' ', '', $ret);
+			}
+
+			$ret .= '.jpg';
+			$ret = strtolower($ret);
+		}
 
 		return $ret;
 	}
