@@ -62,3 +62,6 @@ if ( $oWebuser->hasAuthorisationTabFire() ) {
 if ( !defined('ENT_XHTML') ) {
 	define('ENT_XHTML', 32);
 }
+
+// date out criterium for solving the problem when date_in > date_out
+$dateOutCriterium = " ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' OR ( DATE_IN > DATE_OUT AND DATE_IN <='" . date("Ymd") . "' ) ) ";

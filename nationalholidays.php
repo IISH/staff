@@ -29,7 +29,7 @@ function createNationalHolidaysContent( ) {
 	$oView = new View($oDb);
 
 	$oView->set_view( array(
-		'query' => 'SELECT * FROM Staff_feestdagen WHERE 1=1 AND isdeleted=0 AND datum >= \'' . date('Y-m-d') . '\' ORDER BY datum ASC '
+		'query' => 'SELECT * FROM Staff_feestdagen WHERE isdeleted=0 AND datum >= \'' . date('Y-m-d') . '\' ORDER BY datum ASC '
 		, 'count_source_type' => 'query'
 		, 'table_parameters' => ' cellspacing="0" cellpadding="0" border="0" '
 		));

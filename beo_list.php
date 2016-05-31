@@ -28,7 +28,7 @@ $oProtime->connect();
 $never_show_persnr = '0,' . preg_replace('/[^0-9]/', ',', trim(Settings::get("never_show_persnr")));
 $never_show_persnr = preg_replace('/,{2,}/', ',', $never_show_persnr);
 
-$querySelect = "SELECT * FROM " . Settings::get('protime_tables_prefix') . "CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) AND " . $oBeo->getQuery() . " AND PERSNR NOT IN ($never_show_persnr) ORDER BY FIRSTNAME, NAME ";
+$querySelect = "SELECT * FROM " . Settings::get('protime_tables_prefix') . "CURRIC WHERE ". $dateOutCriterium . " AND " . $oBeo->getQuery() . " AND PERSNR NOT IN ($never_show_persnr) ORDER BY FIRSTNAME, NAME ";
 $resultSelect = mysql_query($querySelect, $oProtime->getConnection());
 
 $totaal["aanwezig"] = 0;

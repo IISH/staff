@@ -1,4 +1,9 @@
 <?php
+function preprint( $object ) {
+	echo '<pre>';
+	print_r( $object );
+	echo '</pre>';
+}
 
 class Misc {
 

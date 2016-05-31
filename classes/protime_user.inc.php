@@ -3,7 +3,7 @@ require_once "role_authorisation.inc.php";
 
 class static_protime_user {
 	public static function getProtimeUserByLoginName( $loginname ) {
-		global $databases;
+		global $databases, $dateOutCriterium;
 		$id = 0;
 
 		$oProtime = new class_mysql($databases['default']);
@@ -18,7 +18,8 @@ class static_protime_user {
 		if ( $loginname != '' ) {
 
 			//
-			$query = "SELECT * FROM " . Settings::get('protime_tables_prefix') .  "CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) AND ( CONCAT(TRIM(FIRSTNAME),'.',TRIM(NAME))='" . $loginname . "' OR TRIM(" . Settings::get('curric_loginname') . ")='" . $loginname . "' ) ";
+			// Remark: don't check date_out here, sometimes they make errors when a person is re-hired they forget to remove the date_out value
+			$query = "SELECT * FROM " . Settings::get('protime_tables_prefix') .  "CURRIC WHERE ( CONCAT(TRIM(FIRSTNAME),'.',TRIM(NAME))='" . $loginname . "' OR TRIM(" . Settings::get('curric_loginname') . ")='" . $loginname . "' ) ";
 
 			$resultReset = mysql_query($query, $oProtime->getConnection());
 			if ($row = mysql_fetch_assoc($resultReset)) {
@@ -32,7 +33,7 @@ class static_protime_user {
 
 				$arrLoginname = explode('.', $loginname);
 
-				$query2 = "SELECT * FROM " . Settings::get('protime_tables_prefix') .  "CURRIC WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) AND FIRSTNAME LIKE '%" . $arrLoginname[0] . "%' ";
+				$query2 = "SELECT * FROM " . Settings::get('protime_tables_prefix') .  "CURRIC WHERE ". $dateOutCriterium . " AND FIRSTNAME LIKE '%" . $arrLoginname[0] . "%'  AND NAME LIKE '%" . $arrLoginname[1] . "%' ";
 				$resultReset2 = mysql_query($query2, $oProtime2->getConnection());
 				while ($row2 = mysql_fetch_assoc($resultReset2) ) {
 					$oEmp2 = new ProtimeUser( $row2['PERSNR']);
@@ -293,6 +294,11 @@ class ProtimeUser {
 			$ret = strtolower($ret);
 		}
 
+		// if no loginname use then session loginname
+		if ( $ret == '' || $ret == '.' ) {
+			$ret = $_SESSION["loginname"];
+		}
+
 		return $ret;
 	}
 
@@ -353,7 +359,9 @@ class ProtimeUser {
 	public function checkLoggedIn() {
 		global $protect;
 
-		if ( $this->protime_id < 1 ) {
+		// TODO: Opmerking: ook controleren of session loginname leeg is, want als de gebruiker wel in ActiveDirectory zit
+		// maar niet in protime, dan heeft men wel een loginname maar geen protime_id
+		if ( $this->protime_id < 1 && $_SESSION["loginname"] == '' ) {
 			Header("Location: login.php?burl=" . URLencode($protect->getShortUrl()));
 			die(Translations::get('go_to') . " <a href=\"login.php?burl=" . URLencode($protect->getShortUrl()) . "\">next</a>");
 		}

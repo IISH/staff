@@ -74,8 +74,9 @@ if ( $to_short != 1 ) {
 SELECT *
 FROM " . Settings::get('protime_tables_prefix') . "CURRIC
 	LEFT JOIN " . Settings::get('protime_tables_prefix') . "DEPART ON " . Settings::get('protime_tables_prefix') . "CURRIC.DEPART = " . Settings::get('protime_tables_prefix') . "DEPART.DEPART
-WHERE ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' ) " . $queryCriterium . " ORDER BY FIRSTNAME, NAME
+WHERE " . $dateOutCriterium . $queryCriterium . " ORDER BY FIRSTNAME, NAME
 ";
+
 	$resultSelect = mysql_query($querySelect, $oProtime->getConnection());
 
 	while ( $row = mysql_fetch_assoc($resultSelect) ) {

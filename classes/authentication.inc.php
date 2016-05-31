@@ -3,7 +3,7 @@
 class Authentication {
 
 	public static function authenticate( $login, $password ) {
-		return Authentication::check_ldap('iisgnet\\' . $login, $password, array("apollo3.iisg.net"));
+		return Authentication::check_ldap('iisgnet\\' . $login, $password, array("sa-dc02.iisg.net"));
 	}
 
 	public static function check_ldap($user, $pw, $servers) {
