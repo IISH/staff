@@ -306,23 +306,50 @@ class ProtimeUser {
 		return $this->room;
 	}
 
-	public function getTelephone() {
-		return $this->telephone;
+	public function getTelephone($skype = 0) {
+		$ret = '';
+		$separator = '';
+		$parts = explode(' ', $this->telephone);
+
+		$pre = '';
+		$post = '';
+
+		if ( $skype == 1 ) {
+			$pre = '<span style="font-size:60%;">';
+			$post = '</span>';
+		}
+
+		$maxLength = Settings::get('max_length_short_company_telephone_number');
+		$pattern = '/^[0-9]{' . $maxLength . ',' . $maxLength . '}[^0-9]?/';
+
+		foreach ( $parts as $part ) {
+			if (
+//				strlen( $part ) == Settings::get('max_length_short_company_telephone_number') && preg_match($pattern, $part)
+				preg_match($pattern, $part)
+				) {
+				$ret .= $separator . $pre . Settings::get('institute_prefix') . $post . $part;
+			} else {
+				$ret .= $separator . $part;
+			}
+			$separator = ' ';
+		}
+		return $ret;
 	}
 
 	public function getTelephoneHref() {
-		$tel = $this->telephone;
+//		$tel = $this->getTelephone(0);
+		$tel = $this->getTelephone(1);
 
 		$template = trim(Settings::get('short_to_long_company_telephone_number_template'));
 		$max_length = trim(Settings::get('max_length_short_company_telephone_number'));
-		if ( $template != '' && $max_length != '' && $max_length > 0 && strlen($tel) <= $max_length ) {
-			if ( strlen( $template ) >= strlen( $tel ) ) {
-				$label = $tel;
-				$number = substr($template, 0, strlen($template) - strlen($tel) ) . $tel;
-
-				$tel = "<a href=\"tel:$number\">$label</a>";
-			}
-		}
+		$institute_prefix = Settings::get('institute_prefix');
+//		if ( $template != '' && $max_length != '' && $max_length > 0 && strlen($tel) <= $max_length ) {
+//			if ( strlen( $template ) >= strlen( $tel ) ) {
+//				$label = $tel;
+//				$number = substr($template, 0, strlen($template) - strlen($tel) ) . $tel;
+//				$tel = "<a href=\"tel:$number\">$label</a>";
+//			}
+//		}
 
 		return $tel;
 	}
