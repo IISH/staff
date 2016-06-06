@@ -87,7 +87,11 @@ function createLoginPage() {
 </tr>
 </form>
 </table>
+";
 
+	$ret .= Translations::get('your_login_credentials_are');
+
+	$ret .= "
 <script language=\"javascript\">
 <!--
 document.frmA.fldLogin.focus();
