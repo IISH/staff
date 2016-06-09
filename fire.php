@@ -90,7 +90,7 @@ function createBrandContent( ) {
 	<td style=\"border: 1px solid black;\">&nbsp;</td>
 	<td style=\"border: 1px solid black;\">" . $totaal["aanwezig"] . "</td>
 	<td style=\"border: 1px solid black;\">" . createUrl( array( 'url' => 'employee.php?id=' . $oEmployee->getId(), 'label' => $oEmployee->getNiceFirstLastname() ) ) . "</td>
-	<td style=\"border: 1px solid black;\">" . $oEmployee->getTelephone() . "&nbsp;</td>
+	<td style=\"border: 1px solid black;\">" . $oEmployee->getTelephoneStyled() . "&nbsp;</td>
 	<td style=\"border: 1px solid black;\">" . $oEmployee->getRolesForFirePage() . "&nbsp;</td>
 </a></td>
 </tr>
