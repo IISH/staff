@@ -310,26 +310,27 @@ class ProtimeUser {
 		$ret = '';
 		$tel = trim($this->telephone);
 
-		$tel = str_replace('/', ' / ', $tel);
-		$tel = str_replace('  ', ' ', $tel);
-
-		$separator = '';
-		$parts = explode(' ', $tel);
-
-		$lengthShortTelephoneNumber = Settings::get('max_length_short_company_telephone_number');
-		$pattern = '/^[0-9]{' . $lengthShortTelephoneNumber . ',' . $lengthShortTelephoneNumber . '}[^0-9]/';
-		$patternExactLength = '/^[0-9]{' . $lengthShortTelephoneNumber . ',' . $lengthShortTelephoneNumber . '}$/';
-		foreach ( $parts as $part ) {
-			if (
-				preg_match($pattern, $part) || preg_match($patternExactLength, $part)
-				) {
-				$ret .= $separator . Settings::get('institute_prefix') . $part;
-			} else {
-				$ret .= $separator . $part;
-			}
-			$separator = ' ';
-		}
-		return $ret;
+		return $tel;
+//		$tel = str_replace('/', ' / ', $tel);
+//		$tel = str_replace('  ', ' ', $tel);
+//
+//		$separator = '';
+//		$parts = explode(' ', $tel);
+//
+//		$lengthShortTelephoneNumber = Settings::get('max_length_short_company_telephone_number');
+//		$pattern = '/^[0-9]{' . $lengthShortTelephoneNumber . ',' . $lengthShortTelephoneNumber . '}[^0-9]/';
+//		$patternExactLength = '/^[0-9]{' . $lengthShortTelephoneNumber . ',' . $lengthShortTelephoneNumber . '}$/';
+//		foreach ( $parts as $part ) {
+//			if (
+//				preg_match($pattern, $part) || preg_match($patternExactLength, $part)
+//				) {
+//				$ret .= $separator . Settings::get('institute_prefix') . $part;
+//			} else {
+//				$ret .= $separator . $part;
+//			}
+//			$separator = ' ';
+//		}
+//		return $ret;
 	}
 
 	public function getTelephoneStyled() {
@@ -337,26 +338,28 @@ class ProtimeUser {
 		$separator = '';
 
 		$tel = $this->getTelephone();
-		$parts = explode(' ', $tel);
 
-		$pre = '<span style="font-size:60%;">';
-		$post = '</span>';
-
-		$lengthInstitutePrefix = strlen(Settings::get('institute_prefix'));
-		$lengthShortTelephoneNumber = Settings::get('max_length_short_company_telephone_number');
-		$pattern = '/^' . Settings::get('institute_prefix') . '[0-9]{' . $lengthShortTelephoneNumber . ',' . $lengthShortTelephoneNumber . '}[^0-9]/';
-		$patternExactLength = '/^' . Settings::get('institute_prefix') . '[0-9]{' . $lengthShortTelephoneNumber . ',' . $lengthShortTelephoneNumber . '}$/';
-		foreach ( $parts as $part ) {
-			if (
-				preg_match($pattern, $part) || preg_match($patternExactLength, $part)
-			) {
-				$ret .= $separator . $pre . substr($part, 0, $lengthInstitutePrefix) . $post . substr($part, $lengthInstitutePrefix, strlen($part)-$lengthInstitutePrefix);
-			} else {
-				$ret .= $separator . $part;
-			}
-			$separator = ' ';
-		}
-		return $ret;
+		return $tel;
+//		$parts = explode(' ', $tel);
+//
+//		$pre = '<span style="font-size:60%;">';
+//		$post = '</span>';
+//
+//		$lengthInstitutePrefix = strlen(Settings::get('institute_prefix'));
+//		$lengthShortTelephoneNumber = Settings::get('max_length_short_company_telephone_number');
+//		$pattern = '/^' . Settings::get('institute_prefix') . '[0-9]{' . $lengthShortTelephoneNumber . ',' . $lengthShortTelephoneNumber . '}[^0-9]/';
+//		$patternExactLength = '/^' . Settings::get('institute_prefix') . '[0-9]{' . $lengthShortTelephoneNumber . ',' . $lengthShortTelephoneNumber . '}$/';
+//		foreach ( $parts as $part ) {
+//			if (
+//				preg_match($pattern, $part) || preg_match($patternExactLength, $part)
+//			) {
+//				$ret .= $separator . $pre . substr($part, 0, $lengthInstitutePrefix) . $post . substr($part, $lengthInstitutePrefix, strlen($part)-$lengthInstitutePrefix);
+//			} else {
+//				$ret .= $separator . $part;
+//			}
+//			$separator = ' ';
+//		}
+//		return $ret;
 	}
 
 	public function getTelephoneHref() {
