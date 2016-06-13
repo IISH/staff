@@ -310,7 +310,7 @@ class ProtimeUser {
 		$ret = '';
 		$tel = trim($this->telephone);
 
-		return $tel;
+		return $tel; // TIJDELIJK
 //		$tel = str_replace('/', ' / ', $tel);
 //		$tel = str_replace('  ', ' ', $tel);
 //
@@ -339,7 +339,7 @@ class ProtimeUser {
 
 		$tel = $this->getTelephone();
 
-		return $tel;
+		return $tel; // TIJDELIJK
 //		$parts = explode(' ', $tel);
 //
 //		$pre = '<span style="font-size:60%;">';

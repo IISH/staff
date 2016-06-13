@@ -48,6 +48,7 @@ $menu[] = new MenuItem(Translations::get('menu_photobook'), 'photobook.php');
 if ( $oWebuser->hasAuthorisationTabAbsences() ) {
 	$menu[] = new MenuItem(Translations::get('menu_absences'), 'absences.php');
 }
+$menu[] = new MenuItem(Translations::get('menu_specialnumbers'), 'special_numbers.php');
 $menu[] = new MenuItem(Translations::get('menu_ert'), 'ert.php');
 $menu[] = new MenuItem(Translations::get('menu_firstaid'), 'firstaid.php');
 if ( $oWebuser->hasAuthorisationTabOntruimer() || $oWebuser->isOntruimer() ) {
