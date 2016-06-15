@@ -14,23 +14,18 @@ class Translations {
 	 * Load the settings from the database
 	 */
 	private static function load() {
-		global $databases;
+		global $dbConn;
 		$language = getLanguage();
-
-		$oConn = new class_mysql($databases['default']);
-		$oConn->connect();
 
 		$arr = array();
 
 		// which language are we using (protime has only 2 languages)
-		$result = mysql_query('SELECT * FROM ' . self::$settings_table, $oConn->getConnection());
-		if ( mysql_num_rows($result) > 0 ) {
-
-			while ($row = mysql_fetch_assoc($result)) {
-				$arr[ $row["property"] ] = $row["lang" . $language];
-			}
-			mysql_free_result($result);
-
+		$query = 'SELECT * FROM ' . self::$settings_table;
+		$stmt = $dbConn->getConnection()->prepare($query);
+		$stmt->execute();
+		$result = $stmt->fetchAll();
+		foreach ($result as $row) {
+			$arr[ $row["property"] ] = $row["lang" . $language];
 		}
 
 		self::$settings = $arr;

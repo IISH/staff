@@ -12,9 +12,6 @@ $date = class_datetime::get_date($protect);
 
 $id = substr(trim($protect->requestPositiveNumberOrEmpty('get', "id")), 0, 4);
 
-$oProtime = new class_mysql($databases['default']);
-$oProtime->connect();
-
 $staff = new ProtimeUser($id);
 
 // create webpage
@@ -27,7 +24,7 @@ echo $oPage->getPage();
 
 function createStaffContent( $staff ) {
 	// header
-	$ret = '<h2>' . $staff->getNiceFirstLastname() . '</h2>';
+	$ret = '<h1>' . $staff->getNiceFirstLastname() . '</h1>';
 
 	// go back
 	$goback = ( isset( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : '' );
@@ -46,6 +43,7 @@ function createStaffContent( $staff ) {
 	}
 
 	$ret .= "
+<div class=\"personalpage\">
 <table border=0 cellpadding=2 cellspacing=0>
 ";
 
@@ -58,8 +56,6 @@ function createStaffContent( $staff ) {
 <tr>
 	<td>" . Translations::get('lbl_name') . ":</td>
 	<td>" . $staff->getNiceFirstLastname() . "</td>
-	<td width=\"20px\"></td>
-	<td rowspan=9 valign=top>$photo</td>
 </tr>
 ";
 
@@ -89,7 +85,7 @@ function createStaffContent( $staff ) {
 	$ret .= "
 <tr>
 	<td>" . Translations::get('lbl_telephone') . ":</td>
-	<td>" . $staff->getTelephoneHref() . "</td>
+	<td>" . Telephone::getTelephonesHref($staff->getTelephones()) . "</td>
 </tr>
 ";
 
@@ -138,13 +134,20 @@ function createStaffContent( $staff ) {
 	$ret .= "
 <tr>
 	<td valign=top>" . Translations::get('lbl_schedule') . ":</td>
-	<td colspan=3>" . $currentSchedule->getCurrentSchedule() . "</td>
+	<td>" . $currentSchedule->getCurrentSchedule() . "</td>
 </tr>
 ";
 
 	$ret .= "
 </table>
+</div>
 ";
+
+	$ret .= "
+<div class=\"personalpage\">$photo</div>
+	";
+
+	$ret .= "<br class=\"clearBoth\">";
 
 	return $ret;
 }

@@ -37,6 +37,9 @@ class FieldBit extends Field {
 	public function getValue($row) {
 		$retval = parent::getValue($row);
 
+		$href2otherpage = $this->get_href();
+		$url_onclick = $this->get_onclick();
+
 		if ( $this->m_show_different_values == true || $this->m_show_different_values == 1 ) {
 			if ( $retval == "1" || $retval == true || $retval == "on" ) {
 				$retval = $this->getDifferentTrueValue();

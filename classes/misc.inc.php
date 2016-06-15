@@ -7,7 +7,15 @@ function preprint( $object ) {
 
 class Misc {
 
-	public function multiplyTag($tag, $code, $start, $end) {
+	public static function getNeverShowPersonsCriterium() {
+		$never_show_persnr = '0,' . preg_replace('/[^0-9]/', ',', trim(Settings::get("never_show_persnr")));
+		$never_show_persnr = preg_replace('/,{2,}/', ',', $never_show_persnr);
+		$never_show_persnr = ' AND PERSNR NOT IN (' . $never_show_persnr . ') ';
+
+		return $never_show_persnr;
+	}
+
+	public static function multiplyTag($tag, $code, $start, $end) {
 		$ret = '';
 		$separator = '';
 
@@ -17,6 +25,28 @@ class Misc {
 		}
 
 		return $ret;
+	}
+
+	function PlaceURLParametersInQuery($query) {
+		$return_value = $query;
+
+		// vervang in de url, de FLD: door waardes
+		$pattern = '/\[FLD\:[a-zA-Z0-9_]*\]/';
+		preg_match($pattern, $return_value, $matches);
+		while ( count($matches) > 0 ) {
+			if ( isset($this->m_form["primarykey"]) && "[FLD:" . $this->m_form["primarykey"] . "]" == $matches[0] ) {
+				$return_value = str_replace($matches[0], $this->m_doc_id, $return_value);
+			} else {
+				$return_value = str_replace($matches[0], addslashes($_GET[str_replace("]", '', str_replace("[FLD:", '', $matches[0]))]), $return_value);
+			}
+
+			$matches = null;
+			preg_match($pattern, $return_value, $matches);
+		}
+
+		$return_value = str_replace("[BACKURL]", urlencode(getBackUrl()), $return_value);
+
+		return $return_value;
 	}
 
 	public function ReplaceSpecialFieldsWithDatabaseValues($url, $row) {

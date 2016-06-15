@@ -1,6 +1,4 @@
 <?php
-require_once "mysql.inc.php";
-
 class RoleAuthorisation {
 	private $id = 0;
 	private $role = '';
@@ -15,19 +13,18 @@ class RoleAuthorisation {
 	}
 
 	private function initValues( $id ) {
-		$oConn = new class_mysql($this->databases['default']);
-		$oConn->connect();
+		global $dbConn;
 
 		$query = "SELECT * FROM Staff_role_authorisation WHERE id=" . $id . " ";
 
-		$res = mysql_query($query, $oConn->getConnection());
-		if ($r = mysql_fetch_assoc($res)) {
+		$stmt = $dbConn->getConnection()->prepare($query);
+		$stmt->execute();
+		if ( $r = $stmt->fetch() ) {
 			$this->id = $id;
 			$this->role = $r['role'];
 			$this->authorisation = $r["authorisation"];
 			$this->isdeleted = $r["isdeleted"];
 		}
-		mysql_free_result($res);
 	}
 
 	public function getId() {

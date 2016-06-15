@@ -31,7 +31,7 @@ function createPresentContent( ) {
 	$s = getAndProtectSearch();
 
 	$ret = "
-<h2>" . Translations::get('menu_absences') . "</h2>
+<h1>" . Translations::get('menu_absences') . "</h1>
 
 <script type=\"text/javascript\">
 <!--

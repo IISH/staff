@@ -20,11 +20,11 @@ $oPage->setContent(createBrandContent( ));
 echo $oPage->getPage();
 
 function createBrandContent( ) {
-	global $databases;
+	global $dbConn;
 
 	$total_of_present_employees = 0;
 	$title = Translations::get('header_fire');
-	$ret = "<h2>$title</h2>
+	$ret = "<h1>$title</h1>
 " . Translations::get('printed_on') . ": " . date("d") . ' ' . Translations::get('month' . (date("m")+0)) . ' ' . date("Y H:i") . "<br><br>";
 
 
@@ -51,7 +51,7 @@ function createBrandContent( ) {
 
 	//
 	foreach( $loop as $item ) {
-		$ret .= "<h2>" . $item['label'] . "</h2>
+		$ret .= "<h1>" . $item['label'] . "</h1>
 <table border=0 cellspacing=0 cellpadding=7 style=\"border: 1px solid black;\">
 <TR>
 	<TD width=25 style=\"border: 1px solid black;\">&nbsp;</TD>
@@ -62,18 +62,13 @@ function createBrandContent( ) {
 </TR>
 ";
 
-		$oProtime = new class_mysql($databases['default']);
-		$oProtime->connect();
-
-		//
-		$querySelect = $item['query'];
-//preprint($querySelect);
-		$resultSelect = mysql_query($querySelect, $oProtime->getConnection());
-
 		$totaal["aanwezig"] = 0;
 
-		while ( $row = mysql_fetch_assoc($resultSelect) ) {
-
+		//
+		$stmt = $dbConn->getConnection()->prepare( $item['query'] );
+		$stmt->execute();
+		$result = $stmt->fetchAll();
+		foreach ($result as $row) {
 			$oEmployee = new ProtimeUser($row["PERSNR"]);
 
 			//
@@ -90,7 +85,7 @@ function createBrandContent( ) {
 	<td style=\"border: 1px solid black;\">&nbsp;</td>
 	<td style=\"border: 1px solid black;\">" . $totaal["aanwezig"] . "</td>
 	<td style=\"border: 1px solid black;\">" . createUrl( array( 'url' => 'employee.php?id=' . $oEmployee->getId(), 'label' => $oEmployee->getNiceFirstLastname() ) ) . "</td>
-	<td style=\"border: 1px solid black;\">" . $oEmployee->getTelephoneStyled() . "&nbsp;</td>
+	<td style=\"border: 1px solid black;\">" . Telephone::getTelephonesHref($oEmployee->getTelephones()) . "&nbsp;</td>
 	<td style=\"border: 1px solid black;\">" . $oEmployee->getRolesForFirePage() . "&nbsp;</td>
 </a></td>
 </tr>
@@ -99,7 +94,6 @@ function createBrandContent( ) {
 				$ret .= $tmp;
 			}
 		}
-		mysql_free_result($resultSelect);
 
 		$ret .= "
 </table><br>

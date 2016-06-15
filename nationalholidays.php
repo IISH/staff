@@ -17,16 +17,14 @@ echo $oPage->getPage();
 function createNationalHolidaysContent( ) {
     global $databases;
 
-	$ret = "<h2>" . Translations::get('header_nationalholidays') . "</h2><br>";
+	$ret = "<h1>" . Translations::get('header_nationalholidays') . "</h1>";
 
-	require_once("./classes/mysql.inc.php");
 	require_once("./classes/class_view/view.inc.php");
 	require_once("./classes/class_view/fieldtypes/field_date.inc.php");
 	require_once("./classes/class_view/fieldtypes/field.inc.php");
 	require_once("./classes/class_view/fieldtypes/field_bit.inc.php");
 
-	$oDb = new class_mysql($databases['default']);
-	$oView = new View($oDb);
+	$oView = new View();
 
 	$oView->set_view( array(
 		'query' => 'SELECT * FROM Staff_feestdagen WHERE isdeleted=0 AND datum >= \'' . date('Y-m-d') . '\' ORDER BY datum ASC '

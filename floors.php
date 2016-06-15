@@ -6,9 +6,6 @@ if ( !isset($settings) ) {
 	$settings = array();
 }
 
-$oProtime = new class_mysql($databases['default']);
-$oProtime->connect();
-
 // create webpage
 $oPage = new Page('design/page.php', $settings);
 $oPage->setTitle(Translations::get('iisg_employee') . ' | Floor plans');

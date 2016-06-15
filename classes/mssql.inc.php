@@ -1,6 +1,4 @@
 <?php 
-// modified: 2014-06-03
-
 class class_mssql {
 	private $server;
 	private $user;

@@ -10,22 +10,17 @@ class ForEveryoneVisibleAbsences {
 	 * Load the settings from the database
 	 */
 	private static function load() {
-		global $databases;
-
-		$oConn = new class_mysql($databases['default']);
-		$oConn->connect();
+		global $databases, $dbConn;
 
 		$arr = array();
 
 		//
-		$result = mysql_query('SELECT * FROM Staff_colors WHERE everyone=1 ', $oConn->getConnection());
-		if ( mysql_num_rows($result) > 0 ) {
-
-			while ($row = mysql_fetch_assoc($result)) {
-				$arr[] = $row["absence_code"];
-			}
-			mysql_free_result($result);
-
+		$query = 'SELECT * FROM Staff_colors WHERE everyone=1 ';
+		$stmt = $dbConn->getConnection()->prepare($query);
+		$stmt->execute();
+		$result = $stmt->fetchAll();
+		foreach ($result as $row) {
+			$arr[] = $row["absence_code"];
 		}
 
 		self::$settings = $arr;

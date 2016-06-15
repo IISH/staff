@@ -28,6 +28,9 @@ class FieldDate extends Field {
 	public function getValue($row) {
 		$retval = parent::getValue($row);
 
+		$href2otherpage = $this->get_href();
+		$url_onclick = $this->get_onclick();
+
 		if ( $retval != '' ) {
 			// verwijder tijd uit datum
 			$retval = trim(str_replace('12:00:00:000AM', '', $retval));

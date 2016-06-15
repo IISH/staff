@@ -20,7 +20,7 @@ function createLoginPage() {
 	$fldLogin = '';
 	$error = '';
 
-	if ( $protect->requestPositiveNumberOrEmpty('post', 'issubmitted') == '1' ) {
+	if ( $_SERVER['REQUEST_METHOD'] == 'POST' ) {
 		// get values
 		$fldLogin = $protect->request('post', 'fldLogin');
 		$fldPassword = $protect->request('post', 'fldPassword');
@@ -59,7 +59,7 @@ function createLoginPage() {
 	}
 
 	$ret = "
-<h2>" . Translations::get('please_log_in') . "</h2>
+<h1>" . Translations::get('please_log_in') . "</h1>
 ";
 
 	if ( $error != '' ) {
@@ -67,16 +67,15 @@ function createLoginPage() {
 	}
 
 	$ret .= "
+<form name=\"frmA\" method=\"POST\" action=\"login.php\">
 <table border=\"0\" cellspacing=\"0\" cellpadding=\"2\">
-<form name=\"frmA\" method=\"POST\">
-<input type=\"hidden\" name=\"issubmitted\" value=\"1\">
 <tr>
 	<td>" . Translations::get('loginname') . ":</td>
 	<td><input type=\"text\" name=\"fldLogin\" class=\"login\" maxlength=\"50\" value=\"" . $fldLogin . "\"> <i>" . Translations::get('loginname_help') . "</i></td>
 </tr>
 <tr>
 	<td>" . Translations::get('password') . ":&nbsp;</td>
-	<td><input type=\"password\" name=\"fldPassword\" class=\"password\" maxlength=\"50\" value=\"\"></td>
+	<td><input type=\"password\" name=\"fldPassword\" class=\"password\" maxlength=\"50\" autocomplete=\"on\"></td>
 </tr>
 <tr>
 	<td>&nbsp;</td>
@@ -85,8 +84,8 @@ function createLoginPage() {
 	<td align=\"right\"><input class=\"button_login\" type=\"reset\" name=\"btnReset\" value=\"" . Translations::get('btn_clear') . "\">&nbsp;</td>
 	<td>&nbsp;<input class=\"button_login\" type=\"submit\" name=\"btnSubmit\" value=\"" . Translations::get('btn_login') . "\"></td>
 </tr>
-</form>
 </table>
+</form>
 ";
 
 	$ret .= Translations::get('your_login_credentials_are');

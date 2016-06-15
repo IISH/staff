@@ -11,21 +11,16 @@ class Settings {
 	 * Load the settings from the database
 	 */
 	private static function load() {
-		global $databases;
-
-		$oConn = new class_mysql($databases['default']);
-		$oConn->connect();
+		global $dbConn;
 
 		$arr = array();
 
-		$result = mysql_query('SELECT * FROM ' . self::$settings_table, $oConn->getConnection());
-		if ( mysql_num_rows($result) > 0 ) {
-
-			while ($row = mysql_fetch_assoc($result)) {
-				$arr[ $row["property"] ] = $row["value"];
-			}
-			mysql_free_result($result);
-
+		$query = 'SELECT * FROM ' . self::$settings_table;
+		$stmt = $dbConn->getConnection()->prepare($query);
+		$stmt->execute();
+		$result = $stmt->fetchAll();
+		foreach ($result as $row) {
+			$arr[ $row["property"] ] = $row["value"];
 		}
 
 		self::$settings = $arr;
@@ -49,7 +44,7 @@ class Settings {
 	}
 
 	public static function save( $setting_name, $value, $settingsTable = '' ) {
-		global $databases;
+		global $dbConn;
 
 		$setting_name = trim($setting_name);
 
@@ -60,17 +55,21 @@ class Settings {
 		}
 
 		if ( $setting_name != '' ) {
-			$oConn = new class_mysql($databases['default']);
-			$oConn->connect();
 
-			$result = mysql_query("SELECT * FROM $settingsTable WHERE property='" . $setting_name . "' ");
-			$num_rows = mysql_num_rows($result);
+			$query = "SELECT * FROM $settingsTable WHERE property='" . $setting_name . "' ";
+			$stmt = $dbConn->getConnection()->prepare($query);
+			$stmt->execute();
+			if ( $row = $stmt->fetch() ) {
 
-			if ($num_rows > 0) {
-				$result = mysql_query("UPDATE $settingsTable SET value='" . addslashes($value) . "' WHERE property='" . $setting_name . "' ", $oConn->getConnection());
+//			if ($num_rows > 0) {
+				$query = "UPDATE $settingsTable SET value='" . addslashes($value) . "' WHERE property='" . $setting_name . "' ";
+				$stmt = $dbConn->getConnection()->prepare($query);
+				$stmt->execute();
 			}
 			else {
-				$result = mysql_query("INSERT INTO $settingsTable (value, property) VALUES ( '" . addslashes($value) . "', '" . $setting_name . "' ) ", $oConn->getConnection());
+				$query = "INSERT INTO $settingsTable (value, property) VALUES ( '" . addslashes($value) . "', '" . $setting_name . "' ) ";
+				$stmt = $dbConn->getConnection()->prepare($query);
+				$stmt->execute();
 			}
 		}
 	}

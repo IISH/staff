@@ -8,9 +8,6 @@ if ( !isset($settings) ) {
 
 $f = substr(trim($protect->requestPositiveNumberOrEmpty('get', "f")), 0, 4);
 
-$oProtime = new class_mysql($databases['default']);
-$oProtime->connect();
-
 // create webpage
 $oPage = new Page('design/page.php', $settings);
 $oPage->setTitle(Translations::get('iisg_employee') . ' | Floor plan level ' . $f);

@@ -19,7 +19,7 @@ if ( trim( $cron_key ) != Settings::get('cron_key') ) {
 echo "Start time: " . date("Y-m-d H:i:s") . "<br>\n";
 
 // sync
-$sync = new SyncProtimeMysql();
+$sync = new SyncProtime2Pdo();
 $sync->setSourceTable("LNK_CURRIC_PROFILE");
 $sync->setTargetTable(Settings::get('protime_tables_prefix') . "LNK_CURRIC_PROFILE");
 $sync->setPrimaryKey("REC_NR");

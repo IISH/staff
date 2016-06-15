@@ -38,17 +38,7 @@ a
 , a:hover {
 	color: <?php echo $c; ?>;
 	text-decoration: none;
-}
-
-a.PT
-, a.PT:visited
-, a.PT:active
-, a.PT:hover {
-	color: black;
-	text-decoration: none;
-	border-bottom: 0px;
-	font-style:italic;
-	font-size:80%;
+	border-bottom: 1px dotted <?php echo $c; ?>;
 }
 
 a.nolink
@@ -84,7 +74,7 @@ input, select {
 	border: 1px solid <?php echo $c; ?>;
 }
 
-h2, h3 {
+h1 {
 	color: <?php echo $c; ?>;
 	margin-top: 0px;
 	margin-bottom: 0px;
@@ -285,7 +275,7 @@ td.photobook {
 	border-color: #AAAAAA;
 }
 
-table.employee_schedule {
+table.employee_schedule, table.special_numbers {
 	border-spacing: 0;
 	border-collapse: collapse;
 }
@@ -334,4 +324,12 @@ td.employee_schedule_accentuate {
 	z-index:1000;
 	background: rgba(211,211,211,0.8);
 	text-align: center;
+}
+
+div.personalpage {
+	float: left;
+	margin-right: 15px;
+}
+.clearBoth {
+	clear: both;
 }

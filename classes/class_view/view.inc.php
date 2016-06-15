@@ -3,15 +3,13 @@ require_once("./classes/file.inc.php");
 require_once("./classes/misc.inc.php");
 
 class View {
-	protected $oDb;
 	protected $oClassFile;
 	protected $oClassMisc;
 
 	protected $m_view;
 	protected $m_array_of_fields = Array();
 
-	function __construct($oDb) {
-		$this->oDb = $oDb;
+	function __construct() {
 		$this->oClassFile = new class_file();
 		$this->oClassMisc = new Misc();
 	}
@@ -38,15 +36,18 @@ class View {
 
 	// generate_view
 	public function generate_view() {
+		global $dbConn;
+
 		$return_value = '';
 
-		// connect to server
-		$this->oDb->connect();
+		// get submit buttons (add new / go back)
+		// show buttons at top
+		$return_value .= $this->get_view_buttons();
 
 		// execute query
-		$res=mysql_query($this->m_view["query"], $this->oDb->getConnection()) or die( "error 8712378" . "<br>" . mysql_error());
-
-		if($res){
+		$stmt = $dbConn->getConnection()->prepare( $this->m_view["query"] );
+		$stmt->execute();
+		$result = $stmt->fetchAll();
 
             $return_value .= "<table";
 
@@ -64,7 +65,7 @@ class View {
             $return_value .= $this->generate_view_header();
 
             // doorloop gevonden recordset
-            while($row=mysql_fetch_assoc($res)){
+            foreach ($result as $row) {
                 $total_data = '';
 
                 foreach ($this->m_array_of_fields as $one_field_in_array_of_fields) {
@@ -80,13 +81,6 @@ class View {
             // end table
             $return_value .= "</table>";
 
-		}
-
-		// free result set
-		mysql_free_result($res);
-
-		// disconnect from database
-		$this->oDb->close();
 
 		// return result
 		return $return_value;
@@ -103,5 +97,28 @@ class View {
 	public function add_field($aField) {
 		array_push($this->m_array_of_fields, $aField);
 		return 1;
+	}
+
+	function get_view_buttons() {
+		// show add new button?
+		$add_new_url = ( isset($this->m_view["add_new_url"]) ? $this->m_view["add_new_url"] : '' );;
+
+		if ( $add_new_url == '' ) {
+			return '';
+		}
+
+		// place submit buttons
+		$submitbuttons = "<p style=\"line-height:20px\"><a href=\"::ADDNEWURL::\" class=\"button\">Add new</a></p>";
+
+		$add_new_url = str_replace("\n", '', $add_new_url);
+		$add_new_url = str_replace("\t", '', $add_new_url);
+		$add_new_url = str_replace("\r", '', $add_new_url);
+
+		$add_new_url = $this->oClassMisc->ReplaceSpecialFieldsWithQuerystringValues($add_new_url);
+
+		// create add new button
+		$submitbuttons = str_replace("::ADDNEWURL::", $add_new_url, $submitbuttons);
+
+		return $submitbuttons;
 	}
 }

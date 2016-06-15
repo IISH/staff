@@ -16,7 +16,7 @@ if ( trim( $cron_key ) != Settings::get('cron_key') ) {
 echo "Start time: " . date("Y-m-d H:i:s") . "<br>\n";
 
 // sync
-$sync = new SyncProtimeMysql();
+$sync = new SyncProtime2Pdo();
 $sync->setSourceTable("BOOKINGS");
 $sync->setSourceCriterium(" BOOKDATE>='" . date("Ymd", mktime(0, 0, 0, date("m")-3, 1, date("Y"))) . "' ");
 $sync->setTargetTable(Settings::get('protime_tables_prefix') . "BOOKINGS");

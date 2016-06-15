@@ -9,25 +9,26 @@ class MailCheckin {
 	}
 
 	public function getListOfNotifications() {
-		$oConn = new class_mysql($this->databases['default']);
-		$oConn->connect();
+		global $dbConn;
 
 		$arr = array();
 		$arr[] = 0;
 
 		$query = "SELECT ProtimeID FROM Staff_favourites WHERE type='checkinout' GROUP BY ProtimeID ";
 
-		$result = mysql_query($query, $oConn->getConnection());
-
-		while ($row = mysql_fetch_assoc($result)) {
+		$stmt = $dbConn->getConnection()->prepare($query);
+		$stmt->execute();
+		$result = $stmt->fetchAll();
+		foreach ($result as $row) {
 			$arr[] = $row["ProtimeID"];
 		}
-		mysql_free_result($result);
 
 		return $arr;
 	}
 
 	public function getListOfCheckedProtimeUserNotifications( $date = '' ) {
+		global $dbConn;
+
 		if ( $date == '' ) {
 			$date = date("Ymd");
 		}
@@ -36,13 +37,12 @@ class MailCheckin {
 
 		$ids = implode(',', $this->getListOfNotifications());
 
-		$oProtime = new class_mysql($this->databases['default']);
-		$oProtime->connect();
-
 		//
 		$query = "SELECT PERSNR, MAX(BOOKTIME) AS CHECKTIME, COUNT(*) AS AANTAL FROM Staff_today_checkinout WHERE PERSNR IN ( " . $ids . " ) AND BOOKDATE='" . $date . "' AND BOOKTIME<>9999 GROUP BY PERSNR HAVING COUNT(*) % 2 = 1 ";
-		$result = mysql_query($query, $oProtime->getConnection());
-		while ( $row = mysql_fetch_assoc($result) ) {
+		$stmt = $dbConn->getConnection()->prepare($query);
+		$stmt->execute();
+		$result = $stmt->fetchAll();
+		foreach ($result as $row) {
 			$user = array();
 			$user["user"] = new ProtimeUser( $row["PERSNR"] );
 			$user["time"] = $row["CHECKTIME"];
@@ -55,15 +55,15 @@ class MailCheckin {
 	}
 
 	public function getListOfTimecardUsersForProtimeUserNotification( $protime_id ) {
-		$oConn = new class_mysql($this->databases['default']);
-		$oConn->connect();
+		global $dbConn;
 
 		$arr = array();
 
 		$query = "SELECT * FROM Staff_favourites WHERE ProtimeID=" . $protime_id . " AND type='checkinout' ";
-		$result = mysql_query($query, $oConn->getConnection());
-
-		while ( $row = mysql_fetch_assoc($result) ) {
+		$stmt = $dbConn->getConnection()->prepare($query);
+		$stmt->execute();
+		$result = $stmt->fetchAll();
+		foreach ($result as $row) {
 			$arr[] = static_protime_user::getProtimeUserByLoginName($row["user"]);
 		}
 
@@ -71,10 +71,10 @@ class MailCheckin {
 	}
 
 	public function deleteNotification( $protime_id ) {
-		$oConn = new class_mysql($this->databases['default']);
-		$oConn->connect();
+		global $dbConn;
 
 		$query = 'DELETE FROM Staff_favourites WHERE ProtimeID=' . $protime_id . ' AND type=\'checkinout\' ';
-		mysql_query($query, $oConn->getConnection());
+		$stmt = $dbConn->getConnection()->prepare($query);
+		$stmt->execute();
 	}
 }

@@ -62,7 +62,7 @@ function goBack() {
 }
 
 function getCurrentDayCheckInoutState( $persnr ) {
-	global $databases, $oWebuser;
+	global $databases, $oWebuser, $dbConn;
 
 	$date = date("Ymd");
 
@@ -73,16 +73,16 @@ function getCurrentDayCheckInoutState( $persnr ) {
 	$status_text = '';
 	$status_alt = '';
 
-	$oProtime = new class_mysql($databases['default']);
-	$oProtime->connect();
-
-	// achterhaal 'present' status
-	$query = "SELECT REC_NR, PERSNR, BOOKDATE, BOOKTIME FROM Staff_today_checkinout WHERE PERSNR=" . $persnr . " AND BOOKDATE='" . $date . "' AND BOOKTIME<>9999 ORDER BY REC_NR ";
-	$result = mysql_query($query, $oProtime->getConnection());
 	$status = 0;
 	$found = 0;
 	$aanwezig = 0;
-	while ( $row = mysql_fetch_assoc($result) ) {
+
+	// achterhaal 'present' status
+	$query = "SELECT REC_NR, PERSNR, BOOKDATE, BOOKTIME FROM Staff_today_checkinout WHERE PERSNR=" . $persnr . " AND BOOKDATE='" . $date . "' AND BOOKTIME<>9999 ORDER BY REC_NR ";
+	$stmt = $dbConn->getConnection()->prepare($query);
+	$stmt->execute();
+	$result = $stmt->fetchAll();
+	foreach ($result as $row) {
 		$found = 1;
 		$status++;
 
@@ -112,7 +112,6 @@ function getCurrentDayCheckInoutState( $persnr ) {
 
 		$status = $status % 2;
 	}
-	mysql_free_result($result);
 
 	$status_alt = trim($status_alt);
 
@@ -120,8 +119,6 @@ function getCurrentDayCheckInoutState( $persnr ) {
 	// dan betekent dat dat de persoon vandaag nog niet ingeklokt heeft
 	// misschien omdat de persoon op vakantie is
 	if ( $status_text == '' && $found == 0 ) {
-		$oProtime->connect();
-
 		$prefix = Settings::get('protime_tables_prefix');
 
 		$query = "
@@ -131,9 +128,11 @@ FROM ${prefix}P_ABSENCE
 WHERE ${prefix}P_ABSENCE.PERSNR = " . $persnr . " AND ${prefix}P_ABSENCE.BOOKDATE = '" . $date . "'
 ";
 
-		$result = mysql_query($query, $oProtime->getConnection());
 		$status_separator = '';
-		while ( $row = mysql_fetch_assoc($result) ) {
+		$stmt = $dbConn->getConnection()->prepare($query);
+		$stmt->execute();
+		$result = $stmt->fetchAll();
+		foreach ($result as $row) {
 			$reasonAbsence = $row["SHORT_" . getLanguage()];
 			$codeAbsence = strtolower($row["CODE"]);
 
@@ -150,7 +149,6 @@ WHERE ${prefix}P_ABSENCE.PERSNR = " . $persnr . " AND ${prefix}P_ABSENCE.BOOKDAT
 			$status_text .= $status_separator . $reasonAbsence;
 			$status_separator = ', ';
 		}
-		mysql_free_result($result);
 	}
 
 	$retval["aanwezig"] = $aanwezig;
@@ -187,7 +185,7 @@ function getAndProtectSearch($field = 's') {
 }
 
 function getAbsencesAndHolidays($eid, $year, $month ) {
-	global $databases;
+	global $databases, $dbConn;
 	$language = getLanguage();
 	$min_minutes = 120;
 
@@ -207,19 +205,13 @@ AND ( ${prefix}P_ABSENCE.ABSENCE_VALUE>=" . $min_minutes . " OR ${prefix}P_ABSEN
 ORDER BY ${prefix}P_ABSENCE.BOOKDATE, ${prefix}P_ABSENCE.REC_NR
 ";
 
-	$oProtime = new class_mysql($databases['default']);
-	$oProtime->connect();
-
-	$result = mysql_query($query, $oProtime->getConnection());
-	$num = mysql_num_rows($result);
-	if ( $num ) {
-		while ( $row = mysql_fetch_assoc($result) ) {
-			// SHORT_1 - dutch, SHORT_2 - english
-			$ret[] = array( 'code' => $row["CODE"], 'date' => $row["BOOKDATE"], 'description' => strtolower($row["SHORT_" . $language]) );
-		}
+	$stmt = $dbConn->getConnection()->prepare($query);
+	$stmt->execute();
+	$result = $stmt->fetchAll();
+	foreach ($result as $row) {
+		// SHORT_1 - dutch, SHORT_2 - english
+		$ret[] = array( 'code' => $row["CODE"], 'date' => $row["BOOKDATE"], 'description' => strtolower($row["SHORT_" . $language]) );
 	}
-
-	mysql_free_result($result);
 
 	return $ret;
 }

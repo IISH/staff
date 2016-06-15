@@ -46,11 +46,9 @@ if ( $dowhat == 'a' ) {
 	}
 }
 
-$oConn = new class_mysql($databases['default']);
-$oConn->connect();
-
 if ( $query != '' ) {
-	$resultSelect = mysql_query($query, $oConn->getConnection());
+	$stmt = $dbConn->getConnection()->prepare($query);
+	$stmt->execute();
 
 	echo $div;
 } else {

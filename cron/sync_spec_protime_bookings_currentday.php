@@ -16,7 +16,7 @@ if ( trim( $cron_key ) != Settings::get('cron_key') ) {
 echo "Start time: " . date("Y-m-d H:i:s") . "<br>\n";
 
 // sync
-$sync = new SyncProtimeMysql();
+$sync = new SyncProtime2Pdo();
 $sync->setSourceTable("BOOKINGS");
 $sync->setSourceCriterium(" BOOKDATE >= '" . date("Ymd") . "' ");
 $sync->setTargetTable("Staff_today_checkinout");
@@ -30,9 +30,8 @@ echo "<br>Rows inserted/updated: " . $sync->getCounter() . "<br>";
 
 // remove old records
 $query = "DELETE FROM " . $sync->getTargetTable() . " WHERE BOOKDATE<'" . date("Ymd") . "' ";
-$oConn = new class_mysql($databases['default']);
-$oConn->connect();
-$result = mysql_query($query, $oConn->getConnection());
+$stmt = $dbConn->getConnection()->prepare($query);
+$stmt->execute();
 
 // save sync last run
 SyncInfo::save($sync->getTargetTable(), 'end', date("Y-m-d H:i:s"));

@@ -15,8 +15,7 @@ class ProtimeUserSchedule {
 	}
 
 	private function initValues() {
-		$oConn = new class_mysql($this->databases['default']);
-		$oConn->connect();
+		global $dbConn;
 
 		$prefix = Settings::get('protime_tables_prefix');
 
@@ -33,8 +32,10 @@ WHERE PROFILETYPE = '4'
 ORDER BY ${prefix}LNK_CURRIC_PROFILE.DATEFROM DESC, CAST(${prefix}CYC_DP.DAYNR AS UNSIGNED) ASC
 ";
 
-		$result = mysql_query($query, $oConn->getConnection());
-		while ($row = mysql_fetch_assoc($result)) {
+		$stmt = $dbConn->getConnection()->prepare($query);
+		$stmt->execute();
+		$result = $stmt->fetchAll();
+		foreach ($result as $row) {
 
 			// convert date format
 			$oTCDate = new TCDateTime();
@@ -50,8 +51,6 @@ ORDER BY ${prefix}LNK_CURRIC_PROFILE.DATEFROM DESC, CAST(${prefix}CYC_DP.DAYNR A
 
 			$this->arr[] = array( 'date' => $date, 'dayOfWeek' => $dayOfWeek, 'minutes' => $minutes );
 		}
-
-		mysql_free_result($result);
 	}
 
 	public function getCurrentSchedule() {

@@ -16,7 +16,7 @@ if ( trim( $cron_key ) != Settings::get('cron_key') ) {
 echo "Start time: " . date("Y-m-d H:i:s") . "<br>\n";
 
 // sync
-$sync = new SyncProtimeMysql();
+$sync = new SyncProtime2Pdo();
 $sync->setSourceTable("WORKLOCATION");
 $sync->setTargetTable(Settings::get('protime_tables_prefix') . "WORKLOCATION");
 $sync->setPrimaryKey("LOCATIONID");

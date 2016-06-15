@@ -17,20 +17,18 @@ class Department {
 	}
 
 	private function initValues( $id ) {
-		$oProtime = new class_mysql($this->databases['default']);
-		$oProtime->connect();
+		global $dbConn;
 
 		$query = "SELECT * FROM " . Settings::get('protime_tables_prefix') .  "DEPART WHERE DEPART=" . $id;
-
-		$res = mysql_query($query, $oProtime->getConnection());
-		if ($r = mysql_fetch_assoc($res)) {
+		$stmt = $dbConn->getConnection()->prepare($query);
+		$stmt->execute();
+		if ( $r = $stmt->fetch() ) {
 			$this->id = $id;
 			$this->short_1 = $r["SHORT_1"];
 			$this->short_2 = $r["SHORT_2"];
 			$this->code_extern = $r["CODE_EXTERN"];
 			$this->customer = $r["CUSTOMER"];
 		}
-		mysql_free_result($res);
 	}
 
 	public function getId() {

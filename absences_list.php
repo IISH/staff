@@ -26,7 +26,7 @@ $to_short = 0;
 if ( $s == '' ) {
 	// no search
 	// use favourites
-	$queryCriterium = 'AND PERSNR IN (' . $favIds . ') ';
+	$queryCriterium = ' AND PERSNR IN (' . $favIds . ') ';
 } else {
 	$to_short = strlen(str_replace(' ', '', $s)) < 3;
 	if ( $to_short == 1 ) {
@@ -66,20 +66,18 @@ $arrHolidays = getNationalHolidays($selectedYear, $selectedMonth );
 
 if ( $to_short != 1 ) {
 
-	$oProtime = new class_mysql($databases['default']);
-	$oProtime->connect();
-
 	// loop employees
 	$querySelect = "
 SELECT *
 FROM " . Settings::get('protime_tables_prefix') . "CURRIC
 	LEFT JOIN " . Settings::get('protime_tables_prefix') . "DEPART ON " . Settings::get('protime_tables_prefix') . "CURRIC.DEPART = " . Settings::get('protime_tables_prefix') . "DEPART.DEPART
-WHERE " . $dateOutCriterium . $queryCriterium . " ORDER BY FIRSTNAME, NAME
+WHERE " . $dateOutCriterium . $queryCriterium . Misc::getNeverShowPersonsCriterium() . " ORDER BY FIRSTNAME, NAME
 ";
 
-	$resultSelect = mysql_query($querySelect, $oProtime->getConnection());
-
-	while ( $row = mysql_fetch_assoc($resultSelect) ) {
+	$stmt = $dbConn->getConnection()->prepare($querySelect);
+	$stmt->execute();
+	$result = $stmt->fetchAll();
+	foreach ($result as $row) {
 
 		$oEmployee = new ProtimeUser($row["PERSNR"]);
 
@@ -148,7 +146,6 @@ WHERE " . $dateOutCriterium . $queryCriterium . " ORDER BY FIRSTNAME, NAME
 		// 
 		$retval .= $tmp;
 	}
-	mysql_free_result($resultSelect);
 
 	// HEADERS
 	$headerDays = '';
@@ -277,19 +274,17 @@ function isHoliday($datum, $holidays) {
 }
 
 function getNationalHolidays($year, $month) {
-	global $databases;
-
-	$oConn = new class_mysql($databases['default']);
-	$oConn->connect();
+	global $dbConn;
 
 	$arr = array();
 
     $query = "SELECT * FROM Staff_feestdagen WHERE datum LIKE '" . $year . '-' . substr("0" . $month,-2) . "-%' AND isdeleted=0 ";
-   	$result = mysql_query($query, $oConn->getConnection());
-    while ($row = mysql_fetch_assoc($result)) {
+	$stmt = $dbConn->getConnection()->prepare($query);
+	$stmt->execute();
+	$result = $stmt->fetchAll();
+	foreach ($result as $row) {
    		$arr[] = new Holiday($row["ID"]);
     }
-   	mysql_free_result($result);
 
 	return $arr;
 }

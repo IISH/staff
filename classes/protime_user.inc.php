@@ -3,14 +3,8 @@ require_once "role_authorisation.inc.php";
 
 class static_protime_user {
 	public static function getProtimeUserByLoginName( $loginname ) {
-		global $databases, $dateOutCriterium;
+		global $dbConn, $dateOutCriterium;
 		$id = 0;
-
-		$oProtime = new class_mysql($databases['default']);
-		$oProtime->connect();
-
-		$oProtime2 = new class_mysql($databases['default']);
-		$oProtime2->connect();
 
 		//
 		$loginname = trim($loginname);
@@ -21,12 +15,12 @@ class static_protime_user {
 			// Remark: don't check date_out here, sometimes they make errors when a person is re-hired they forget to remove the date_out value
 			$query = "SELECT * FROM " . Settings::get('protime_tables_prefix') .  "CURRIC WHERE ( CONCAT(TRIM(FIRSTNAME),'.',TRIM(NAME))='" . $loginname . "' OR TRIM(" . Settings::get('curric_loginname') . ")='" . $loginname . "' ) ";
 
-			$resultReset = mysql_query($query, $oProtime->getConnection());
-			if ($row = mysql_fetch_assoc($resultReset)) {
+			$stmt = $dbConn->getConnection()->prepare($query);
+			$stmt->execute();
+			$result = $stmt->fetchAll();
+			foreach ($result as $row) {
 				$id = $row['PERSNR'];
-
 			}
-			mysql_free_result($resultReset);
 
 			// if id still 0, try different way to find protime user
 			if ( $id == 0 ) {
@@ -34,15 +28,16 @@ class static_protime_user {
 				$arrLoginname = explode('.', $loginname);
 
 				$query2 = "SELECT * FROM " . Settings::get('protime_tables_prefix') .  "CURRIC WHERE ". $dateOutCriterium . " AND FIRSTNAME LIKE '%" . $arrLoginname[0] . "%'  AND NAME LIKE '%" . $arrLoginname[1] . "%' ";
-				$resultReset2 = mysql_query($query2, $oProtime2->getConnection());
-				while ($row2 = mysql_fetch_assoc($resultReset2) ) {
+				$stmt = $dbConn->getConnection()->prepare($query2);
+				$stmt->execute();
+				$result = $stmt->fetchAll();
+				foreach ($result as $row2) {
 					$oEmp2 = new ProtimeUser( $row2['PERSNR']);
 					if ( $oEmp2->getLoginname() == $loginname ) {
 						$id = $oEmp2->getId();
 					}
 
 				}
-				mysql_free_result($resultReset2);
 
 			}
 		}
@@ -54,25 +49,23 @@ class static_protime_user {
 class ProtimeUser {
 	protected $protime_id = 0;
 	protected $loginname = '';
-	protected $databases;
 	protected $firstname = '';
 	protected $lastname = '';
 	protected $email = '';
 	protected $room = '';
-	protected $telephone = '';
+	protected $telephones = '';
 	protected $photo = '';
 	protected $roles = '';
 	protected $arrRoles = array();
-	protected $arrAuthorisation = array();
+	protected $arrDepartmentRoleAuthorisation = array();
+	protected $arrUserAuthorisation = array();
 	protected $is_admin = false;
 	protected $department;
 	protected $oDepartment;
 	protected $arrSubEmployees = array();
+	protected $arrUserSettings = array();
 
 	function __construct($protime_id) {
-		global $databases;
-		$this->databases = $databases;
-
 		if ( $protime_id == '' || $protime_id < -1 ) {
 			$protime_id = 0;
 		}
@@ -83,31 +76,32 @@ class ProtimeUser {
 	}
 
 	public function getProtimeValues( $protime_id ) {
-		$oProtime = new class_mysql($this->databases['default']);
-		$oProtime->connect();
+		global $dbConn;
 
 		// reset values
 		$query = "SELECT * FROM " . Settings::get('protime_tables_prefix') .  "CURRIC WHERE PERSNR=" . $protime_id;
-		$resultReset = mysql_query($query, $oProtime->getConnection());
-		if ($row = mysql_fetch_assoc($resultReset)) {
+		$stmt = $dbConn->getConnection()->prepare($query);
+		$stmt->execute();
+		$result = $stmt->fetchAll();
+		foreach ($result as $row) {
 			$this->protime_id = $protime_id;
 			$this->lastname = trim($row["NAME"]);
 			$this->firstname = trim($row["FIRSTNAME"]);
 			$this->email = trim($row["EMAIL"]);
 			$this->loginname = trim(strtolower($row[Settings::get('curric_loginname')]));
 			$this->room =  trim($row[Settings::get('curric_room')]);
-			$this->telephone =  trim($row[Settings::get('curric_telephone')]);
+			$this->telephones =  $row[Settings::get('curric_telephone')];
 			$this->photo = trim($row["PHOTO"]);
 			$this->department = $row["DEPART"];
 			$this->oDepartment = new Department( $row["DEPART"] );
 			$this->roles = $row[Settings::get('curric_roles')];
 
 			$this->calculateRoles();
-			$this->calculateAuthorisation();
-			$this->calculateIsAdmin();
+			$this->calculateDepartmentRoleAuthorisation();
+			$this->calculateUserAuthorisation();
 			$this->findSubEmployees();
+			$this->calculateUserSettings();
 		}
-		mysql_free_result($resultReset);
 	}
 
 	private function calculateRoles() {
@@ -131,7 +125,9 @@ class ProtimeUser {
 		$this->arrRoles = $arrRoles;
 	}
 
-	private function calculateAuthorisation() {
+	private function calculateDepartmentRoleAuthorisation() {
+		global $dbConn;
+
 		$departmentId = trim($this->department);
 
 		if ( $departmentId == '' || $departmentId == 0 ) {
@@ -140,21 +136,19 @@ class ProtimeUser {
 
 		$arrAuthorisation = array();
 
-		$oConn = new class_mysql($this->databases['default']);
-		$oConn->connect();
-
 		// Roles via department
 		$query = "SELECT * FROM Staff_department_authorisation WHERE DEPART=" . $departmentId;
 
-		$res = mysql_query($query, $oConn->getConnection());
-		while ($r = mysql_fetch_assoc($res)) {
+		$stmt = $dbConn->getConnection()->prepare($query);
+		$stmt->execute();
+		$result = $stmt->fetchAll();
+		foreach ($result as $r) {
 			$authorisation = trim( $r["authorisation"] );
 			$authorisation = strtolower($authorisation);
 			if ( trim($authorisation) != '' ) {
 				$arrAuthorisation[] = $authorisation;
 			}
 		}
-		mysql_free_result($res);
 
 		// Roles via user03
 		$this->calculateRoles();
@@ -162,27 +156,72 @@ class ProtimeUser {
 		// loop through all roles
 		foreach ( $this->arrRoles as $role ) {
 			$query = "SELECT * FROM Staff_role_authorisation WHERE role='" . $role . "' ";
-
-			$res = mysql_query($query, $oConn->getConnection());
-			while ($r = mysql_fetch_assoc($res)) {
+			$stmt = $dbConn->getConnection()->prepare($query);
+			$stmt->execute();
+			$result = $stmt->fetchAll();
+			foreach ($result as $r) {
 				$authorisation = trim( $r["authorisation"] );
 				$authorisation = strtolower($authorisation);
 				if ( trim($authorisation) != '' ) {
 					$arrAuthorisation[] = $authorisation;
 				}
 			}
-			mysql_free_result($res);
-
 		}
 
 		// make unique
 		$arrAuthorisation = array_unique( $arrAuthorisation );
 
-		$this->arrAuthorisation = $arrAuthorisation;
+		$this->arrDepartmentRoleAuthorisation = $arrAuthorisation;
+	}
+
+	private function calculateUserAuthorisation() {
+		global $dbConn;
+
+		$arrAuthorisation = array();
+
+		// rights via user authorisation
+		$query = "SELECT * FROM Staff_user_authorisation WHERE user_id=" . $this->protime_id . " AND isdeleted=0 ";
+		$stmt = $dbConn->getConnection()->prepare($query);
+		$stmt->execute();
+		$result = $stmt->fetchAll();
+		foreach ($result as $r) {
+			$authorisation = strtolower( trim( $r["authorisation"] ) );
+			if ( trim($authorisation) != '' ) {
+				$arrAuthorisation[] = $authorisation;
+			}
+		}
+
+		// make unique
+		$arrAuthorisation = array_unique( $arrAuthorisation );
+
+		$this->arrUserAuthorisation = $arrAuthorisation;
+	}
+
+	private function calculateUserSettings() {
+		global $dbConn;
+
+		$arrSettings = array();
+
+		// rights via user authorisation
+		$query = "SELECT * FROM Staff_user_settings WHERE user_id=" . $this->protime_id;
+		$stmt = $dbConn->getConnection()->prepare($query);
+		$stmt->execute();
+		$result = $stmt->fetchAll();
+		foreach ($result as $r) {
+			$setting = $r["setting"];
+			$value = trim( $r["value"] );
+			$arrSettings[$setting] = $value;
+		}
+
+		$this->arrUserSettings = $arrSettings;
+	}
+
+	public function getUserSetting( $setting, $default = '' ) {
+		return ( isset($this->arrUserSettings[$setting]) ) ? $this->arrUserSettings[$setting] : $default;
 	}
 
 	public function hasAuthorisationTabAbsences() {
-		return ( $this->isAdmin() || in_array('tab_absences', $this->arrAuthorisation) );
+		return ( $this->isAdmin() || in_array('tab_absences', $this->arrDepartmentRoleAuthorisation) );
 	}
 
 	public function isBhv() {
@@ -213,31 +252,23 @@ class ProtimeUser {
 	}
 
 	public function hasAuthorisationTabFire() {
-		return ( $this->isAdmin() || in_array('tab_fire', $this->arrAuthorisation) );
+		return ( $this->isAdmin() || in_array('tab_fire', $this->arrDepartmentRoleAuthorisation) );
 	}
 
 	public function hasAuthorisationReasonOfAbsenceAll() {
-		return ( $this->isAdmin() || in_array('reason_of_absence_all', $this->arrAuthorisation) );
+		return ( $this->isAdmin() || in_array('reason_of_absence_all', $this->arrDepartmentRoleAuthorisation) );
 	}
 
 	public function hasAuthorisationReasonOfAbsenceDepartment() {
-		return ( $this->isAdmin() || in_array('reason_of_absence_department', $this->arrAuthorisation) );
+		return ( $this->isAdmin() || in_array('reason_of_absence_department', $this->arrDepartmentRoleAuthorisation) );
 	}
 
 	public function hasAuthorisationBeoTelephone() {
-		return ( $this->isAdmin() || in_array('beo_telephone', $this->arrAuthorisation) );
+		return ( $this->isAdmin() || in_array('beo_telephone', $this->arrDepartmentRoleAuthorisation) );
 	}
 
 	public function hasAuthorisationTabOntruimer() {
-		return ( $this->isAdmin() || in_array('tab_ontruimer', $this->arrAuthorisation) );
-	}
-
-	private function calculateIsAdmin() {
-		// check if and set is_admin
-		$arr = splitStringIntoArray(Settings::get('superadmin'), "/[^a-zA-Z0-9\.]/");
-		if ( in_array( $this->getLoginname(), $arr ) ) {
-			$this->is_admin = true;
-		}
+		return ( $this->isAdmin() || in_array('tab_ontruimer', $this->arrDepartmentRoleAuthorisation) );
 	}
 
 	public function getId() {
@@ -306,78 +337,8 @@ class ProtimeUser {
 		return $this->room;
 	}
 
-	public function getTelephone() {
-		$ret = '';
-		$tel = trim($this->telephone);
-
-		return $tel; // TIJDELIJK
-//		$tel = str_replace('/', ' / ', $tel);
-//		$tel = str_replace('  ', ' ', $tel);
-//
-//		$separator = '';
-//		$parts = explode(' ', $tel);
-//
-//		$lengthShortTelephoneNumber = Settings::get('max_length_short_company_telephone_number');
-//		$pattern = '/^[0-9]{' . $lengthShortTelephoneNumber . ',' . $lengthShortTelephoneNumber . '}[^0-9]/';
-//		$patternExactLength = '/^[0-9]{' . $lengthShortTelephoneNumber . ',' . $lengthShortTelephoneNumber . '}$/';
-//		foreach ( $parts as $part ) {
-//			if (
-//				preg_match($pattern, $part) || preg_match($patternExactLength, $part)
-//				) {
-//				$ret .= $separator . Settings::get('institute_prefix') . $part;
-//			} else {
-//				$ret .= $separator . $part;
-//			}
-//			$separator = ' ';
-//		}
-//		return $ret;
-	}
-
-	public function getTelephoneStyled() {
-		$ret = '';
-		$separator = '';
-
-		$tel = $this->getTelephone();
-
-		return $tel; // TIJDELIJK
-//		$parts = explode(' ', $tel);
-//
-//		$pre = '<span style="font-size:60%;">';
-//		$post = '</span>';
-//
-//		$lengthInstitutePrefix = strlen(Settings::get('institute_prefix'));
-//		$lengthShortTelephoneNumber = Settings::get('max_length_short_company_telephone_number');
-//		$pattern = '/^' . Settings::get('institute_prefix') . '[0-9]{' . $lengthShortTelephoneNumber . ',' . $lengthShortTelephoneNumber . '}[^0-9]/';
-//		$patternExactLength = '/^' . Settings::get('institute_prefix') . '[0-9]{' . $lengthShortTelephoneNumber . ',' . $lengthShortTelephoneNumber . '}$/';
-//		foreach ( $parts as $part ) {
-//			if (
-//				preg_match($pattern, $part) || preg_match($patternExactLength, $part)
-//			) {
-//				$ret .= $separator . $pre . substr($part, 0, $lengthInstitutePrefix) . $post . substr($part, $lengthInstitutePrefix, strlen($part)-$lengthInstitutePrefix);
-//			} else {
-//				$ret .= $separator . $part;
-//			}
-//			$separator = ' ';
-//		}
-//		return $ret;
-	}
-
-	public function getTelephoneHref() {
-		$tel = $this->getTelephoneStyled();
-
-
-		$template = trim(Settings::get('short_to_long_company_telephone_number_template'));
-		$max_length = trim(Settings::get('max_length_short_company_telephone_number'));
-		$institute_prefix = Settings::get('institute_prefix');
-//		if ( $template != '' && $max_length != '' && $max_length > 0 && strlen($tel) <= $max_length ) {
-//			if ( strlen( $template ) >= strlen( $tel ) ) {
-//				$label = $tel;
-//				$number = substr($template, 0, strlen($template) - strlen($tel) ) . $tel;
-//				$tel = "<a href=\"tel:$number\">$label</a>";
-//			}
-//		}
-
-		return $tel;
+	public function getTelephones() {
+		return $this->telephones;
 	}
 
 	public function getEmail() {
@@ -389,12 +350,17 @@ class ProtimeUser {
 	}
 
 	//
+	public function isSuperAdmin() {
+		return ( in_array('superadmin', $this->arrUserAuthorisation) );
+	}
+
+	//
 	public function isAdmin() {
-		return $this->is_admin;
+		return ( in_array('admin', $this->arrUserAuthorisation) || $this->isSuperAdmin() );
 	}
 
 	public function hasInOutTimeAuthorisation() {
-		return ( $this->isAdmin() || in_array('inout_time', $this->arrAuthorisation) );
+		return ( $this->isAdmin() || in_array('inout_time', $this->arrDepartmentRoleAuthorisation) );
 	}
 
 	public function isHeadOfDepartment() {
@@ -402,7 +368,8 @@ class ProtimeUser {
 	}
 
 	public function isLoggedIn() {
-		if ( $this->protime_id > 0 ) {
+//		if ( $this->protime_id > 0 ) {
+		if ( $_SESSION["loginname"] != '' ) {
 			return true;
 		}
 
@@ -421,40 +388,36 @@ class ProtimeUser {
 	}
 
 	public function getFavourites( $type ) {
-		global $databases;
-
-		$oConn = new class_mysql($databases['default']);
-		$oConn->connect();
+		global $dbConn;
 
 		$ids = array();
 		$ids[] = '0';
 
 		$query = 'SELECT * FROM Staff_favourites WHERE user=\'' . $this->getLoginname() . '\' AND type=\'' . $type . '\' ';
-		$result = mysql_query($query, $oConn->getConnection());
-		while ( $row = mysql_fetch_assoc($result) ) {
+		$stmt = $dbConn->getConnection()->prepare($query);
+		$stmt->execute();
+		$result = $stmt->fetchAll();
+		foreach ($result as $row) {
 			$ids[] = $row["ProtimeID"];
 		}
-		mysql_free_result($result);
 
 		return $ids;
 	}
 
 	public function findSubEmployees() {
+		global $dbConn;
 		if ( $this->isHeadOfDepartment() ) {
 
 			$department = $this->department;
 			if ( $department > 0 ) {
-				$oProtime = new class_mysql($this->databases['default']);
-				$oProtime->connect();
-
 				// reset values
 				$query = "SELECT PERSNR FROM " . Settings::get('protime_tables_prefix') .  "CURRIC WHERE DEPART=" . $department . " AND PERSNR<>" . $this->protime_id;
-				$resultReset = mysql_query($query, $oProtime->getConnection());
-				while ($row = mysql_fetch_assoc($resultReset)) {
+				$stmt = $dbConn->getConnection()->prepare($query);
+				$stmt->execute();
+				$result = $stmt->fetchAll();
+				foreach ($result as $row) {
 					$this->arrSubEmployees[] = $row["PERSNR"];
 				}
-				mysql_free_result($resultReset);
-
 			}
 		}
 	}

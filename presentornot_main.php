@@ -25,7 +25,7 @@ function createPresentContent( $pageSettings ) {
 	$s = getAndProtectSearch();
 
 	$ret = "
-<h2>" . $pageSettings['title'] . "</h2>
+<h1>" . $pageSettings['title'] . "</h1>
 
 <script type=\"text/javascript\">
 <!--

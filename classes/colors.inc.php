@@ -10,12 +10,9 @@ class class_colors {
 	 * Load the settings from the database
 	 */
 	private static function load() {
-		global $databases;
+		global $dbConn;
 
 		$language = getLanguage();
-
-		$oConn = new class_mysql($databases['default']);
-		$oConn->connect();
 
 		$arr = array();
 
@@ -27,10 +24,10 @@ FROM ${prefix}ABSENCE
 	RIGHT JOIN Staff_colors ON ${prefix}ABSENCE.CODE = Staff_colors.absence_code
 ";
 
-		$result = mysql_query($query, $oConn->getConnection());
-		if ( mysql_num_rows($result) > 0 ) {
-
-			while ($row = mysql_fetch_assoc($result)) {
+		$stmt = $dbConn->getConnection()->prepare($query);
+		$stmt->execute();
+		$result = $stmt->fetchAll();
+		foreach ($result as $row) {
 
 				$desc = trim($row["substitute_" . getLanguage()]);
 				if ( $desc == '' ) {
@@ -39,8 +36,6 @@ FROM ${prefix}ABSENCE
 
 				$arr[ $row["absence_code"] ] = new class_color( $row["ABSENCE"], $desc, $row["absence_code"], $row["background_color"], $row["font_color"], $row["everyone"] );
 			}
-			mysql_free_result($result);
-		}
 
 		self::$settings = $arr;
 		self::$is_loaded = true;

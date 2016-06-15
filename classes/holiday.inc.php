@@ -8,21 +8,17 @@ class Holiday {
 	protected $description = '';
 
 	function __construct($id) {
-		global $databases;
-		$this->databases = $databases;
-
-		$oConn = new class_mysql($this->databases['default']);
-		$oConn->connect();
+		global $dbConn;
 
 		$this->id = $id;
 
 		$query = "SELECT * FROM Staff_feestdagen WHERE ID=" . $this->getId();
-		$res = mysql_query($query, $oConn->getConnection());
-		if ($r = mysql_fetch_assoc($res)) {
+		$stmt = $dbConn->getConnection()->prepare($query);
+		$stmt->execute();
+		if ( $r = $stmt->fetch() ) {
 			$this->date = $r["datum"];
 			$this->description = $r["omschrijving"];
 		}
-		mysql_free_result($res);
 	}
 
 	public function getId() {

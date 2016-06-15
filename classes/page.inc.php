@@ -36,7 +36,13 @@ class Page {
 		$welcome = Translations::get('welcome');
 		$logout = '';
 		if ( $oWebuser->isLoggedIn() ) {
-			$welcome .= ', ' . $oWebuser->getNiceFirstLastname();
+			$niceName = trim($oWebuser->getNiceFirstLastname());
+			if ( $niceName == '' ) {
+				$niceName = '...';
+			}
+			$niceName = '<a href="user.php">' . $niceName . '</a>';
+
+			$welcome .= ', ' . $niceName;
 
 			$logout = '<a href="logout.php" onclick="if (!confirm(\'' . Translations::get('confirm') . '\')) return false;">(' . Translations::get('logout') . ')</a>';
 		} else {

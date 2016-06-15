@@ -1,11 +1,9 @@
 <?php
-// modified: 2014-07-03
-
 require_once dirname(__FILE__) . "/../sites/default/staff.settings.php";
-require_once "mysql.inc.php";
 require_once "mssql.inc.php";
+require_once "pdo.inc.php";
 
-class SyncProtimeMysql {
+class SyncProtime2Pdo {
 	protected $settings = null;
 	protected $databases;
 	protected $sourceTable = '';
@@ -72,10 +70,10 @@ class SyncProtimeMysql {
 	}
 
 	public function doSync() {
+		global $dbConn;
+
 		echo "Sync " . $this->sourceTable . " (KNAW) -> " . $this->targetTable . " (IISG)<br>";
 
-		$oConn = new class_mysql($this->databases['default']);
-		$oConn->connect();
 
 		$oPt = new class_mssql($this->databases['protime_live']);
 		$oPt->connect();
@@ -88,7 +86,8 @@ class SyncProtimeMysql {
 			// all records
 			$query = "UPDATE " . $this->targetTable . " SET sync_state=2 ";
 		}
-		$resultData = mysql_query($query, $oConn->getConnection());
+		$stmt = $dbConn->getConnection()->prepare($query);
+		$stmt->execute();
 
 		//
 		$query = "SELECT * FROM " . $this->sourceTable;
@@ -103,7 +102,7 @@ class SyncProtimeMysql {
 		//
 		$resultData = mssql_query($query, $oPt->getConnection());
 		while ( $rowData = mssql_fetch_array($resultData) ) {
-			$this->insertUpdateMysqlRecord($rowData, $oConn);
+			$this->insertUpdateMysqlRecord($rowData);
 		}
 
 		//
@@ -111,22 +110,24 @@ class SyncProtimeMysql {
 
 		// remove deleted records
 		$query = "DELETE FROM " . $this->targetTable . " WHERE sync_state=2 ";
-		$resultData = mysql_query($query, $oConn->getConnection());
+		$stmt = $dbConn->getConnection()->prepare($query);
+		$stmt->execute();
 	}
 
 	public function __toString() {
 		return "Class: " . get_class($this) . "\nsource: " . $this->sourceTable . "\ntarget: " . $this->targetTable . "\n";
 	}
 
-	protected function insertUpdateMysqlRecord($protimeRowData, $oConn) {
-
-		$result = mysql_query("SELECT * FROM " . $this->getTargetTable() . " WHERE " . $this->getPrimaryKey() . "='" . $protimeRowData[$this->getPrimaryKey()] . "' ", $oConn->getConnection());
-		$num_rows = mysql_num_rows($result);
+	protected function insertUpdateMysqlRecord($protimeRowData) {
+		global $dbConn;
 
 		$this->lastInsertId = $protimeRowData[$this->getPrimaryKey()];
 		$this->counter++;
 
-		if ($num_rows > 0) {
+		$query = "SELECT * FROM " . $this->getTargetTable() . " WHERE " . $this->getPrimaryKey() . "='" . $protimeRowData[$this->getPrimaryKey()] . "' ";
+		$stmt = $dbConn->getConnection()->prepare($query);
+		$stmt->execute();
+		if ( $row = $stmt->fetch() ) {
 			// create update query
 			$separator = '';
 			$query = "UPDATE " . $this->getTargetTable() . " SET ";
@@ -174,6 +175,7 @@ class SyncProtimeMysql {
 		SyncInfo::save($this->getTargetTable(), 'counter', $this->counter);
 
 		// execute query
-		$result = mysql_query($query, $oConn->getConnection());
+		$stmt = $dbConn->getConnection()->prepare($query);
+		$stmt->execute();
 	}
 }

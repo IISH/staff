@@ -17,7 +17,7 @@ echo $oPage->getPage();
 function createContactContent( ) {
 	global $oWebuser;
 
-	$ret = "<h2>" . Translations::get('contact') . "</h2><br>";
+	$ret = "<h1>" . Translations::get('contact') . "</h1>";
 
 	$message = Translations::get('questions_bugs_comments');
 	if ( $oWebuser->isLoggedIn() ) {

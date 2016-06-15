@@ -49,13 +49,19 @@ class WebsiteProtection {
 	}
 
 	public function getLongUrl() {
-		return 'https://' . ( $_SERVER["HTTP_X_FORWARDED_HOST"] != '' ? $_SERVER["HTTP_X_FORWARDED_HOST"] : $_SERVER["SERVER_NAME"] ) . $this->getShortUrl();
+		return 'https://' . ( isset($_SERVER["HTTP_X_FORWARDED_HOST"]) && $_SERVER["HTTP_X_FORWARDED_HOST"] != '' ? $_SERVER["HTTP_X_FORWARDED_HOST"] : $_SERVER["SERVER_NAME"] ) . $this->getShortUrl();
 	}
 
 	public function get_remote_addr() {
-		$retval = trim($_SERVER["HTTP_X_FORWARDED_FOR"]);
+		$retval = '';
+		if ( isset( $_SERVER["HTTP_X_FORWARDED_FOR"] ) ) {
+			$retval = trim($_SERVER["HTTP_X_FORWARDED_FOR"]);
+		}
+
 		if ( $retval == '' ) {
-			$retval = trim($_SERVER["REMOTE_ADDR"]);
+			if ( isset( $_SERVER["REMOTE_ADDR"] ) ) {
+				$retval = trim($_SERVER["REMOTE_ADDR"]);
+			}
 		}
 
 		return $retval;

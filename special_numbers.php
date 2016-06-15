@@ -16,36 +16,53 @@ $oPage->setContent(createSpecialNumbersContent( ));
 // show page
 echo $oPage->getPage();
 
+// disconnect database connection
+$dbConn->close();
+
 function createSpecialNumbersContent( ) {
-    global $databases;
+    global $dbConn, $oWebuser;
 
-	$ret = "<h2>" . Translations::get('header_specialnumbers') . "</h2><br>";
+	$ret = "
+<h1>" . Translations::get('header_specialnumbers') . "</h1>";
 
-	require_once("./classes/mysql.inc.php");
-	require_once("./classes/class_view/view.inc.php");
-	require_once("./classes/class_view/fieldtypes/field.inc.php");
+	if ( $oWebuser->isAdmin() ) {
+	$ret .= "
+<input type=\"button\" class=\"button\" name=\"addNewButton\" value=\"Add new\" onClick=\"open_page('special_numbers_edit.php?ID=0');\"><br>
+";
+	}
 
-	$oDb = new class_mysql($databases['default']);
-	$oView = new View($oDb);
+	$ret .= "<br>
+<table class=\"special_numbers\">
+<tr>
+	<th>" . Translations::get('lbl_object') . "</th>
+	<th>" . Translations::get('lbl_number') . "</th>
+</tr>
+";
 
-	$oView->set_view( array(
-		'query' => 'SELECT * FROM Staff_special_numbers WHERE isdeleted=0 ORDER BY object ASC '
-		, 'count_source_type' => 'query'
-		, 'table_parameters' => ' cellspacing="0" cellpadding="0" border="0" '
-		));
+	//
+	$query = 'SELECT ID, object, number FROM Staff_special_numbers WHERE isdeleted=0 ORDER BY object ASC ';
+	$stmt = $dbConn->getConnection()->prepare($query);
+	$stmt->execute();
+	$result = $stmt->fetchAll();
+	foreach ($result as $row) {
+		if ( $oWebuser->isAdmin() ) {
+			$object = "<a href=\"special_numbers_edit.php?ID=" . $row['ID'] . "\">" . $row['object'] . "</a>";
+		} else {
+			$object = $row['object'];
+		}
 
-	$oView->add_field( new Field ( array(
-		'fieldname' => 'object'
-		, 'fieldlabel' => Translations::get('lbl_object')
-		)));
+		$ret .= "
+<tr>
+	<td>" . $object . "</td>
+	<td>" . Telephone::getTelephonesHref($row['number']) . "</td>
+</tr>
+";
+	}
 
-	$oView->add_field( new Field ( array(
-		'fieldname' => 'number'
-		, 'fieldlabel' => Translations::get('lbl_number')
-		)));
-
-	// calculate and show view
-	$ret .= $oView->generate_view();
+	//
+$ret .= "
+</table>
+";
 
 	return $ret;
 }

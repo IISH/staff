@@ -36,7 +36,7 @@ if ( $s == '-a-' ) {
 } elseif ( $s == '' ) {
 	// no search
 	// use favourites
-	$queryCriterium = 'AND PERSNR IN (' . $favIds . ') ';
+	$queryCriterium = ' AND PERSNR IN (' . $favIds . ') ';
 	$title = Translations::get('your_favourites');
 } else {
 	// search
@@ -44,24 +44,24 @@ if ( $s == '-a-' ) {
 	$title = 'Search: ' . $s;
 }
 
-$oProtime = new class_mysql($databases['default']);
-$oProtime->connect();
+//
 
 //
 $querySelect = "
 SELECT *
 FROM " . Settings::get('protime_tables_prefix') . "CURRIC
 	LEFT JOIN " . Settings::get('protime_tables_prefix') . "DEPART ON " . Settings::get('protime_tables_prefix') . "CURRIC.DEPART = " . Settings::get('protime_tables_prefix') . "DEPART.DEPART
-WHERE " . $dateOutCriterium . $queryCriterium . " ORDER BY FIRSTNAME, NAME ";
-
-$resultSelect = mysql_query($querySelect, $oProtime->getConnection());
+WHERE " . $dateOutCriterium . $queryCriterium . Misc::getNeverShowPersonsCriterium() . " ORDER BY FIRSTNAME, NAME ";
 
 $totaal["aanwezig"] = 0;
 $totaal["afwezig"] = 0;
 
 $retvalArray = array();
 
-while ( $row = mysql_fetch_assoc($resultSelect) ) {
+$stmt = $dbConn->getConnection()->prepare($querySelect);
+$stmt->execute();
+$result = $stmt->fetchAll();
+foreach ($result as $row) {
 	$photo = '';
 
 	$oEmployee = new ProtimeUser( $row["PERSNR"] );
@@ -73,7 +73,7 @@ while ( $row = mysql_fetch_assoc($resultSelect) ) {
 	<td><div id=\"divCheckInOut" . $oEmployee->getId() . "\">::CHECKINOUT::</div></td>
 	<td>" . createUrl( array( 'url' => 'employee.php?id=' . $oEmployee->getId(), 'label' => $oEmployee->getNiceFirstLastname() ) ) . "</td>
 	<td class=\"presentornot_absence\" style=\"::STATUS_STYLE::\"><A class=\"checkinouttime\" TITLE=\"::STATUS_ALT::\">::STATUS_TEXT::</A></td>
-	<td align=\"center\">" . $oEmployee->getTelephoneHref() . "</td>
+	<td align=\"center\">" . Telephone::getTelephonesHref($oEmployee->getTelephones()) . "</td>
 	<td align=\"center\">" . static_Room::createRoomUrl( $oEmployee->getRoom() ) . "</td>
 </td>
 </tr>
@@ -94,7 +94,7 @@ while ( $row = mysql_fetch_assoc($resultSelect) ) {
 	<td class=\"photobook presentornot_absence\" colspan=2 width=\"100px\" style=\"::STATUS_STYLE::\"><A class=\"checkinouttime\" TITLE=\"::STATUS_ALT::\">::STATUS_TEXT::</A></td>
 </tr>
 <tr>
-	<td class=\"photobook\" colspan=4>" . Translations::get('lbl_telephone_short') . ": " . valueOr($oEmployee->getTelephoneHref()) . ", " . Translations::get('lbl_room_short') . ": " . valueOr( static_Room::createRoomUrl( $oEmployee->getRoom() ) ) . "</td>
+	<td class=\"photobook\" colspan=4>" . Translations::get('lbl_telephone_short') . ": " . valueOr(Telephone::getTelephonesHref($oEmployee->getTelephones())) . "<br>" . Translations::get('lbl_room_short') . ": " . valueOr( static_Room::createRoomUrl( $oEmployee->getRoom() ) ) . "</td>
 </tr>
 </table>
 ";
@@ -161,7 +161,6 @@ while ( $row = mysql_fetch_assoc($resultSelect) ) {
 		$retvalArray[] = $tmp;
 	}
 }
-mysql_free_result($resultSelect);
 
 if ( count($retvalArray) > 0 ) {
 
@@ -214,6 +213,6 @@ if ( count($retvalArray) > 0 ) {
 		" . Translations::get('lbl_page_refreshes_every') . " " . date("H:i:s") . "</i></font>";
 }
 
-$retval = "<h2>$title</h2>" . $retval;
+$retval = "<h1>$title</h1>" . $retval;
 
 echo $retval;

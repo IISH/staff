@@ -1,6 +1,5 @@
 <?php
 require_once dirname(__FILE__) . "/../sites/default/staff.settings.php";
-require_once "mysql.inc.php";
 
 class Feestdag {
 	private $id;
@@ -28,13 +27,12 @@ class Feestdag {
 	}
 
 	private function initValues() {
-		$oConn = new class_mysql($this->databases['default']);
-		$oConn->connect();
+		global $dbConn;
 
 		$query = "SELECT * FROM Staff_feestdagen WHERE ID=" . $this->getId();
-
-		$res = mysql_query($query, $oConn->getConnection());
-		if ($r = mysql_fetch_assoc($res)) {
+		$stmt = $dbConn->getConnection()->prepare($query);
+		$stmt->execute();
+		if ( $r = $stmt->fetch() ) {
 			$this->date = $r["datum"];
 			$this->description = $r["omschrijving"];
 			$this->vooreigenrekening = $r["vooreigenrekening"];
@@ -42,7 +40,6 @@ class Feestdag {
 			$this->last_refresh = $r["last_refresh"];
 			$this->is_new = false;
 		}
-		mysql_free_result($res);
 	}
 
 	public function getId() {
@@ -106,8 +103,7 @@ class Feestdag {
 	}
 
 	protected function insert() {
-		$oConn = new class_mysql($this->databases['default']);
-		$oConn->connect();
+		global $dbConn;
 
 		$query = "INSERT INTO Staff_feestdagen (ID, datum, omschrijving, vooreigenrekening, isdeleted, last_refresh) VALUES (
 			" . $this->id . "
@@ -117,12 +113,12 @@ class Feestdag {
 			, " . $this->isdeleted . "
 			, '" . addslashes($this->last_refresh) . "'
 			) ";
-		$result = mysql_query($query, $oConn->getConnection());
+		$stmt = $dbConn->getConnection()->prepare($query);
+		$stmt->execute();
 	}
 
 	protected function update() {
-		$oConn = new class_mysql($this->databases['default']);
-		$oConn->connect();
+		global $dbConn;
 
 		$query = "UPDATE Staff_feestdagen
 			SET datum = '" . addslashes($this->date) . "'
@@ -131,6 +127,7 @@ class Feestdag {
 				, isdeleted = " . $this->isdeleted . "
 				, last_refresh = '" . addslashes($this->last_refresh) . "'
 			WHERE ID=" . $this->id;
-		$result = mysql_query($query, $oConn->getConnection());
+		$stmt = $dbConn->getConnection()->prepare($query);
+		$stmt->execute();
 	}
 }

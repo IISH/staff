@@ -14,22 +14,16 @@ if ( !isset($settings) ) {
 $oWebuser->checkLoggedIn();
 
 $retval = "
-<h2>" . $oBeo->getLabel() . "</h2>
+<h1>" . $oBeo->getLabel() . "</h1>
 <div class='incaseofemergency'>" . Translations::get('in_case_of_emergency_call') . " <span class='incaseofemergencynumber'>" . Settings::get('emergency_number') . "</span></div>
 ";
 
 //
 $checkInOutIds = implode(',', $oWebuser->getFavourites('checkinout'));
 
-$oProtime = new class_mysql($databases['default']);
-$oProtime->connect();
-
 //
-$never_show_persnr = '0,' . preg_replace('/[^0-9]/', ',', trim(Settings::get("never_show_persnr")));
-$never_show_persnr = preg_replace('/,{2,}/', ',', $never_show_persnr);
-
-$querySelect = "SELECT * FROM " . Settings::get('protime_tables_prefix') . "CURRIC WHERE ". $dateOutCriterium . " AND " . $oBeo->getQuery() . " AND PERSNR NOT IN ($never_show_persnr) ORDER BY FIRSTNAME, NAME ";
-$resultSelect = mysql_query($querySelect, $oProtime->getConnection());
+//$never_show_persnr = '0,' . preg_replace('/[^0-9]/', ',', trim(Settings::get("never_show_persnr")));
+//$never_show_persnr = preg_replace('/,{2,}/', ',', $never_show_persnr);
 
 $totaal["aanwezig"] = 0;
 $totaal["afwezig"] = 0;
@@ -40,10 +34,14 @@ if ( $nrOfLevels == '' ) {
 	$nrOfLevels = 6;
 }
 for( $i=0 ; $i <= $nrOfLevels; $i++ ) {
-    $ontruimersAanwezigOpVerdieping[$i] = 0;
+	$ontruimersAanwezigOpVerdieping[$i] = 0;
 }
 
-while ( $row = mysql_fetch_assoc($resultSelect) ) {
+$querySelect = "SELECT * FROM " . Settings::get('protime_tables_prefix') . "CURRIC WHERE ". $dateOutCriterium . " AND " . $oBeo->getQuery() . Misc::getNeverShowPersonsCriterium() . " ORDER BY FIRSTNAME, NAME ";
+$stmt = $dbConn->getConnection()->prepare($querySelect);
+$stmt->execute();
+$result = $stmt->fetchAll();
+foreach ($result as $row) {
 	$verdieping = '';
 	$telephone = '';
 
@@ -54,7 +52,7 @@ while ( $row = mysql_fetch_assoc($resultSelect) ) {
 	}
 
 	if ( $oWebuser->hasAuthorisationBeoTelephone() ) {
-		$telephone = "<td align=\"center\">" . $oEmployee->getTelephoneHref() . "</td>";
+		$telephone = "<td align=\"center\">" . Telephone::getTelephonesHref($oEmployee->getTelephones()) . "</td>";
 	}
 
 	$tmp = "
@@ -94,7 +92,6 @@ while ( $row = mysql_fetch_assoc($resultSelect) ) {
 	// als niet rood en ook niet groen dan altijd tonen
 	$retval .= $tmp;
 }
-mysql_free_result($resultSelect);
 
 if ( $retval != '' ) {
 	$verdieping = '';
