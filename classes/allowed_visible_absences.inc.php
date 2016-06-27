@@ -15,7 +15,7 @@ class ForEveryoneVisibleAbsences {
 		$arr = array();
 
 		//
-		$query = 'SELECT * FROM Staff_colors WHERE everyone=1 ';
+		$query = 'SELECT * FROM staff_colors WHERE everyone=1 ';
 		$stmt = $dbConn->getConnection()->prepare($query);
 		$stmt->execute();
 		$result = $stmt->fetchAll();

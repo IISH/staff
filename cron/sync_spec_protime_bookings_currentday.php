@@ -19,7 +19,7 @@ echo "Start time: " . date("Y-m-d H:i:s") . "<br>\n";
 $sync = new SyncProtime2Pdo();
 $sync->setSourceTable("BOOKINGS");
 $sync->setSourceCriterium(" BOOKDATE >= '" . date("Ymd") . "' ");
-$sync->setTargetTable("Staff_today_checkinout");
+$sync->setTargetTable("staff_today_checkinout");
 $sync->setPrimaryKey("REC_NR");
 $sync->addFields( array("REC_NR", "PERSNR", "BOOKDATE", "BOOK_ORIG", "BOOKTIME", "BOOKTYPE", "CCABS", "TERMINAL", "USER_ID", "COMMENTS", "REQUEST", "CALCBOOKTIME") );
 SyncInfo::save($sync->getTargetTable(), 'start', date("Y-m-d H:i:s"));

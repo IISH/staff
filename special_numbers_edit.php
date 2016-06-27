@@ -32,8 +32,8 @@ function createSpecialNumbersContent( ) {
 	$oForm = new class_form($settings);
 
 	$oForm->set_form( array(
-		'query' => 'SELECT * FROM Staff_special_numbers WHERE ID=[FLD:ID] AND isdeleted=0 '
-		, 'table' => 'Staff_special_numbers'
+		'query' => 'SELECT * FROM staff_special_numbers WHERE ID=[FLD:ID] AND isdeleted=0 '
+		, 'table' => 'staff_special_numbers'
 		, 'primarykey' => 'ID'
 		));
 

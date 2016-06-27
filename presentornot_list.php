@@ -49,8 +49,8 @@ if ( $s == '-a-' ) {
 //
 $querySelect = "
 SELECT *
-FROM " . Settings::get('protime_tables_prefix') . "CURRIC
-	LEFT JOIN " . Settings::get('protime_tables_prefix') . "DEPART ON " . Settings::get('protime_tables_prefix') . "CURRIC.DEPART = " . Settings::get('protime_tables_prefix') . "DEPART.DEPART
+FROM " . Settings::get('protime_tables_prefix') . "curric
+	LEFT JOIN " . Settings::get('protime_tables_prefix') . "depart ON " . Settings::get('protime_tables_prefix') . "curric.DEPART = " . Settings::get('protime_tables_prefix') . "depart.DEPART
 WHERE " . $dateOutCriterium . $queryCriterium . Misc::getNeverShowPersonsCriterium() . " ORDER BY FIRSTNAME, NAME ";
 
 $totaal["aanwezig"] = 0;
@@ -94,7 +94,10 @@ foreach ($result as $row) {
 	<td class=\"photobook presentornot_absence\" colspan=2 width=\"100px\" style=\"::STATUS_STYLE::\"><A class=\"checkinouttime\" TITLE=\"::STATUS_ALT::\">::STATUS_TEXT::</A></td>
 </tr>
 <tr>
-	<td class=\"photobook\" colspan=4>" . Translations::get('lbl_telephone_short') . ": " . valueOr(Telephone::getTelephonesHref($oEmployee->getTelephones())) . "<br>" . Translations::get('lbl_room_short') . ": " . valueOr( static_Room::createRoomUrl( $oEmployee->getRoom() ) ) . "</td>
+	<td class=\"photobook\" colspan=4>" . Translations::get('lbl_telephone_short') . ": " . valueOr(Telephone::getTelephonesHref($oEmployee->getTelephones())) . "</td>
+</tr>
+<tr>
+	<td class=\"photobook\" colspan=4>" . Translations::get('lbl_room_short') . ": " . valueOr( static_Room::createRoomUrl( $oEmployee->getRoom() ) ) . "</td>
 </tr>
 </table>
 ";

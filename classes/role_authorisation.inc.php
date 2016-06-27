@@ -15,7 +15,7 @@ class RoleAuthorisation {
 	private function initValues( $id ) {
 		global $dbConn;
 
-		$query = "SELECT * FROM Staff_role_authorisation WHERE id=" . $id . " ";
+		$query = "SELECT * FROM staff_role_authorisation WHERE id=" . $id . " ";
 
 		$stmt = $dbConn->getConnection()->prepare($query);
 		$stmt->execute();

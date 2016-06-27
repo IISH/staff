@@ -14,7 +14,7 @@ class MailCheckin {
 		$arr = array();
 		$arr[] = 0;
 
-		$query = "SELECT ProtimeID FROM Staff_favourites WHERE type='checkinout' GROUP BY ProtimeID ";
+		$query = "SELECT ProtimeID FROM staff_favourites WHERE type='checkinout' GROUP BY ProtimeID ";
 
 		$stmt = $dbConn->getConnection()->prepare($query);
 		$stmt->execute();
@@ -38,7 +38,7 @@ class MailCheckin {
 		$ids = implode(',', $this->getListOfNotifications());
 
 		//
-		$query = "SELECT PERSNR, MAX(BOOKTIME) AS CHECKTIME, COUNT(*) AS AANTAL FROM Staff_today_checkinout WHERE PERSNR IN ( " . $ids . " ) AND BOOKDATE='" . $date . "' AND BOOKTIME<>9999 GROUP BY PERSNR HAVING COUNT(*) % 2 = 1 ";
+		$query = "SELECT PERSNR, MAX(BOOKTIME) AS CHECKTIME, COUNT(*) AS AANTAL FROM staff_today_checkinout WHERE PERSNR IN ( " . $ids . " ) AND BOOKDATE='" . $date . "' AND BOOKTIME<>9999 GROUP BY PERSNR HAVING COUNT(*) % 2 = 1 ";
 		$stmt = $dbConn->getConnection()->prepare($query);
 		$stmt->execute();
 		$result = $stmt->fetchAll();
@@ -59,7 +59,7 @@ class MailCheckin {
 
 		$arr = array();
 
-		$query = "SELECT * FROM Staff_favourites WHERE ProtimeID=" . $protime_id . " AND type='checkinout' ";
+		$query = "SELECT * FROM staff_favourites WHERE ProtimeID=" . $protime_id . " AND type='checkinout' ";
 		$stmt = $dbConn->getConnection()->prepare($query);
 		$stmt->execute();
 		$result = $stmt->fetchAll();
@@ -73,7 +73,7 @@ class MailCheckin {
 	public function deleteNotification( $protime_id ) {
 		global $dbConn;
 
-		$query = 'DELETE FROM Staff_favourites WHERE ProtimeID=' . $protime_id . ' AND type=\'checkinout\' ';
+		$query = 'DELETE FROM staff_favourites WHERE ProtimeID=' . $protime_id . ' AND type=\'checkinout\' ';
 		$stmt = $dbConn->getConnection()->prepare($query);
 		$stmt->execute();
 	}

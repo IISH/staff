@@ -20,8 +20,8 @@ class class_colors {
 
 		$query = "
 SELECT ID, absence_code, ABSENCE, SHORT_" . $language . ", CODE, background_color, font_color, everyone, show_always, substitute_" . $language . "
-FROM ${prefix}ABSENCE
-	RIGHT JOIN Staff_colors ON ${prefix}ABSENCE.CODE = Staff_colors.absence_code
+FROM ${prefix}absence
+	RIGHT JOIN staff_colors ON ${prefix}absence.CODE = staff_colors.absence_code
 ";
 
 		$stmt = $dbConn->getConnection()->prepare($query);

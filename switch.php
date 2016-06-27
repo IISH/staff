@@ -34,7 +34,7 @@ switch ( $switch ) {
 
 $newValue = ($value+1)%$howManyChoices;
 
-$query_update = "INSERT INTO Staff_user_settings (`user_id`, `setting`, `value`) VALUES (" . $oWebuser->getId() . ", '$field', '$newValue') ON DUPLICATE KEY UPDATE `value`='$newValue' ";
+$query_update = "INSERT INTO staff_user_settings (`user_id`, `setting`, `value`) VALUES (" . $oWebuser->getId() . ", '$field', '$newValue') ON DUPLICATE KEY UPDATE `value`='$newValue' ";
 $stmt = $dbConn->getConnection()->prepare($query_update);
 $stmt->execute();
 

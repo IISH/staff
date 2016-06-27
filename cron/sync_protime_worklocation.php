@@ -18,7 +18,7 @@ echo "Start time: " . date("Y-m-d H:i:s") . "<br>\n";
 // sync
 $sync = new SyncProtime2Pdo();
 $sync->setSourceTable("WORKLOCATION");
-$sync->setTargetTable(Settings::get('protime_tables_prefix') . "WORKLOCATION");
+$sync->setTargetTable(Settings::get('protime_tables_prefix') . "worklocation");
 $sync->setPrimaryKey("LOCATIONID");
 $sync->addFields( array("LOCATIONID", "SHORT_1", "SHORT_2", "DESCRIPTION") );
 SyncInfo::save($sync->getTargetTable(), 'start', date("Y-m-d H:i:s"));

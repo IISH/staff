@@ -37,7 +37,7 @@ for( $i=0 ; $i <= $nrOfLevels; $i++ ) {
 	$ontruimersAanwezigOpVerdieping[$i] = 0;
 }
 
-$querySelect = "SELECT * FROM " . Settings::get('protime_tables_prefix') . "CURRIC WHERE ". $dateOutCriterium . " AND " . $oBeo->getQuery() . Misc::getNeverShowPersonsCriterium() . " ORDER BY FIRSTNAME, NAME ";
+$querySelect = "SELECT * FROM " . Settings::get('protime_tables_prefix') . "curric WHERE ". $dateOutCriterium . " AND " . $oBeo->getQuery() . Misc::getNeverShowPersonsCriterium() . " ORDER BY FIRSTNAME, NAME ";
 $stmt = $dbConn->getConnection()->prepare($querySelect);
 $stmt->execute();
 $result = $stmt->fetchAll();

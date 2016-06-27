@@ -78,7 +78,7 @@ function getCurrentDayCheckInoutState( $persnr ) {
 	$aanwezig = 0;
 
 	// achterhaal 'present' status
-	$query = "SELECT REC_NR, PERSNR, BOOKDATE, BOOKTIME FROM Staff_today_checkinout WHERE PERSNR=" . $persnr . " AND BOOKDATE='" . $date . "' AND BOOKTIME<>9999 ORDER BY REC_NR ";
+	$query = "SELECT REC_NR, PERSNR, BOOKDATE, BOOKTIME FROM staff_today_checkinout WHERE PERSNR=" . $persnr . " AND BOOKDATE='" . $date . "' AND BOOKTIME<>9999 ORDER BY REC_NR ";
 	$stmt = $dbConn->getConnection()->prepare($query);
 	$stmt->execute();
 	$result = $stmt->fetchAll();
@@ -122,10 +122,10 @@ function getCurrentDayCheckInoutState( $persnr ) {
 		$prefix = Settings::get('protime_tables_prefix');
 
 		$query = "
-SELECT DISTINCT CODE, ${prefix}ABSENCE.SHORT_" . getLanguage() . "
-FROM ${prefix}P_ABSENCE
-	INNER JOIN ${prefix}ABSENCE ON ${prefix}P_ABSENCE.ABSENCE = ${prefix}ABSENCE.ABSENCE
-WHERE ${prefix}P_ABSENCE.PERSNR = " . $persnr . " AND ${prefix}P_ABSENCE.BOOKDATE = '" . $date . "'
+SELECT DISTINCT CODE, ${prefix}absence.SHORT_" . getLanguage() . "
+FROM ${prefix}p_absence
+	INNER JOIN ${prefix}absence ON ${prefix}p_absence.ABSENCE = ${prefix}absence.ABSENCE
+WHERE ${prefix}p_absence.PERSNR = " . $persnr . " AND ${prefix}p_absence.BOOKDATE = '" . $date . "'
 ";
 
 		$status_separator = '';
@@ -197,12 +197,12 @@ function getAbsencesAndHolidays($eid, $year, $month ) {
 
 	// SHORT_1 - dutch, SHORT_2 - english
 	$query = "
-SELECT CODE, ${prefix}P_ABSENCE.REC_NR, ${prefix}P_ABSENCE.PERSNR, ${prefix}P_ABSENCE.BOOKDATE, ${prefix}P_ABSENCE.ABSENCE_VALUE, ${prefix}P_ABSENCE.ABSENCE_STATUS, ${prefix}ABSENCE.SHORT_" . $language . ", ${prefix}P_ABSENCE.ABSENCE
-FROM ${prefix}P_ABSENCE
-	LEFT OUTER JOIN ${prefix}ABSENCE ON ${prefix}P_ABSENCE.ABSENCE = ${prefix}ABSENCE.ABSENCE
-WHERE ${prefix}P_ABSENCE.PERSNR=" . $eid . " AND ${prefix}P_ABSENCE.BOOKDATE LIKE '" . $yearMonth . "%' AND ${prefix}P_ABSENCE.ABSENCE NOT IN (5, 19)
-AND ( ${prefix}P_ABSENCE.ABSENCE_VALUE>=" . $min_minutes . " OR ${prefix}P_ABSENCE.ABSENCE_VALUE=0 )
-ORDER BY ${prefix}P_ABSENCE.BOOKDATE, ${prefix}P_ABSENCE.REC_NR
+SELECT CODE, ${prefix}p_absence.REC_NR, ${prefix}p_absence.PERSNR, ${prefix}p_absence.BOOKDATE, ${prefix}p_absence.ABSENCE_VALUE, ${prefix}p_absence.ABSENCE_STATUS, ${prefix}absence.SHORT_" . $language . ", ${prefix}p_absence.ABSENCE
+FROM ${prefix}p_absence
+	LEFT OUTER JOIN ${prefix}absence ON ${prefix}p_absence.ABSENCE = ${prefix}absence.ABSENCE
+WHERE ${prefix}p_absence.PERSNR=" . $eid . " AND ${prefix}p_absence.BOOKDATE LIKE '" . $yearMonth . "%' AND ${prefix}p_absence.ABSENCE NOT IN (5, 19)
+AND ( ${prefix}p_absence.ABSENCE_VALUE>=" . $min_minutes . " OR ${prefix}p_absence.ABSENCE_VALUE=0 )
+ORDER BY ${prefix}p_absence.BOOKDATE, ${prefix}p_absence.REC_NR
 ";
 
 	$stmt = $dbConn->getConnection()->prepare($query);

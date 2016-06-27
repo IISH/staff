@@ -12,7 +12,7 @@ class Holiday {
 
 		$this->id = $id;
 
-		$query = "SELECT * FROM Staff_feestdagen WHERE ID=" . $this->getId();
+		$query = "SELECT * FROM staff_feestdagen WHERE ID=" . $this->getId();
 		$stmt = $dbConn->getConnection()->prepare($query);
 		$stmt->execute();
 		if ( $r = $stmt->fetch() ) {

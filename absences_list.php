@@ -69,8 +69,8 @@ if ( $to_short != 1 ) {
 	// loop employees
 	$querySelect = "
 SELECT *
-FROM " . Settings::get('protime_tables_prefix') . "CURRIC
-	LEFT JOIN " . Settings::get('protime_tables_prefix') . "DEPART ON " . Settings::get('protime_tables_prefix') . "CURRIC.DEPART = " . Settings::get('protime_tables_prefix') . "DEPART.DEPART
+FROM " . Settings::get('protime_tables_prefix') . "curric
+	LEFT JOIN " . Settings::get('protime_tables_prefix') . "depart ON " . Settings::get('protime_tables_prefix') . "curric.DEPART = " . Settings::get('protime_tables_prefix') . "depart.DEPART
 WHERE " . $dateOutCriterium . $queryCriterium . Misc::getNeverShowPersonsCriterium() . " ORDER BY FIRSTNAME, NAME
 ";
 
@@ -278,7 +278,7 @@ function getNationalHolidays($year, $month) {
 
 	$arr = array();
 
-    $query = "SELECT * FROM Staff_feestdagen WHERE datum LIKE '" . $year . '-' . substr("0" . $month,-2) . "-%' AND isdeleted=0 ";
+    $query = "SELECT * FROM staff_feestdagen WHERE datum LIKE '" . $year . '-' . substr("0" . $month,-2) . "-%' AND isdeleted=0 ";
 	$stmt = $dbConn->getConnection()->prepare($query);
 	$stmt->execute();
 	$result = $stmt->fetchAll();

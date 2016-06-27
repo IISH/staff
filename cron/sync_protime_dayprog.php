@@ -1,9 +1,6 @@
 <?php
 require_once "../classes/start.inc.php";
 
-ini_set("display_errors", 1);
-error_reporting(E_ALL ^ E_NOTICE);
-
 // check cron key
 $cron_key = '';
 if ( isset($_GET["cron_key"]) ) {
@@ -21,7 +18,7 @@ echo "Start time: " . date("Y-m-d H:i:s") . "<br>\n";
 // sync
 $sync = new SyncProtime2Pdo();
 $sync->setSourceTable("DAYPROG");
-$sync->setTargetTable(Settings::get('protime_tables_prefix') . "DAYPROG");
+$sync->setTargetTable(Settings::get('protime_tables_prefix') . "dayprog");
 $sync->setPrimaryKey("DAYPROG");
 $sync->addFields( array("DAYPROG", "SHORT_1", "SHORT_2", "ITEM_LEVEL", "CODE", "COLOR", "NORM", "F_CORE", "T_CORE", "F_FICTIF", "T_FICTIF", "B_CLOSURE", "E_CLOSURE", "DP_ROUND", "DP_OVERTIME", "DP_SLIDE", "SHIFT", "ABSENCEDAY", "ACCESSDAYTYPE", "CUSTOMER", "DISPLAY_1", "DISPLAY_2", "VALIDFORDAYS", "F_PLANNABLE", "T_PLANNABLE", "USEPLANNEDCORE") );
 SyncInfo::save($sync->getTargetTable(), 'start', date("Y-m-d H:i:s"));

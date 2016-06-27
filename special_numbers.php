@@ -40,7 +40,7 @@ function createSpecialNumbersContent( ) {
 ";
 
 	//
-	$query = 'SELECT ID, object, number FROM Staff_special_numbers WHERE isdeleted=0 ORDER BY object ASC ';
+	$query = 'SELECT ID, object, number FROM staff_special_numbers WHERE isdeleted=0 ORDER BY object ASC ';
 	$stmt = $dbConn->getConnection()->prepare($query);
 	$stmt->execute();
 	$result = $stmt->fetchAll();

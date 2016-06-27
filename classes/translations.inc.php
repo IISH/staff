@@ -8,7 +8,7 @@
 class Translations {
 	private static $is_loaded = false;
 	private static $settings = null;
-	private static $settings_table = 'Staff_translations';
+	private static $settings_table = 'staff_translations';
 
 	/**
 	 * Load the settings from the database
@@ -43,7 +43,7 @@ class Translations {
 			self::load();
 		}
 
-		$value = self::$settings[$setting_name];
+		$value = isset( self::$settings[$setting_name] ) ? self::$settings[$setting_name] : '';
 
 		return $value;
 	}

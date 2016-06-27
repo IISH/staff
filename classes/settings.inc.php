@@ -5,7 +5,7 @@
 class Settings {
 	private static $is_loaded = false;
 	private static $settings = null;
-	private static $settings_table = 'Staff_settings';
+	private static $settings_table = 'staff_settings';
 
 	/**
 	 * Load the settings from the database
@@ -38,7 +38,7 @@ class Settings {
 			self::load();
 		}
 
-		$value = self::$settings[$setting_name];
+		$value = isset ( self::$settings[$setting_name] ) ? self::$settings[$setting_name] : '';
 
 		return $value;
 	}

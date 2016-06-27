@@ -1,7 +1,7 @@
 <?php
 require_once "../classes/start.inc.php";
 
-$path_parts['filename'] = 'Staff_feestdagen';
+$path_parts['filename'] = 'staff_feestdagen';
 
 // check cron key
 $cron_key = '';

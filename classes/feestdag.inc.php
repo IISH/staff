@@ -29,7 +29,7 @@ class Feestdag {
 	private function initValues() {
 		global $dbConn;
 
-		$query = "SELECT * FROM Staff_feestdagen WHERE ID=" . $this->getId();
+		$query = "SELECT * FROM staff_feestdagen WHERE ID=" . $this->getId();
 		$stmt = $dbConn->getConnection()->prepare($query);
 		$stmt->execute();
 		if ( $r = $stmt->fetch() ) {
@@ -105,7 +105,7 @@ class Feestdag {
 	protected function insert() {
 		global $dbConn;
 
-		$query = "INSERT INTO Staff_feestdagen (ID, datum, omschrijving, vooreigenrekening, isdeleted, last_refresh) VALUES (
+		$query = "INSERT INTO staff_feestdagen (ID, datum, omschrijving, vooreigenrekening, isdeleted, last_refresh) VALUES (
 			" . $this->id . "
 			, '" . addslashes($this->date) . "'
 			, '" . addslashes($this->description) . "'
@@ -120,7 +120,7 @@ class Feestdag {
 	protected function update() {
 		global $dbConn;
 
-		$query = "UPDATE Staff_feestdagen
+		$query = "UPDATE staff_feestdagen
 			SET datum = '" . addslashes($this->date) . "'
 				, omschrijving = '" . addslashes($this->description) . "'
 				, vooreigenrekening = " . $this->vooreigenrekening . "

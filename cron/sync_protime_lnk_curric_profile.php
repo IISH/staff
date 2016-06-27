@@ -1,9 +1,6 @@
 <?php
 require_once "../classes/start.inc.php";
 
-ini_set("display_errors", 1);
-error_reporting(E_ALL ^ E_NOTICE);
-
 // check cron key
 $cron_key = '';
 if ( isset($_GET["cron_key"]) ) {
@@ -21,7 +18,7 @@ echo "Start time: " . date("Y-m-d H:i:s") . "<br>\n";
 // sync
 $sync = new SyncProtime2Pdo();
 $sync->setSourceTable("LNK_CURRIC_PROFILE");
-$sync->setTargetTable(Settings::get('protime_tables_prefix') . "LNK_CURRIC_PROFILE");
+$sync->setTargetTable(Settings::get('protime_tables_prefix') . "lnk_curric_profile");
 $sync->setPrimaryKey("REC_NR");
 $sync->addFields( array("REC_NR", "PERSNR", "PROFILE", "PROFILETYPE", "DATEFROM", "DAYNUMBER", "CUSTOMER") );
 SyncInfo::save($sync->getTargetTable(), 'start', date("Y-m-d H:i:s"));

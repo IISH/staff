@@ -19,7 +19,7 @@ echo "Start time: " . date("Y-m-d H:i:s") . "<br>\n";
 $sync = new SyncProtime2Pdo();
 $sync->setSourceTable("P_LIMIT");
 $sync->setSourceCriterium(" EXEC_ORDER=2 AND BOOKDATE>='" . date("Ymd", mktime(0, 0, 0, date("m")-3, 1, date("Y"))) . "' ");
-$sync->setTargetTable(Settings::get('protime_tables_prefix') . "P_LIMIT");
+$sync->setTargetTable(Settings::get('protime_tables_prefix') . "p_limit");
 $sync->setPrimaryKey("REC_NR");
 $sync->addFields( array("REC_NR", "PERSNR", "BOOKDATE", "LIMIT_LINE", "LIM_PERIODE", "ITEM_TYPE", "YEARCOUNTER", "BEGIN_VAL", "END_VAL", "EXEC_ORDER") );
 SyncInfo::save($sync->getTargetTable(), 'start', date("Y-m-d H:i:s"));

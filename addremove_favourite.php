@@ -24,7 +24,7 @@ if ( !in_array($fav, array('', 'vakantie', 'present', 'checkinout', 'absences') 
 $query = '';
 if ( $dowhat == 'a' ) {
 	// add to database
-	$query = 'INSERT INTO Staff_favourites (user, ProtimeID, type) VALUES(\'' . $oWebuser->getLoginname() . '\', ' . $id . ', \'' . $fav . '\') ';
+	$query = 'INSERT INTO staff_favourites (user, ProtimeID, type) VALUES(\'' . $oWebuser->getLoginname() . '\', ' . $id . ', \'' . $fav . '\') ';
 	// show remove button in window
 	if ( $fav == 'checkinout' ) {
 		$alttitle = Translations::get('lbl_click_to_not_get_email_notification');
@@ -35,7 +35,7 @@ if ( $dowhat == 'a' ) {
 	}
 } elseif ( $dowhat == 'r' ) {
 	// remove from database
-	$query = 'DELETE FROM Staff_favourites WHERE user=\'' . $oWebuser->getLoginname() . '\' AND ProtimeID=' . $id . ' AND type=\'' . $fav . '\' ';
+	$query = 'DELETE FROM staff_favourites WHERE user=\'' . $oWebuser->getLoginname() . '\' AND ProtimeID=' . $id . ' AND type=\'' . $fav . '\' ';
 	// show add button in window
 	if ( $fav == 'checkinout' ) {
 		$alttitle = Translations::get('lbl_click_to_get_email_notification');

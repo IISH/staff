@@ -3,7 +3,7 @@
  * Class for settings syncinfo
  */
 class SyncInfo {
-	private static $settings_table = 'Staff_syncinfo';
+	private static $settings_table = 'staff_syncinfo';
 
 	public static function save( $setting_name, $type, $value ) {
 		global $databases, $dbConn;

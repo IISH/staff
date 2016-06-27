@@ -22,14 +22,14 @@ class ProtimeUserSchedule {
 		// probleem erhan
 		// nieuwe query naar aanleiding van wisselende week roosters
 		$query = "
-SELECT ${prefix}LNK_CURRIC_PROFILE.DATEFROM, MOD(CAST(${prefix}CYC_DP.DAYNR AS UNSIGNED),7) AS DAG, ${prefix}DAYPROG.NORM AS HOEVEEL
-FROM ${prefix}LNK_CURRIC_PROFILE
-	LEFT JOIN ${prefix}CYC_DP ON ${prefix}LNK_CURRIC_PROFILE.PROFILE = ${prefix}CYC_DP.CYCLIQ
-	LEFT JOIN ${prefix}DAYPROG ON ${prefix}CYC_DP.DAYPROG = ${prefix}DAYPROG.DAYPROG
+SELECT ${prefix}lnk_curric_profile.DATEFROM, MOD(CAST(${prefix}cyc_dp.DAYNR AS UNSIGNED),7) AS DAG, ${prefix}dayprog.NORM AS HOEVEEL
+FROM ${prefix}lnk_curric_profile
+	LEFT JOIN ${prefix}cyc_dp ON ${prefix}lnk_curric_profile.PROFILE = ${prefix}cyc_dp.CYCLIQ
+	LEFT JOIN ${prefix}dayprog ON ${prefix}cyc_dp.dayprog = ${prefix}dayprog.DAYPROG
 WHERE PROFILETYPE = '4'
-	AND ${prefix}LNK_CURRIC_PROFILE.PERSNR = '" . $this->persnr . "'
-	AND ${prefix}LNK_CURRIC_PROFILE.DATEFROM < '" . ($this->last_year+1)  . "'
-ORDER BY ${prefix}LNK_CURRIC_PROFILE.DATEFROM DESC, CAST(${prefix}CYC_DP.DAYNR AS UNSIGNED) ASC
+	AND ${prefix}lnk_curric_profile.PERSNR = '" . $this->persnr . "'
+	AND ${prefix}lnk_curric_profile.DATEFROM < '" . ($this->last_year+1)  . "'
+ORDER BY ${prefix}lnk_curric_profile.DATEFROM DESC, CAST(${prefix}cyc_dp.DAYNR AS UNSIGNED) ASC
 ";
 
 		$stmt = $dbConn->getConnection()->prepare($query);

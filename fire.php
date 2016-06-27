@@ -35,18 +35,18 @@ function createBrandContent( ) {
 	$loop = array();
 
 	// Remark: the queries return all employees
-	// check of an employee is present or not, is done below
+	// checking if an employee is present or not, is done below
 	$loop[] = array(
 		'label' => Translations::get('present_employees_long')
-		, 'query' => "SELECT * FROM " . Settings::get('protime_tables_prefix') . "CURRIC WHERE " . $oBeoMedewerker->getQuery() . " ORDER BY FIRSTNAME, NAME "
+		, 'query' => "SELECT * FROM " . Settings::get('protime_tables_prefix') . "curric WHERE " . $oBeoMedewerker->getQuery() . " ORDER BY FIRSTNAME, NAME "
 	);
 	$loop[] = array(
 		'label' => Translations::get('present_evacuators')
-		, 'query' => "SELECT * FROM " . Settings::get('protime_tables_prefix') . "CURRIC WHERE " . $oBeoOntruimer->getQuery() . " ORDER BY FIRSTNAME, NAME "
+		, 'query' => "SELECT * FROM " . Settings::get('protime_tables_prefix') . "curric WHERE " . $oBeoOntruimer->getQuery() . " ORDER BY FIRSTNAME, NAME "
 	);
 	$loop[] = array(
 		'label' => Translations::get('present_ert')
-		, 'query' => "SELECT * FROM " . Settings::get('protime_tables_prefix') . "CURRIC WHERE " . $oBeoBhv->getQuery() . " ORDER BY FIRSTNAME, NAME "
+		, 'query' => "SELECT * FROM " . Settings::get('protime_tables_prefix') . "curric WHERE " . $oBeoBhv->getQuery() . " ORDER BY FIRSTNAME, NAME "
 	);
 
 	//

@@ -1,9 +1,6 @@
 <?php
 require_once "../classes/start.inc.php";
 
-ini_set("display_errors", 1);
-error_reporting(E_ALL ^ E_NOTICE);
-
 // check cron key
 $cron_key = '';
 if ( isset($_GET["cron_key"]) ) {
@@ -21,7 +18,7 @@ echo "Start time: " . date("Y-m-d H:i:s") . "<br>\n";
 // sync
 $sync = new SyncProtime2Pdo();
 $sync->setSourceTable("CYC_DP");
-$sync->setTargetTable(Settings::get('protime_tables_prefix') . "CYC_DP");
+$sync->setTargetTable(Settings::get('protime_tables_prefix') . "cyc_dp");
 $sync->setPrimaryKey("CYC_DP");
 $sync->addFields( array("CYC_DP", "CYCLIQ", "DAYNR", "DAYPROG") );
 SyncInfo::save($sync->getTargetTable(), 'start', date("Y-m-d H:i:s"));

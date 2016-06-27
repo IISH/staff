@@ -13,7 +13,7 @@ class static_protime_user {
 
 			//
 			// Remark: don't check date_out here, sometimes they make errors when a person is re-hired they forget to remove the date_out value
-			$query = "SELECT * FROM " . Settings::get('protime_tables_prefix') .  "CURRIC WHERE ( CONCAT(TRIM(FIRSTNAME),'.',TRIM(NAME))='" . $loginname . "' OR TRIM(" . Settings::get('curric_loginname') . ")='" . $loginname . "' ) ";
+			$query = "SELECT * FROM " . Settings::get('protime_tables_prefix') .  "curric WHERE ( CONCAT(TRIM(FIRSTNAME),'.',TRIM(NAME))='" . $loginname . "' OR TRIM(" . Settings::get('curric_loginname') . ")='" . $loginname . "' ) ";
 
 			$stmt = $dbConn->getConnection()->prepare($query);
 			$stmt->execute();
@@ -27,7 +27,7 @@ class static_protime_user {
 
 				$arrLoginname = explode('.', $loginname);
 
-				$query2 = "SELECT * FROM " . Settings::get('protime_tables_prefix') .  "CURRIC WHERE ". $dateOutCriterium . " AND FIRSTNAME LIKE '%" . $arrLoginname[0] . "%'  AND NAME LIKE '%" . $arrLoginname[1] . "%' ";
+				$query2 = "SELECT * FROM " . Settings::get('protime_tables_prefix') .  "curric WHERE ". $dateOutCriterium . " AND FIRSTNAME LIKE '%" . $arrLoginname[0] . "%'  AND NAME LIKE '%" . $arrLoginname[1] . "%' ";
 				$stmt = $dbConn->getConnection()->prepare($query2);
 				$stmt->execute();
 				$result = $stmt->fetchAll();
@@ -79,7 +79,7 @@ class ProtimeUser {
 		global $dbConn;
 
 		// reset values
-		$query = "SELECT * FROM " . Settings::get('protime_tables_prefix') .  "CURRIC WHERE PERSNR=" . $protime_id;
+		$query = "SELECT * FROM " . Settings::get('protime_tables_prefix') .  "curric WHERE PERSNR=" . $protime_id;
 		$stmt = $dbConn->getConnection()->prepare($query);
 		$stmt->execute();
 		$result = $stmt->fetchAll();
@@ -137,7 +137,7 @@ class ProtimeUser {
 		$arrAuthorisation = array();
 
 		// Roles via department
-		$query = "SELECT * FROM Staff_department_authorisation WHERE DEPART=" . $departmentId;
+		$query = "SELECT * FROM staff_department_authorisation WHERE DEPART=" . $departmentId;
 
 		$stmt = $dbConn->getConnection()->prepare($query);
 		$stmt->execute();
@@ -155,7 +155,7 @@ class ProtimeUser {
 
 		// loop through all roles
 		foreach ( $this->arrRoles as $role ) {
-			$query = "SELECT * FROM Staff_role_authorisation WHERE role='" . $role . "' ";
+			$query = "SELECT * FROM staff_role_authorisation WHERE role='" . $role . "' ";
 			$stmt = $dbConn->getConnection()->prepare($query);
 			$stmt->execute();
 			$result = $stmt->fetchAll();
@@ -180,7 +180,7 @@ class ProtimeUser {
 		$arrAuthorisation = array();
 
 		// rights via user authorisation
-		$query = "SELECT * FROM Staff_user_authorisation WHERE user_id=" . $this->protime_id . " AND isdeleted=0 ";
+		$query = "SELECT * FROM staff_user_authorisation WHERE user_id=" . $this->protime_id . " AND isdeleted=0 ";
 		$stmt = $dbConn->getConnection()->prepare($query);
 		$stmt->execute();
 		$result = $stmt->fetchAll();
@@ -203,7 +203,7 @@ class ProtimeUser {
 		$arrSettings = array();
 
 		// rights via user authorisation
-		$query = "SELECT * FROM Staff_user_settings WHERE user_id=" . $this->protime_id;
+		$query = "SELECT * FROM staff_user_settings WHERE user_id=" . $this->protime_id;
 		$stmt = $dbConn->getConnection()->prepare($query);
 		$stmt->execute();
 		$result = $stmt->fetchAll();
@@ -393,7 +393,7 @@ class ProtimeUser {
 		$ids = array();
 		$ids[] = '0';
 
-		$query = 'SELECT * FROM Staff_favourites WHERE user=\'' . $this->getLoginname() . '\' AND type=\'' . $type . '\' ';
+		$query = 'SELECT * FROM staff_favourites WHERE user=\'' . $this->getLoginname() . '\' AND type=\'' . $type . '\' ';
 		$stmt = $dbConn->getConnection()->prepare($query);
 		$stmt->execute();
 		$result = $stmt->fetchAll();
@@ -411,7 +411,7 @@ class ProtimeUser {
 			$department = $this->department;
 			if ( $department > 0 ) {
 				// reset values
-				$query = "SELECT PERSNR FROM " . Settings::get('protime_tables_prefix') .  "CURRIC WHERE DEPART=" . $department . " AND PERSNR<>" . $this->protime_id;
+				$query = "SELECT PERSNR FROM " . Settings::get('protime_tables_prefix') .  "curric WHERE DEPART=" . $department . " AND PERSNR<>" . $this->protime_id;
 				$stmt = $dbConn->getConnection()->prepare($query);
 				$stmt->execute();
 				$result = $stmt->fetchAll();
