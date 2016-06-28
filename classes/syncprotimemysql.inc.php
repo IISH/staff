@@ -92,7 +92,7 @@ class SyncProtime2Pdo {
 		$stmt2->execute();
 
 		// save counter in table
-		SyncInfo::save($this->getTargetTable(), 'counter', $this->counter);
+		SyncInfo::save($this->getTargetTable(), 'counter', $this->counter, $dbConn);
 
 		//
 		$query = "SELECT * FROM " . $this->sourceTable;
@@ -124,7 +124,7 @@ class SyncProtime2Pdo {
 	}
 
 	protected function insertUpdateMysqlRecord($protimeRowData, $databaseConnection) {
-//		global $dbConn, $dbTimecard;
+		global $dbConn, $dbTimecard;
 
 		$this->lastInsertId = $protimeRowData[$this->getPrimaryKey()];
 		$this->counter++;
@@ -170,7 +170,7 @@ class SyncProtime2Pdo {
 				echo $this->counter . ' ';
 
 				// save counter in table
-				SyncInfo::save($this->getTargetTable(), 'counter', $this->counter);
+				SyncInfo::save($this->getTargetTable(), 'counter', $this->counter, $dbConn);
 			} else {
 				echo '. ';
 			}
@@ -178,7 +178,7 @@ class SyncProtime2Pdo {
 		}
 
 		// save counter in table
-		SyncInfo::save($this->getTargetTable(), 'counter', $this->counter);
+		SyncInfo::save($this->getTargetTable(), 'counter', $this->counter, $dbConn);
 
 		// execute query
 //		$stmt = $dbConn->getConnection()->prepare($query);
