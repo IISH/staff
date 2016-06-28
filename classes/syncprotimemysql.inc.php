@@ -70,7 +70,7 @@ class SyncProtime2Pdo {
 	}
 
 	public function doSync() {
-		global $dbConn;
+		global $dbConn, $dbTimecard;
 
 		echo "Sync " . $this->sourceTable . " (KNAW) -> " . $this->targetTable . " (IISG)<br>";
 
@@ -88,6 +88,11 @@ class SyncProtime2Pdo {
 		}
 		$stmt = $dbConn->getConnection()->prepare($query);
 		$stmt->execute();
+		$stmt2 = $dbTimecard->getConnection()->prepare($query);
+		$stmt2->execute();
+
+		// save counter in table
+		SyncInfo::save($this->getTargetTable(), 'counter', $this->counter);
 
 		//
 		$query = "SELECT * FROM " . $this->sourceTable;
@@ -96,13 +101,11 @@ class SyncProtime2Pdo {
 		}
 		$query .= " ORDER BY " . $this->getPrimaryKey();
 
-		// save counter in table
-		SyncInfo::save($this->getTargetTable(), 'counter', $this->counter);
-
 		//
 		$resultData = mssql_query($query, $oPt->getConnection());
 		while ( $rowData = mssql_fetch_array($resultData) ) {
-			$this->insertUpdateMysqlRecord($rowData);
+			$this->insertUpdateMysqlRecord($rowData, $dbConn);
+			$this->insertUpdateMysqlRecord($rowData, $dbTimecard);
 		}
 
 		//
@@ -112,20 +115,23 @@ class SyncProtime2Pdo {
 		$query = "DELETE FROM " . $this->targetTable . " WHERE sync_state=2 ";
 		$stmt = $dbConn->getConnection()->prepare($query);
 		$stmt->execute();
+		$stmt2 = $dbTimecard->getConnection()->prepare($query);
+		$stmt2->execute();
 	}
 
 	public function __toString() {
 		return "Class: " . get_class($this) . "\nsource: " . $this->sourceTable . "\ntarget: " . $this->targetTable . "\n";
 	}
 
-	protected function insertUpdateMysqlRecord($protimeRowData) {
-		global $dbConn;
+	protected function insertUpdateMysqlRecord($protimeRowData, $databaseConnection) {
+//		global $dbConn, $dbTimecard;
 
 		$this->lastInsertId = $protimeRowData[$this->getPrimaryKey()];
 		$this->counter++;
 
 		$query = "SELECT * FROM " . $this->getTargetTable() . " WHERE " . $this->getPrimaryKey() . "='" . $protimeRowData[$this->getPrimaryKey()] . "' ";
-		$stmt = $dbConn->getConnection()->prepare($query);
+//		$stmt = $dbConn->getConnection()->prepare($query);
+		$stmt = $databaseConnection->getConnection()->prepare($query);
 		$stmt->execute();
 		if ( $row = $stmt->fetch() ) {
 			// create update query
@@ -175,7 +181,8 @@ class SyncProtime2Pdo {
 		SyncInfo::save($this->getTargetTable(), 'counter', $this->counter);
 
 		// execute query
-		$stmt = $dbConn->getConnection()->prepare($query);
+//		$stmt = $dbConn->getConnection()->prepare($query);
+		$stmt = $databaseConnection->getConnection()->prepare($query);
 		$stmt->execute();
 	}
 }

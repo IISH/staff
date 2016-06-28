@@ -12,6 +12,9 @@ if ( trim( $cron_key ) != Settings::get('cron_key') ) {
 	die('Error: Incorrect cron key');
 }
 
+// connect to timecard database
+$dbTimecard = new class_pdo( $databases['timecard'] );
+
 // show time
 echo "Start time: " . date("Y-m-d H:i:s") . "<br>\n";
 
@@ -22,15 +25,15 @@ $sync->setSourceCriterium(" BOOKDATE>='" . date("Ymd", mktime(0, 0, 0, date("m")
 $sync->setTargetTable(Settings::get('protime_tables_prefix') . "pr_month");
 $sync->setPrimaryKey("PR_KEY");
 $sync->addFields( array("PR_KEY", "PERSNR", "BOOKDATE", "CYC_DP", "DAYPROG", "NORM", "WORKED", "PREST", "RPREST", "EXTRA", "WEEKPRES1", "WEEKPRES2", "WEEKPRES3", "PAYPERIO_PRES", "BALANCE", "TERMINAL", "FLAGS1", "FLAGS2", "FLAGS3", "FLAGS4", "FLAGS5", "FLAGS6", "FLAGS7", "ABS_CORE", "NROFBREAKS", "BREAKTIME", "CALCULATED", "ACCESSGROUP", "SHIFT", "CYCLIQ", "COSTCENTERGROUP", "COSTBLOCKING", "PP_FUNCTION", "COMMENTS", "CUSTOMER" ) );
-SyncInfo::save($sync->getTargetTable(), 'start', date("Y-m-d H:i:s"));
+SyncInfo::save($sync->getTargetTable(), 'start', date("Y-m-d H:i:s"), $dbConn);
 $sync->doSync();
 
 //
 echo "<br>Rows inserted/updated: " . $sync->getCounter() . "<br>";
 
 // save sync last run
-SyncInfo::save($sync->getTargetTable(), 'end', date("Y-m-d H:i:s"));
-SyncInfo::save($sync->getTargetTable(), 'last_insert_id', $sync->getLastInsertId());
+SyncInfo::save($sync->getTargetTable(), 'end', date("Y-m-d H:i:s"), $dbConn);
+SyncInfo::save($sync->getTargetTable(), 'last_insert_id', $sync->getLastInsertId(), $dbConn);
 
 // show time
 echo "End time: " . date("Y-m-d H:i:s") . "<br>\n";

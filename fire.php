@@ -38,15 +38,15 @@ function createBrandContent( ) {
 	// checking if an employee is present or not, is done below
 	$loop[] = array(
 		'label' => Translations::get('present_employees_long')
-		, 'query' => "SELECT * FROM " . Settings::get('protime_tables_prefix') . "curric WHERE " . $oBeoMedewerker->getQuery() . " ORDER BY FIRSTNAME, NAME "
+		, 'query' => "SELECT * FROM " . Settings::get('protime_tables_prefix') . "curric WHERE " . $oBeoMedewerker->getQuery() . " ORDER BY NAME, FIRSTNAME "
 	);
 	$loop[] = array(
 		'label' => Translations::get('present_evacuators')
-		, 'query' => "SELECT * FROM " . Settings::get('protime_tables_prefix') . "curric WHERE " . $oBeoOntruimer->getQuery() . " ORDER BY FIRSTNAME, NAME "
+		, 'query' => "SELECT * FROM " . Settings::get('protime_tables_prefix') . "curric WHERE " . $oBeoOntruimer->getQuery() . " ORDER BY NAME, FIRSTNAME "
 	);
 	$loop[] = array(
 		'label' => Translations::get('present_ert')
-		, 'query' => "SELECT * FROM " . Settings::get('protime_tables_prefix') . "curric WHERE " . $oBeoBhv->getQuery() . " ORDER BY FIRSTNAME, NAME "
+		, 'query' => "SELECT * FROM " . Settings::get('protime_tables_prefix') . "curric WHERE " . $oBeoBhv->getQuery() . " ORDER BY NAME, FIRSTNAME "
 	);
 
 	//
@@ -54,11 +54,11 @@ function createBrandContent( ) {
 		$ret .= "<h1>" . $item['label'] . "</h1>
 <table border=0 cellspacing=0 cellpadding=7 style=\"border: 1px solid black;\">
 <TR>
-	<TD width=25 style=\"border: 1px solid black;\">&nbsp;</TD>
-	<TD width=25 style=\"border: 1px solid black;\">&nbsp;</TD>
-	<TD width=270 style=\"border: 1px solid black;\"><font size=-1><b>" . Translations::get('lbl_name') . "</b></font></TD>
-	<td width=130 align=\"center\" style=\"border: 1px solid black;\"><font size=-1><b>" . Translations::get('lbl_telephone') . "</b></font></td>
-	<td width=200 align=\"center\" style=\"border: 1px solid black;\"><font size=-1><b>" . Translations::get('lbl_roles') . "</b></font></td>
+	<TD width=\"25\" style=\"border: 1px solid black;\">&nbsp;</TD>
+	<TD width=\"25\" style=\"border: 1px solid black;\">&nbsp;</TD>
+	<TD width=\"250\" style=\"border: 1px solid black;\"><font size=-1><b>" . Translations::get('lbl_name') . "</b></font></TD>
+	<td width=\"170\" align=\"center\" style=\"border: 1px solid black;\"><font size=-1><b>" . Translations::get('lbl_telephone') . "</b></font></td>
+	<td width=\"200\" align=\"center\" style=\"border: 1px solid black;\"><font size=-1><b>" . Translations::get('lbl_roles') . "</b></font></td>
 </TR>
 ";
 
@@ -84,7 +84,7 @@ function createBrandContent( ) {
 <tr>
 	<td style=\"border: 1px solid black;\">&nbsp;</td>
 	<td style=\"border: 1px solid black;\">" . $totaal["aanwezig"] . "</td>
-	<td style=\"border: 1px solid black;\">" . createUrl( array( 'url' => 'employee.php?id=' . $oEmployee->getId(), 'label' => $oEmployee->getNiceFirstLastname() ) ) . "</td>
+	<td style=\"border: 1px solid black;\">" . createUrl( array( 'url' => 'employee.php?id=' . $oEmployee->getId(), 'label' => $oEmployee->getFireName() ) ) . "</td>
 	<td style=\"border: 1px solid black;\">" . Telephone::getTelephonesHref($oEmployee->getTelephones()) . "&nbsp;</td>
 	<td style=\"border: 1px solid black;\">" . $oEmployee->getRolesForFirePage() . "&nbsp;</td>
 </a></td>

@@ -288,6 +288,15 @@ class ProtimeUser {
 		return $ret;
 	}
 
+	public function getFireName() {
+		$ret =  $this->lastname . ', ' . $this->firstname;
+		$ret = $this->removeJobFunctionFromName($ret);
+		$ret = replaceDoubleTripleSpaces($ret);
+		$ret = $this->fixBrokenChars($ret);
+
+		return $ret;
+	}
+
 	public function getPhoto() {
 		$ret = trim($this->photo);
 
