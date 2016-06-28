@@ -5,7 +5,7 @@
 class SyncInfo {
 	private static $settings_table = 'website_syncinfo';
 
-	public static function save2( $setting_name, $type, $value, $databaseConnection ) {
+	public static function save( $setting_name, $type, $value, $databaseConnection ) {
 		$settingsTable = self::$settings_table;
 
 		if ( $setting_name != '' ) {
