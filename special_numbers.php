@@ -34,7 +34,7 @@ function createSpecialNumbersContent( ) {
 	$ret .= "<br>
 <table class=\"special_numbers\">
 <tr>
-	<th>" . Translations::get('lbl_object') . "</th>
+	<th align=\"left\">" . Translations::get('lbl_object') . "</th>
 	<th>" . Translations::get('lbl_number') . "</th>
 </tr>
 ";

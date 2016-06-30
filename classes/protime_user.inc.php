@@ -288,7 +288,7 @@ class ProtimeUser {
 		return $ret;
 	}
 
-	public function getFireName() {
+	public function getNameForFirePage() {
 		$ret =  $this->lastname . ', ' . $this->firstname;
 		$ret = $this->removeJobFunctionFromName($ret);
 		$ret = replaceDoubleTripleSpaces($ret);

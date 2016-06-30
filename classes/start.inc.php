@@ -74,7 +74,10 @@ if ( $oWebuser->hasAuthorisationTabOntruimer() || $oWebuser->isOntruimer() ) {
 	$menu[] = new MenuItem(Translations::get('menu_evacuator'), 'evacuators.php');
 }
 $menu[] = new MenuItem(Translations::get('menu_nationalholidays'), 'nationalholidays.php');
+if ( $oWebuser->isSuperAdmin() ) {
+	$menu[] = new MenuItem(Translations::get('menu_switch_user'), 'switch_user.php');
+}
 if ( $oWebuser->hasAuthorisationTabFire() ) {
-	$menu[] = new MenuItem(Translations::get('menu_fire'), 'fire.php');
+	$menu[] = new MenuItem(Translations::get('menu_fire'), 'fire.php', 'fire');
 }
 //$menu[] = new MenuItem(Translations::get('menu_contact'), 'contact.php');

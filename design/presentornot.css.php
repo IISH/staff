@@ -58,7 +58,7 @@ a.add
 }
 
 input, select {
-	border-width: 1px;
+	border-width: thin;
 	border-style: solid;
 	border-color: <?php echo $c; ?>;
 }
@@ -71,7 +71,7 @@ input, select {
 	border-radius: 3px;
 	padding: 3px;
 	width: 75px;
-	border: 1px solid <?php echo $c; ?>;
+	border: thin solid <?php echo $c; ?>;
 }
 
 h1 {
@@ -83,7 +83,7 @@ h1 {
 
 hr {
 	color: <?php echo $c; ?>;
-	border: 1px solid;
+	border: thin solid;
 }
 
 .contenttitle {
@@ -137,8 +137,7 @@ span.logout {
 
 div.content {
 	width: 1190px;
-	border: 1px solid #AAAAAA;
-	margin-top: 5px;
+	border: thin solid #AAAAAA;
 	margin-bottom: 5px;
 	padding-top: 5px;
 	padding-bottom: 15px;
@@ -151,7 +150,7 @@ div.content {
 
 div.footer {
 	background-color: <?php echo $c; ?>;
-	border: 1px solid #AAAAAA;
+	border: thin solid #AAAAAA;
 	color: white;
 }
 
@@ -209,18 +208,11 @@ a.checkinouttime {
 #menu {
 	margin-top: 9px;
 	margin-bottom: 0px;
-	padding-top: 8px;
-	padding-bottom: 8px;
-	padding-left: 0px;
-	padding-right: 0px;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-	border-radius: 5px;
 }
 
 #menu ul {
 	margin-top: 0px;
-	margin-bottom: 0px;
+	margin-bottom: 1px;
 	margin-left: 0px;
 	margin-right: 0px;
 	list-style-type: none;
@@ -229,7 +221,12 @@ a.checkinouttime {
 
 #menu li {
 	display: inline;
-	padding-right: 16px;
+	margin-right: 3px;
+	padding: 3px 6px;
+	border-style: solid;
+	border-width: thin;
+	border-color: #AAAAAA;
+	border-bottom: 0px;
 }
 
 a.favourites_on:link, a.favourites_on:visited {
@@ -332,4 +329,60 @@ div.personalpage {
 }
 .clearBoth {
 	clear: both;
+}
+
+table.fire {
+	border-spacing: 0;
+	border-collapse: collapse;
+}
+
+table.fire tr th {
+	font-size: 130%;
+	padding: 7px;
+	text-align: left;
+	border-style: solid;
+	border-width: thin;
+	border-color: lightgrey;
+}
+
+table.fire tr td {
+	font-size: 130%;
+	padding: 7px;
+	border-style: solid;
+	border-width: thin;
+	border-color: lightgrey;
+}
+
+.fire_header {
+	font-size: 140% !important;
+	border-style: none !important;
+}
+
+table.fire a
+, table.fire a:visited
+, table.fire a:active
+, table.fire a:hover
+{
+	color: black;
+	border-bottom: 0px
+}
+
+#menu li.fire {
+	background-color: red;
+	margin-right: 0px !important;
+}
+
+#menu li a
+, ul li a:visited
+, ul li a:active
+, ul li a:hover {
+	text-decoration: none;
+	border-bottom: 0px;
+}
+
+#menu li.fire a
+, ul li.fire a:visited
+, ul li.fire a:active
+, ul li.fire a:hover {
+	color: white;
 }

@@ -112,7 +112,7 @@ WHERE " . $dateOutCriterium . $queryCriterium . Misc::getNeverShowPersonsCriteri
 		$vak = '';
 
 		for ( $i = 1; $i <= $daysInCurrentMonth; $i++ ) {
-			$style = "border: 1px solid white;";
+			$style = "border: thin solid white;";
 			//
 			$celValue = '&nbsp;&nbsp;';
 
@@ -150,7 +150,7 @@ WHERE " . $dateOutCriterium . $queryCriterium . Misc::getNeverShowPersonsCriteri
 	// HEADERS
 	$headerDays = '';
 	for ( $i = 1; $i <= $daysInCurrentMonth; $i++ ) {
-		$extrastyle = "width:" . $cellWidth ."px;border: 1px solid white;";
+		$extrastyle = "width:" . $cellWidth ."px;border: thin solid white;";
 
 		$celValue = $i;
 

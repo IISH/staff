@@ -63,12 +63,11 @@
 			<td rowspan="2" width="130"><div class="logo"><img src="images/logo/{color}.png"></div></td>
 			<td><span class="title">{website_name}</span></td>
 			<td align="right">
-				<span class="name">{welcome}</span>
-				<br>
+				<span class="name">{welcome}</span><br>
+				<span class="logout">{logout}</span><br>
 				<a href="en.php"><img src="images/misc/en.png" border="0"></a>
 				<a href="nl.php"><img src="images/misc/nl.png" border="0"></a>
-				<br>
-				<span class="logout">{logout}</span></td>
+			</td>
 		</tr>
 		<tr>
 			<td colspan="3"><span class="subtitle" id="menu">{menu}</span></td>

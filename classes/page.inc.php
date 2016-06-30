@@ -67,7 +67,7 @@ class Page {
 
 		//
 		foreach ( $menu as $a ) {
-			$sMenu .= "				<li><a href=\"" . $a->getUrl() . "\">" . $a->getLabel() . "</a></li>\n";
+			$sMenu .= "				<li class=\"" . $a->getClass() . "\"><a href=\"" . $a->getUrl() . "\">" . $a->getLabel() . "</a></li>\n";
 		}
 
 		$sMenu .= "</ul>";

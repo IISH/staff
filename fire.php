@@ -25,7 +25,7 @@ function createBrandContent( ) {
 	$total_of_present_employees = 0;
 	$title = Translations::get('header_fire');
 	$ret = "<h1>$title</h1>
-" . Translations::get('printed_on') . ": " . date("d") . ' ' . Translations::get('month' . (date("m")+0)) . ' ' . date("Y H:i") . "<br><br>";
+" . Translations::get('printed_on') . ": " . date("d") . ' ' . Translations::get('month' . (date("m")+0)) . ' ' . date("Y H:i") . "<br>";
 
 
 	//
@@ -49,16 +49,22 @@ function createBrandContent( ) {
 		, 'query' => "SELECT * FROM " . Settings::get('protime_tables_prefix') . "curric WHERE " . $oBeoBhv->getQuery() . " ORDER BY NAME, FIRSTNAME "
 	);
 
+	$ret .= "
+<table class=\"fire\">
+";
+
 	//
 	foreach( $loop as $item ) {
-		$ret .= "<h1>" . $item['label'] . "</h1>
-<table border=0 cellspacing=0 cellpadding=7 style=\"border: 1px solid black;\">
+		$ret .= "
 <TR>
-	<TD width=\"25\" style=\"border: 1px solid black;\">&nbsp;</TD>
-	<TD width=\"25\" style=\"border: 1px solid black;\">&nbsp;</TD>
-	<TD width=\"250\" style=\"border: 1px solid black;\"><font size=-1><b>" . Translations::get('lbl_name') . "</b></font></TD>
-	<td width=\"170\" align=\"center\" style=\"border: 1px solid black;\"><font size=-1><b>" . Translations::get('lbl_telephone') . "</b></font></td>
-	<td width=\"200\" align=\"center\" style=\"border: 1px solid black;\"><font size=-1><b>" . Translations::get('lbl_roles') . "</b></font></td>
+	<TH colspan=5 class=\"fire_header\"><br>" . $item['label'] . "</TH>
+</TR>
+<TR>
+	<TH width=\"30\">&nbsp;</TH>
+	<TH width=\"30\">&nbsp;</TH>
+	<TH>" . Translations::get('lbl_name') . "</TH>
+	<TH align=\"center\">" . Translations::get('lbl_telephone') . "</TH>
+	<TH align=\"center\">" . Translations::get('lbl_roles') . "</TH>
 </TR>
 ";
 
@@ -82,11 +88,11 @@ function createBrandContent( ) {
 
 				$tmp = "
 <tr>
-	<td style=\"border: 1px solid black;\">&nbsp;</td>
-	<td style=\"border: 1px solid black;\">" . $totaal["aanwezig"] . "</td>
-	<td style=\"border: 1px solid black;\">" . createUrl( array( 'url' => 'employee.php?id=' . $oEmployee->getId(), 'label' => $oEmployee->getFireName() ) ) . "</td>
-	<td style=\"border: 1px solid black;\">" . Telephone::getTelephonesHref($oEmployee->getTelephones()) . "&nbsp;</td>
-	<td style=\"border: 1px solid black;\">" . $oEmployee->getRolesForFirePage() . "&nbsp;</td>
+	<td>&nbsp;</td>
+	<td align=\"right\">" . $totaal["aanwezig"] . "</td>
+	<td>" . createUrl( array( 'url' => 'employee.php?id=' . $oEmployee->getId(), 'label' => $oEmployee->getNameForFirePage() ) ) . "</td>
+	<td>" . Telephone::getTelephonesHref($oEmployee->getTelephones()) . "&nbsp;</td>
+	<td>" . $oEmployee->getRolesForFirePage() . "&nbsp;</td>
 </a></td>
 </tr>
 ";
@@ -95,10 +101,10 @@ function createBrandContent( ) {
 			}
 		}
 
-		$ret .= "
+	}
+	$ret .= "
 </table><br>
 ";
-	}
 
 	$ret .= '<br>' . Translations::get('total_number_of_employees') . ': ' . $total_of_present_employees . "<br><br>";
 
