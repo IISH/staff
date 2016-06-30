@@ -235,7 +235,7 @@ a.favourites_on:link, a.favourites_on:visited {
 }
 
 a.favourites_off:link, a.favourites_off:visited {
-	color: lightgrey;
+	color: grey;
 	font-size: 120%;
 }
 
@@ -283,7 +283,7 @@ tr.employee_schedule {
 th.employee_schedule {
 	border-style: solid;
 	border-width: thin;
-	border-color: lightgrey;
+	border-color: grey;
 	font-size: 90%;
 	width: 28px;
 	text-align: center;
@@ -292,7 +292,7 @@ th.employee_schedule {
 td.employee_schedule {
 	border-style: solid;
 	border-width: thin;
-	border-color: lightgrey;
+	border-color: grey;
 	font-size: 90%;
 	text-align: center;
 	padding-left: 6px;
@@ -337,20 +337,20 @@ table.fire {
 }
 
 table.fire tr th {
-	font-size: 130%;
+	font-size: 140%;
 	padding: 7px;
 	text-align: left;
 	border-style: solid;
 	border-width: thin;
-	border-color: lightgrey;
+	border-color: grey;
 }
 
 table.fire tr td {
-	font-size: 130%;
+	font-size: 140%;
 	padding: 7px;
 	border-style: solid;
 	border-width: thin;
-	border-color: lightgrey;
+	border-color: grey;
 }
 
 .fire_header {
