@@ -221,7 +221,7 @@ a.checkinouttime {
 
 #menu li {
 	display: inline;
-	margin-right: 3px;
+	margin-right: 2px;
 	padding: 3px 6px;
 	border-style: solid;
 	border-width: thin;
