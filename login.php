@@ -71,11 +71,11 @@ function createLoginPage() {
 <table border=\"0\" cellspacing=\"0\" cellpadding=\"2\">
 <tr>
 	<td>" . Translations::get('loginname') . ":</td>
-	<td><input type=\"text\" name=\"fldLogin\" class=\"login\" maxlength=\"50\" value=\"" . $fldLogin . "\"> <i>" . Translations::get('loginname_help') . "</i></td>
+	<td><input type=\"text\" name=\"fldLogin\" class=\"login\" maxlength=\"50\" value=\"" . $fldLogin . "\" placeholder=\"" . Translations::get('loginname_placeholder') . "\"> <i>" . Translations::get('loginname_help') . "</i></td>
 </tr>
 <tr>
 	<td>" . Translations::get('password') . ":&nbsp;</td>
-	<td><input type=\"password\" name=\"fldPassword\" class=\"password\" maxlength=\"50\" autocomplete=\"on\"></td>
+	<td><input type=\"password\" name=\"fldPassword\" class=\"password\" maxlength=\"50\" autocomplete=\"on\" placeholder=\"" . Translations::get('password_placeholder') . "\"></td>
 </tr>
 <tr>
 	<td>&nbsp;</td>
