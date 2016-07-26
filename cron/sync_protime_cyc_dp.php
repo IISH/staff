@@ -24,15 +24,15 @@ $sync->setSourceTable("CYC_DP");
 $sync->setTargetTable(Settings::get('protime_tables_prefix') . "cyc_dp");
 $sync->setPrimaryKey("CYC_DP");
 $sync->addFields( array("CYC_DP", "CYCLIQ", "DAYNR", "DAYPROG") );
-SyncInfo::save($sync->getTargetTable(), 'start', date("Y-m-d H:i:s"), $dbConn);
+SyncInfo::save($sync->getTargetTable(), 'start', date("Y-m-d H:i:s"), array($dbConn, $dbTimecard));
 $sync->doSync();
 
 //
 echo "<br>Rows inserted/updated: " . $sync->getCounter() . "<br>";
 
 // save sync last run
-SyncInfo::save($sync->getTargetTable(), 'end', date("Y-m-d H:i:s"), $dbConn);
-SyncInfo::save($sync->getTargetTable(), 'last_insert_id', $sync->getLastInsertId(), $dbConn);
+SyncInfo::save($sync->getTargetTable(), 'end', date("Y-m-d H:i:s"), array($dbConn, $dbTimecard));
+SyncInfo::save($sync->getTargetTable(), 'last_insert_id', $sync->getLastInsertId(), array($dbConn, $dbTimecard));
 
 // show time
 echo "End time: " . date("Y-m-d H:i:s") . "<br>\n";

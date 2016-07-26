@@ -24,15 +24,15 @@ $sync->setSourceTable("LNK_CURRIC_PROFILE");
 $sync->setTargetTable(Settings::get('protime_tables_prefix') . "lnk_curric_profile");
 $sync->setPrimaryKey("REC_NR");
 $sync->addFields( array("REC_NR", "PERSNR", "PROFILE", "PROFILETYPE", "DATEFROM", "DAYNUMBER", "CUSTOMER") );
-SyncInfo::save($sync->getTargetTable(), 'start', date("Y-m-d H:i:s"), $dbConn);
+SyncInfo::save($sync->getTargetTable(), 'start', date("Y-m-d H:i:s"), array($dbConn, $dbTimecard));
 $sync->doSync();
 
 //
 echo "<br>Rows inserted/updated: " . $sync->getCounter() . "<br>";
 
 // save sync last run
-SyncInfo::save($sync->getTargetTable(), 'end', date("Y-m-d H:i:s"), $dbConn);
-SyncInfo::save($sync->getTargetTable(), 'last_insert_id', $sync->getLastInsertId(), $dbConn);
+SyncInfo::save($sync->getTargetTable(), 'end', date("Y-m-d H:i:s"), array($dbConn, $dbTimecard));
+SyncInfo::save($sync->getTargetTable(), 'last_insert_id', $sync->getLastInsertId(), array($dbConn, $dbTimecard));
 
 // show time
 echo "End time: " . date("Y-m-d H:i:s") . "<br>\n";

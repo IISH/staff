@@ -25,7 +25,7 @@ $sync->setSourceCriterium(" BOOKDATE >= '" . date("Ymd") . "' ");
 $sync->setTargetTable("staff_today_checkinout");
 $sync->setPrimaryKey("REC_NR");
 $sync->addFields( array("REC_NR", "PERSNR", "BOOKDATE", "BOOK_ORIG", "BOOKTIME", "BOOKTYPE", "CCABS", "TERMINAL", "USER_ID", "COMMENTS", "REQUEST", "CALCBOOKTIME") );
-SyncInfo::save($sync->getTargetTable(), 'start', date("Y-m-d H:i:s"), $dbConn);
+SyncInfo::save($sync->getTargetTable(), 'start', date("Y-m-d H:i:s"), array($dbConn, $dbTimecard));
 $sync->doSync();
 
 //
@@ -37,8 +37,8 @@ $stmt = $dbConn->getConnection()->prepare($query);
 $stmt->execute();
 
 // save sync last run
-SyncInfo::save($sync->getTargetTable(), 'end', date("Y-m-d H:i:s"), $dbConn);
-SyncInfo::save($sync->getTargetTable(), 'last_insert_id', $sync->getLastInsertId(), $dbConn);
+SyncInfo::save($sync->getTargetTable(), 'end', date("Y-m-d H:i:s"), array($dbConn, $dbTimecard));
+SyncInfo::save($sync->getTargetTable(), 'last_insert_id', $sync->getLastInsertId(), array($dbConn, $dbTimecard));
 
 // show time
 echo "End time: " . date("Y-m-d H:i:s") . "<br>\n";

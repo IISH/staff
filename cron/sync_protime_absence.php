@@ -24,15 +24,15 @@ $sync->setSourceTable("ABSENCE");
 $sync->setTargetTable(Settings::get('protime_tables_prefix') . "absence");
 $sync->setPrimaryKey("ABSENCE");
 $sync->addFields( array("ABSENCE", "SHORT_1", "SHORT_2", "CODE") );
-SyncInfo::save($sync->getTargetTable(), 'start', date("Y-m-d H:i:s"), $dbConn);
+SyncInfo::save($sync->getTargetTable(), 'start', date("Y-m-d H:i:s"), array($dbConn, $dbTimecard));
 $sync->doSync();
 
 //
 echo "<br>Rows inserted/updated: " . $sync->getCounter() . "<br>";
 
 // save sync last run
-SyncInfo::save($sync->getTargetTable(), 'end', date("Y-m-d H:i:s"), $dbConn);
-SyncInfo::save($sync->getTargetTable(), 'last_insert_id', $sync->getLastInsertId(), $dbConn);
+SyncInfo::save($sync->getTargetTable(), 'end', date("Y-m-d H:i:s"), array($dbConn, $dbTimecard));
+SyncInfo::save($sync->getTargetTable(), 'last_insert_id', $sync->getLastInsertId(), array($dbConn, $dbTimecard));
 
 // show time
 echo "End time: " . date("Y-m-d H:i:s") . "<br>\n";

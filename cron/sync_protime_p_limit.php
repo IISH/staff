@@ -25,15 +25,15 @@ $sync->setSourceCriterium(" EXEC_ORDER=2 AND BOOKDATE>='" . date("Ymd", mktime(0
 $sync->setTargetTable(Settings::get('protime_tables_prefix') . "p_limit");
 $sync->setPrimaryKey("REC_NR");
 $sync->addFields( array("REC_NR", "PERSNR", "BOOKDATE", "LIMIT_LINE", "LIM_PERIODE", "ITEM_TYPE", "YEARCOUNTER", "BEGIN_VAL", "END_VAL", "EXEC_ORDER") );
-SyncInfo::save($sync->getTargetTable(), 'start', date("Y-m-d H:i:s"), $dbConn);
+SyncInfo::save($sync->getTargetTable(), 'start', date("Y-m-d H:i:s"), array($dbConn, $dbTimecard));
 $sync->doSync();
 
 //
 echo "<br>Rows inserted/updated: " . $sync->getCounter() . "<br>";
 
 // save sync last run
-SyncInfo::save($sync->getTargetTable(), 'end', date("Y-m-d H:i:s"), $dbConn);
-SyncInfo::save($sync->getTargetTable(), 'last_insert_id', $sync->getLastInsertId(), $dbConn);
+SyncInfo::save($sync->getTargetTable(), 'end', date("Y-m-d H:i:s"), array($dbConn, $dbTimecard));
+SyncInfo::save($sync->getTargetTable(), 'last_insert_id', $sync->getLastInsertId(), array($dbConn, $dbTimecard));
 
 // show time
 echo "End time: " . date("Y-m-d H:i:s") . "<br>\n";
