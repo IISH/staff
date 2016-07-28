@@ -47,7 +47,7 @@ foreach ($result as $row) {
 
 	$oEmployee = new ProtimeUser($row["PERSNR"]);
 
-	if ( $oBeo->getShowLevel() ) {
+	if ( $oBeo->getShowFloor() ) {
 		$verdieping = "<td align=\"center\">" . $oEmployee->getOntruimerVerdieping() . "</td>";
 	}
 
@@ -95,7 +95,7 @@ foreach ($result as $row) {
 
 if ( $retval != '' ) {
 	$verdieping = '';
-	if ( $oBeo->getShowLevel() ) {
+	if ( $oBeo->getShowFloor() ) {
 		$verdieping = "<td width=100 align=\"center\"><font size=-1><b>" . Translations::get('lbl_level') . "</b></font></td>";
 	}
 	if ( $oWebuser->hasAuthorisationBeoTelephone() ) {
@@ -115,7 +115,7 @@ if ( $retval != '' ) {
 </table>";
 }
 
-if ( $oBeo->getShowLevel() ) {
+if ( $oBeo->getShowFloor() ) {
 	//
 	$retval .= "<br>
 	<table>
