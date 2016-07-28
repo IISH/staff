@@ -29,24 +29,27 @@ function createBrandContent( ) {
 
 
 	//
-	$oBeoMedewerker = new Beo( 'mnotonotb', Translations::get('employees') );
 	$oBeoOntruimer = new Beo( 'o',  Translations::get('menu_evacuator'));
 	$oBeoBhv = new Beo( 'b', Translations::get('menu_ert'));
 	$loop = array();
 
 	// Remark: the queries return all employees
 	// checking if an employee is present or not, is done below
+	// Remark: in fire page, sorting always on (last)name, firstname
 	$loop[] = array(
 		'label' => Translations::get('present_employees_long')
-		, 'query' => "SELECT * FROM " . Settings::get('protime_tables_prefix') . "curric WHERE " . $oBeoMedewerker->getQuery() . " ORDER BY NAME, FIRSTNAME "
+		, 'query' => "SELECT * FROM " . Settings::get('protime_tables_prefix') . "curric ORDER BY NAME, FIRSTNAME "
+		, 'count_total' => true
 	);
 	$loop[] = array(
 		'label' => Translations::get('present_evacuators')
 		, 'query' => "SELECT * FROM " . Settings::get('protime_tables_prefix') . "curric WHERE " . $oBeoOntruimer->getQuery() . " ORDER BY NAME, FIRSTNAME "
+		, 'count_total' => false
 	);
 	$loop[] = array(
 		'label' => Translations::get('present_ert')
 		, 'query' => "SELECT * FROM " . Settings::get('protime_tables_prefix') . "curric WHERE " . $oBeoBhv->getQuery() . " ORDER BY NAME, FIRSTNAME "
+		, 'count_total' => false
 	);
 
 	$ret .= "
@@ -68,7 +71,7 @@ function createBrandContent( ) {
 </TR>
 ";
 
-		$totaal["aanwezig"] = 0;
+		$groupCounter = 0;
 
 		//
 		$stmt = $dbConn->getConnection()->prepare( $item['query'] );
@@ -77,19 +80,22 @@ function createBrandContent( ) {
 		foreach ($result as $row) {
 			$oEmployee = new ProtimeUser($row["PERSNR"]);
 
+			// TODO: dit moet anders
 			//
 			$status = getCurrentDayCheckInoutState($oEmployee->getId());
 
 			// check if employee is present, if so, show the employee
 			if ( $status["aanwezig"] == 1 ) {
-				$total_of_present_employees++;
+				if ( $item['count_total'] ) {
+					$total_of_present_employees++;
+				}
 
-				$totaal["aanwezig"]++;
+				$groupCounter++;
 
 				$tmp = "
 <tr>
 	<td>&nbsp;</td>
-	<td align=\"right\">" . $totaal["aanwezig"] . "</td>
+	<td align=\"right\">" . $groupCounter . "</td>
 	<td>" . createUrl( array( 'url' => 'employee.php?id=' . $oEmployee->getId(), 'label' => $oEmployee->getNameForFirePage() ) ) . "</td>
 	<td>" . Telephone::getTelephonesHref($oEmployee->getTelephones()) . "&nbsp;</td>
 	<td>" . $oEmployee->getRolesForFirePage() . "&nbsp;</td>
@@ -109,7 +115,6 @@ function createBrandContent( ) {
 	$ret .= '<br>' . Translations::get('total_number_of_employees') . ': ' . $total_of_present_employees . "<br><br>";
 
 	$ret .= "
-
 <SCRIPT LANGUAGE=\"JavaScript\">
 <!--
 window.print();
