@@ -11,10 +11,8 @@ class static_protime_user {
 
 		if ( $loginname != '' ) {
 
-			//
 			// Remark: don't check date_out here, sometimes they make errors when a person is re-hired they forget to remove the date_out value
 			$query = "SELECT * FROM " . Settings::get('protime_tables_prefix') .  "curric WHERE ( CONCAT(TRIM(FIRSTNAME),'.',TRIM(NAME))='" . $loginname . "' OR TRIM(" . Settings::get('curric_loginname') . ")='" . $loginname . "' ) ";
-
 			$stmt = $dbConn->getConnection()->prepare($query);
 			$stmt->execute();
 			$result = $stmt->fetchAll();
@@ -25,9 +23,23 @@ class static_protime_user {
 			// if id still 0, try different way to find protime user
 			if ( $id == 0 ) {
 
+				// TODO TODOGCU
+				// DIT STUKJE MOET EIGENLIJK HELEMAAL WEG
+				// ER MOET EIGENLIJK EEN MELDING KOMEN DAT MEN WEL INGELOGD MAAR DAT MEN GEWONE GEBRUIKERS RECHTEN HEEFT
+				// OMDAT ER GEEN KOPPELING GEMAAKT KAN WORDEN MET DE JUISTE PROTIME RECORD
+				// WAARSCHIJNLIJK WEGENS TUSSENVOEGSELS, SPATIES, STREEPJES
+				// IN HET VELD LOGINNAAM (IN DE TAB VARIABLES MOET BIJ DE PERSOON HET VELD LOGINNAAM INGEVULD WORDEN
+				// MET DE LOGIN DIE ZE GEBRUIKEN VOOR STAFF.IISG.NL MEESTAL FIRSTNAME.LASTNAME ZONDER SPATIES
 				$arrLoginname = explode('.', $loginname);
+				if ( count( $arrLoginname ) >= 2 ) {
+					// dirty solution
+					$arrLoginname[1] = trim(Misc::stripLeftPart($arrLoginname[1], 'vanden'));
+					$arrLoginname[1] = trim(Misc::stripLeftPart($arrLoginname[1], 'vander'));
+					$arrLoginname[1] = trim(Misc::stripLeftPart($arrLoginname[1], 'vande'));
+					$arrLoginname[1] = trim(Misc::stripLeftPart($arrLoginname[1], 'van'));
+				}
 
-				$query2 = "SELECT * FROM " . Settings::get('protime_tables_prefix') .  "curric WHERE ". $dateOutCriterium . " AND FIRSTNAME LIKE '%" . $arrLoginname[0] . "%'  AND NAME LIKE '%" . $arrLoginname[1] . "%' ";
+				$query2 = "SELECT * FROM " . Settings::get('protime_tables_prefix') .  "curric WHERE FIRSTNAME LIKE '%" . $arrLoginname[0] . "%'  AND NAME LIKE '%" . $arrLoginname[1] . "%' ";
 				$stmt = $dbConn->getConnection()->prepare($query2);
 				$stmt->execute();
 				$result = $stmt->fetchAll();
@@ -36,9 +48,7 @@ class static_protime_user {
 					if ( $oEmp2->getLoginname() == $loginname ) {
 						$id = $oEmp2->getId();
 					}
-
 				}
-
 			}
 		}
 

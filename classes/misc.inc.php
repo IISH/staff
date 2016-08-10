@@ -7,6 +7,13 @@ function preprint( $object ) {
 
 class Misc {
 
+	public static function stripLeftPart( $string, $strip ) {
+		if ( strtolower(substr($string, 0, strlen($strip))) == strtolower($strip) ) {
+			$string = substr($string, -(strlen($string)-strlen($strip)));
+		}
+		return $string;
+	}
+
 	public static function getNeverShowPersonsCriterium() {
 		$never_show_persnr = '0,' . preg_replace('/[^0-9]/', ',', trim(Settings::get("never_show_persnr")));
 		$never_show_persnr = preg_replace('/,{2,}/', ',', $never_show_persnr);
