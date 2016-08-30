@@ -386,3 +386,16 @@ table.fire a
 , ul li.fire a:hover {
 	color: white;
 }
+
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+	color: darkgrey;
+}
+::-moz-placeholder { /* Firefox 19+ */
+	color: darkgrey;
+}
+:-ms-input-placeholder { /* IE 10+ */
+	color: darkgrey;
+}
+:-moz-placeholder { /* Firefox 18- */
+	color: darkgrey;
+}
