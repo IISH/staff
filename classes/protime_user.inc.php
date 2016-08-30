@@ -4,7 +4,7 @@ require_once "role_authorisation.inc.php";
 class static_protime_user {
 	public static function getProtimeUserByLoginName( $loginname ) {
 		global $dbConn, $dateOutCriterium;
-		$id = 0;
+		$id = array();
 
 		//
 		$loginname = trim($loginname);
@@ -12,16 +12,16 @@ class static_protime_user {
 		if ( $loginname != '' ) {
 
 			// Remark: don't check date_out here, sometimes they make errors when a person is re-hired they forget to remove the date_out value
-			$query = "SELECT * FROM " . Settings::get('protime_tables_prefix') .  "curric WHERE ( CONCAT(TRIM(FIRSTNAME),'.',TRIM(NAME))='" . $loginname . "' OR TRIM(" . Settings::get('curric_loginname') . ")='" . $loginname . "' ) ";
+			$query = "SELECT * FROM " . Settings::get('protime_tables_prefix') .  "curric WHERE ( CONCAT(TRIM(FIRSTNAME),'.',TRIM(NAME))='" . $loginname . "' OR TRIM(" . Settings::get('curric_loginname') . ")='" . $loginname . "' ) ORDER BY PERSNR ASC ";
 			$stmt = $dbConn->getConnection()->prepare($query);
 			$stmt->execute();
 			$result = $stmt->fetchAll();
 			foreach ($result as $row) {
-				$id = $row['PERSNR'];
+				$id[] = $row['PERSNR'];
 			}
 
 			// if id still 0, try different way to find protime user
-			if ( $id == 0 ) {
+			if ( count( $id ) == 0 ) {
 
 				// TODO TODOGCU
 				// DIT STUKJE MOET EIGENLIJK HELEMAAL WEG
@@ -46,10 +46,14 @@ class static_protime_user {
 				foreach ($result as $row2) {
 					$oEmp2 = new ProtimeUser( $row2['PERSNR']);
 					if ( $oEmp2->getLoginname() == $loginname ) {
-						$id = $oEmp2->getId();
+						$id[] = $oEmp2->getId();
 					}
 				}
 			}
+		}
+
+		if ( count( $id ) == 0 ) {
+			$id[] = 0;
 		}
 
 		return new ProtimeUser( $id );
@@ -75,26 +79,27 @@ class ProtimeUser {
 	protected $arrSubEmployees = array();
 	protected $arrUserSettings = array();
 
-	function __construct($protime_id) {
-		if ( $protime_id == '' || $protime_id < -1 ) {
-			$protime_id = 0;
+	function __construct($protimeId) {
+		if ( !is_array( $protimeId ) ) {
+			$protimeId = array( $protimeId );
 		}
 
-		if ( $protime_id > 0 ) {
-			$this->getProtimeValues( $protime_id );
+		if ( count( $protimeId ) == 0 ) {
+			$protimeId[] = 0;
 		}
+
+		$this->getProtimeValues( $protimeId );
 	}
 
 	public function getProtimeValues( $protime_id ) {
 		global $dbConn;
-
 		// reset values
-		$query = "SELECT * FROM " . Settings::get('protime_tables_prefix') .  "curric WHERE PERSNR=" . $protime_id;
+		$query = "SELECT * FROM " . Settings::get('protime_tables_prefix') .  "curric WHERE PERSNR IN ( " . implode(',', $protime_id) . " ) ";
 		$stmt = $dbConn->getConnection()->prepare($query);
 		$stmt->execute();
 		$result = $stmt->fetchAll();
 		foreach ($result as $row) {
-			$this->protime_id = $protime_id;
+			$this->protime_id = $row['PERSNR'];
 			$this->lastname = trim($row["NAME"]);
 			$this->firstname = trim($row["FIRSTNAME"]);
 			$this->email = trim($row["EMAIL"]);
@@ -117,7 +122,8 @@ class ProtimeUser {
 	private function calculateRoles() {
 		$roles = trim($this->roles);
 
-		$arrRoles = array();
+		//$arrRoles = array();
+		$arrRoles = $this->arrRoles;
 
 		$arr = splitStringIntoArray( $roles, "/[^a-zA-Z0-9]/" );
 		foreach ( $arr as $item ) {
@@ -144,7 +150,8 @@ class ProtimeUser {
 			return;
 		}
 
-		$arrAuthorisation = array();
+//		$arrAuthorisation = array();
+		$arrAuthorisation = $this->arrDepartmentRoleAuthorisation;
 
 		// Roles via department
 		$query = "SELECT * FROM staff_department_authorisation WHERE DEPART=" . $departmentId;
@@ -187,10 +194,11 @@ class ProtimeUser {
 	private function calculateUserAuthorisation() {
 		global $dbConn;
 
-		$arrAuthorisation = array();
+		//$arrAuthorisation = array();
+		$arrAuthorisation = $this->arrUserAuthorisation;
 
 		// rights via user authorisation
-		$query = "SELECT * FROM staff_user_authorisation WHERE user_id=" . $this->protime_id . " AND isdeleted=0 ";
+		$query = "SELECT * FROM staff_user_authorisation WHERE user_id IN ( " . $this->protime_id . " ) AND isdeleted=0 ";
 		$stmt = $dbConn->getConnection()->prepare($query);
 		$stmt->execute();
 		$result = $stmt->fetchAll();
@@ -210,10 +218,11 @@ class ProtimeUser {
 	private function calculateUserSettings() {
 		global $dbConn;
 
-		$arrSettings = array();
+//		$arrSettings = array();
+		$arrSettings = $this->arrUserSettings;
 
 		// rights via user authorisation
-		$query = "SELECT * FROM staff_user_settings WHERE user_id=" . $this->protime_id;
+		$query = "SELECT * FROM staff_user_settings WHERE user_id IN ( " . $this->protime_id . " ) ";
 		$stmt = $dbConn->getConnection()->prepare($query);
 		$stmt->execute();
 		$result = $stmt->fetchAll();
@@ -387,7 +396,6 @@ class ProtimeUser {
 	}
 
 	public function isLoggedIn() {
-//		if ( $this->protime_id > 0 ) {
 		if ( $_SESSION["loginname"] != '' ) {
 			return true;
 		}
@@ -430,7 +438,7 @@ class ProtimeUser {
 			$department = $this->department;
 			if ( $department > 0 ) {
 				// reset values
-				$query = "SELECT PERSNR FROM " . Settings::get('protime_tables_prefix') .  "curric WHERE DEPART=" . $department . " AND PERSNR<>" . $this->protime_id;
+				$query = "SELECT PERSNR FROM " . Settings::get('protime_tables_prefix') .  "curric WHERE DEPART=" . $department . " AND PERSNR NOT IN ( " . $this->protime_id . " ) ";
 				$stmt = $dbConn->getConnection()->prepare($query);
 				$stmt->execute();
 				$result = $stmt->fetchAll();
@@ -450,6 +458,7 @@ class ProtimeUser {
 		$string = str_ireplace('(vrijwillig)', '', $string);
 		$string = str_ireplace('(stz)', '', $string);
 		$string = str_ireplace('(rec)', '', $string);
+		$string = str_ireplace('(uu)', '', $string);
 
 		return $string;
 	}
