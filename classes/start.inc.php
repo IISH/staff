@@ -60,6 +60,20 @@ $oWebuser = static_protime_user::getProtimeUserByLoginName( $_SESSION["loginname
 $detect = new Mobile_Detect;
 $deviceType = ($detect->isMobile() ? ($detect->isTablet() ? 'tablet' : 'phone') : 'computer');
 
+// check fire key
+if ( !isset( $_SESSION["FIRE_KEY_CORRECT"] ) ) {
+	$_SESSION["FIRE_KEY_CORRECT"] = '';
+}
+if ( $_SESSION["FIRE_KEY_CORRECT"] != '1' ) {
+	$fire_key = '';
+	if (isset($_GET["fire_key"])) {
+		$fire_key = $_GET["fire_key"];
+	}
+	if (trim($fire_key) == Settings::get('fire_key')) {
+		$_SESSION["FIRE_KEY_CORRECT"] = '1';
+	}
+}
+
 //
 $menu = array();
 $menu[] = new MenuItem(Translations::get('menu_presentornot'), 'presentornot.php');
@@ -77,7 +91,7 @@ $menu[] = new MenuItem(Translations::get('menu_nationalholidays'), 'nationalholi
 if ( $oWebuser->isSuperAdmin() ) {
 	$menu[] = new MenuItem(Translations::get('menu_switch_user'), 'switch_user.php');
 }
-if ( $oWebuser->hasAuthorisationTabFire() ) {
+if ( $_SESSION["FIRE_KEY_CORRECT"] == '1' || $oWebuser->hasAuthorisationTabFire() ) {
 	$menu[] = new MenuItem(Translations::get('menu_fire'), 'fire.php', 'fire');
 }
 //$menu[] = new MenuItem(Translations::get('menu_contact'), 'contact.php');

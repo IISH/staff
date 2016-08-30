@@ -7,7 +7,9 @@ if ( !isset($settings) ) {
 	$settings = array();
 }
 
-$oWebuser->checkLoggedIn();
+if ( $_SESSION["FIRE_KEY_CORRECT"] != '1' ) {
+	$oWebuser->checkLoggedIn();
+}
 
 $date = class_datetime::get_date($protect);
 
@@ -20,13 +22,12 @@ $oPage->setContent(createBrandContent( ));
 echo $oPage->getPage();
 
 function createBrandContent( ) {
-	global $dbConn;
+	global $dbConn, $oWebuser;
 
 	$total_of_present_employees = 0;
 	$title = Translations::get('header_fire');
 	$ret = "<h1>$title</h1>
 " . Translations::get('printed_on') . ": " . date("d") . ' ' . Translations::get('month' . (date("m")+0)) . ' ' . date("Y H:i") . "<br>";
-
 
 	//
 	$oBeoOntruimer = new Beo( 'o',  Translations::get('menu_evacuator'));
@@ -92,11 +93,17 @@ function createBrandContent( ) {
 
 				$groupCounter++;
 
+				if ( $oWebuser->isLoggedIn() ) {
+					$empNameLink = createUrl( array( 'url' => 'employee.php?id=' . $oEmployee->getId(), 'label' => $oEmployee->getNameForFirePage() ) );
+				} else {
+					$empNameLink = $oEmployee->getNameForFirePage();
+				}
+
 				$tmp = "
 <tr>
 	<td>&nbsp;</td>
 	<td align=\"right\">" . $groupCounter . "</td>
-	<td>" . createUrl( array( 'url' => 'employee.php?id=' . $oEmployee->getId(), 'label' => $oEmployee->getNameForFirePage() ) ) . "</td>
+	<td>" . $empNameLink . "</td>
 	<td>" . Telephone::getTelephonesHref($oEmployee->getTelephones(), false) . "&nbsp;</td>
 	<td>" . $oEmployee->getRolesForFirePage() . "&nbsp;</td>
 </a></td>

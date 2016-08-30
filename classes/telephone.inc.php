@@ -2,7 +2,7 @@
 class Telephone {
 
 	public static function getTelephonesHref( $telephone, $doStyling = true ) {
-		global $oWebuser, $deviceType;
+		global $deviceType;
 
 		$ret = '';
 
@@ -11,7 +11,6 @@ class Telephone {
 		foreach ( $tel as $part ) {
 			$telephoneStyled = Telephone::styleTelephone($part, $doStyling);
 
-//			if ( $oWebuser->getUserSetting('call_via_computer', 0) == 1 || $oWebuser->getUserSetting('call_via_mobile', 0) == 1 ) {
 			if ( $deviceType == 'phone' ) {
 				$telephoneHref = Telephone::createTelephoneUrlLink($part);
 				if ( $telephoneHref != '' ) {
