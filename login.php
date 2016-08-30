@@ -77,11 +77,9 @@ function createLoginPage() {
 	<td>" . Translations::get('password') . ":&nbsp;</td>
 	<td><input type=\"password\" name=\"fldPassword\" class=\"password\" maxlength=\"50\" autocomplete=\"on\" placeholder=\"" . Translations::get('password_placeholder') . "\"></td>
 </tr>
+
 <tr>
-	<td>&nbsp;</td>
-</tr>
-<tr>
-	<td align=\"right\"><input class=\"button_login\" type=\"reset\" name=\"btnReset\" value=\"" . Translations::get('btn_clear') . "\">&nbsp;</td>
+	<td align=\"right\"><!-- <input class=\"button_login\" type=\"reset\" name=\"btnReset\" value=\"" . Translations::get('btn_clear') . "\"> -->&nbsp;</td>
 	<td>&nbsp;<input class=\"button_login\" type=\"submit\" name=\"btnSubmit\" value=\"" . Translations::get('btn_login') . "\"></td>
 </tr>
 </table>

@@ -63,10 +63,7 @@ function createChangeUserContent() {
 	<td><input type=\"text\" name=\"fldUserName\" class=\"login\" maxlength=\"50\" value=\"" . $fldUserName . "\"> <i>" . Translations::get('loginname_help') . "</i></td>
 </tr>
 <tr>
-	<td>&nbsp;</td>
-</tr>
-<tr>
-	<td align=\"right\"><input class=\"button_login\" type=\"reset\" name=\"btnReset\" value=\"" . Translations::get('btn_clear') . "\">&nbsp;</td>
+	<td align=\"right\"><!-- <input class=\"button_login\" type=\"reset\" name=\"btnReset\" value=\"" . Translations::get('btn_clear') . "\"> -->&nbsp;</td>
 	<td>&nbsp;<input class=\"button_login\" type=\"submit\" name=\"btnSubmit\" value=\"" . Translations::get('btn_login') . "\"></td>
 </tr>
 </form>
