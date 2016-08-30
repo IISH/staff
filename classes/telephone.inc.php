@@ -1,7 +1,7 @@
 <?php
 class Telephone {
 
-	public static function getTelephonesHref( $telephone ) {
+	public static function getTelephonesHref( $telephone, $doStyling = true ) {
 		global $oWebuser, $deviceType;
 
 		$ret = '';
@@ -9,7 +9,7 @@ class Telephone {
 		$tel = Telephone::splitTelephoneInParts( $telephone );
 
 		foreach ( $tel as $part ) {
-			$telephoneStyled = Telephone::styleTelephone($part);
+			$telephoneStyled = Telephone::styleTelephone($part, $doStyling);
 
 //			if ( $oWebuser->getUserSetting('call_via_computer', 0) == 1 || $oWebuser->getUserSetting('call_via_mobile', 0) == 1 ) {
 			if ( $deviceType == 'phone' ) {
@@ -51,11 +51,11 @@ class Telephone {
 		return $href;
 	}
 
-	public static function styleTelephone( $telephone ) {
+	public static function styleTelephone( $telephone, $doStyling = true ) {
 		global $oWebuser;
 
 		// lowercase institute prefix
-		if ( $oWebuser->getUserSetting('smaller_font_institute_prefix', 0) == 1 ) {
+		if ( $doStyling && $oWebuser->getUserSetting('smaller_font_institute_prefix', 0) == 1 ) {
 			$pre = '<span style="font-size:70%;">';
 			$post = '</span>';
 

@@ -13,6 +13,19 @@ if ( !isset($settings) ) {
 
 $oWebuser->checkLoggedIn();
 
+//
+$layout = trim($protect->request('get', "l"));
+if ( $layout == '' ) {
+	$layout = $oWebuser->getUserSetting($type_of_beo . '_display_format', 'tabular');
+}
+if ( !in_array($layout, array('tabular', 'tile')) ) {
+	$layout = 'tabular';
+}
+// save setting
+$query_update = "INSERT INTO staff_user_settings (`user_id`, `setting`, `value`) VALUES (" . $oWebuser->getId() . ", '" . $type_of_beo . "_display_format', '$layout') ON DUPLICATE KEY UPDATE `value`='$layout' ";
+$stmt = $dbConn->getConnection()->prepare($query_update);
+$stmt->execute();
+
 $retval = "
 <h1>" . $oBeo->getLabel() . "</h1>
 <div class='incaseofemergency'>" . Translations::get('in_case_of_emergency_call') . " <span class='incaseofemergencynumber'>" . Settings::get('emergency_number') . "</span></div>

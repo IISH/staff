@@ -62,7 +62,8 @@ if (!xmlhttpCheckInOut && window.createRequest) {
 }
 
 function tcRefreshSearch() {
-	xmlhttpSearch.open(\"GET\", \"" . $oBeo->getScriptName() . "\", true);
+	var strDesign = document.getElementById('fldDesign').value;
+	xmlhttpSearch.open(\"GET\", \"" . $oBeo->getScriptName() . "?l=\" + escape(strDesign), true);
 	xmlhttpSearch.onreadystatechange=function() {
 		if (xmlhttpSearch.readyState==4) {
 			document.getElementById('tcContentSearch').innerHTML = xmlhttpSearch.responseText;
@@ -91,9 +92,22 @@ function checkInOut(pid, dowhat) {
 	return false;
 }
 
+function setDesign(fldValue) {
+	document.getElementById('fldDesign').value = fldValue;
+	tcRefreshSearch();
+	return false;
+}
 // -->
 </script>
-<div id=\"tcContentSearch\"></div>
+<form name=\"frmTc\" method=\"GET\" onsubmit=\"return false;\">
+<input type=\"hidden\" name=\"fldDesign\" id=\"fldDesign\" value=\"\">
+<div style=\"float:right;\">
+<!--
+	<a href=\"#\" onclick=\"javascript:setDesign('tabular');\"><img src=\"images/misc/tabular.png\" border=\"0\"></a> <a href=\"#\" onclick=\"javascript:setDesign('tile');\"><img src=\"images/misc/tile.png\" border=\"0\"></a>
+// -->
+</div>
+</form>
+<div id=\"tcContentSearch\"><br></div>
 <script type=\"text/javascript\">
 <!--
 tcRefreshSearchStart();

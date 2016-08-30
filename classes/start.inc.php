@@ -63,7 +63,7 @@ $deviceType = ($detect->isMobile() ? ($detect->isTablet() ? 'tablet' : 'phone') 
 //
 $menu = array();
 $menu[] = new MenuItem(Translations::get('menu_presentornot'), 'presentornot.php');
-$menu[] = new MenuItem(Translations::get('menu_photobook'), 'photobook.php');
+//$menu[] = new MenuItem(Translations::get('menu_photobook'), 'photobook.php');
 if ( $oWebuser->hasAuthorisationTabAbsences() ) {
 	$menu[] = new MenuItem(Translations::get('menu_absences'), 'absences.php');
 }

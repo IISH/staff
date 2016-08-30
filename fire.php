@@ -97,7 +97,7 @@ function createBrandContent( ) {
 	<td>&nbsp;</td>
 	<td align=\"right\">" . $groupCounter . "</td>
 	<td>" . createUrl( array( 'url' => 'employee.php?id=' . $oEmployee->getId(), 'label' => $oEmployee->getNameForFirePage() ) ) . "</td>
-	<td>" . Telephone::getTelephonesHref($oEmployee->getTelephones()) . "&nbsp;</td>
+	<td>" . Telephone::getTelephonesHref($oEmployee->getTelephones(), false) . "&nbsp;</td>
 	<td>" . $oEmployee->getRolesForFirePage() . "&nbsp;</td>
 </a></td>
 </tr>

@@ -10,10 +10,18 @@ $oWebuser->checkLoggedIn();
 
 //
 $s = getAndProtectSearch();
-$layout = trim($protect->requestPositiveNumberOrEmpty('get', "l"));
-if ( $layout <> "2" ) {
-	$layout = 1;
+$layout = trim($protect->request('get', "l"));
+if ( $layout == '' ) {
+	$layout = $oWebuser->getUserSetting('presentornot_display_format', 'tabular');
 }
+if ( !in_array($layout, array('tabular', 'tile')) ) {
+	$layout = 'tabular';
+}
+// save setting
+$query_update = "INSERT INTO staff_user_settings (`user_id`, `setting`, `value`) VALUES (" . $oWebuser->getId() . ", 'presentornot_display_format', '$layout') ON DUPLICATE KEY UPDATE `value`='$layout' ";
+$stmt = $dbConn->getConnection()->prepare($query_update);
+$stmt->execute();
+
 
 $retval = '';
 
@@ -66,7 +74,7 @@ foreach ($result as $row) {
 
 	$oEmployee = new ProtimeUser( $row["PERSNR"] );
 
-	if ( $layout == 1 ) {
+	if ( $layout == 'tabular' ) {
 		$tmp = "
 <tr>
 	<td><div id=\"divAddRemove" . $oEmployee->getId() . "\">::ADDREMOVE::</div></td>
@@ -148,26 +156,23 @@ foreach ($result as $row) {
 		// als rood, dan alleen tonen als persoon niet aanwezig is
 		if ( $status["aanwezig"] == 0 ) {
 			//
-//			$retval .= $tmp;
 			$retvalArray[] = $tmp;
 		}
 	} elseif ( $s == '-g-' ) {
 		// als groen, dan alleen tonen als persoon aanwezig is
 		if ( $status["aanwezig"] == 1 ) {
 			//
-//			$retval .= $tmp;
 			$retvalArray[] = $tmp;
 		}
 	} else {
 		// als niet rood en ook niet groen dan altijd tonen
-//		$retval .= $tmp;
 		$retvalArray[] = $tmp;
 	}
 }
 
 if ( count($retvalArray) > 0 ) {
 
-	if ( $layout == 1 ) {
+	if ( $layout == 'tabular' ) {
 		$retval = "
 <table border=0 cellspacing=1 cellpadding=1>
 <TR>
