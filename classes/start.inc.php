@@ -87,6 +87,7 @@ $menu[] = new MenuItem(Translations::get('menu_firstaid'), 'firstaid.php');
 if ( $oWebuser->hasAuthorisationTabOntruimer() || $oWebuser->isOntruimer() ) {
 	$menu[] = new MenuItem(Translations::get('menu_evacuator'), 'evacuators.php');
 }
+$menu[] = new MenuItem(Translations::get('menu_print'), 'print.php');
 $menu[] = new MenuItem(Translations::get('menu_nationalholidays'), 'nationalholidays.php');
 if ( $oWebuser->isSuperAdmin() ) {
 	$menu[] = new MenuItem(Translations::get('menu_switch_user'), 'switch_user.php');

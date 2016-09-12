@@ -7,6 +7,28 @@ function preprint( $object ) {
 
 class Misc {
 
+	public static function removeJobFunctionFromName( $string ) {
+		$string = str_ireplace('(vrijwilliger)', '', $string);
+		$string = str_ireplace('(vrijwillig)', '', $string);
+		$string = str_ireplace('(stz)', '', $string);
+		$string = str_ireplace('(rec)', '', $string);
+		$string = str_ireplace('(uu)', '', $string);
+
+		return $string;
+	}
+
+	public static function verplaatsTussenvoegselNaarBegin( $text ) {
+		$array = array( ' van den', ' van der', ' van', ' de', ' el' );
+
+		foreach ( $array as $t ) {
+			if ( strtolower(substr($text, -strlen($t))) == strtolower($t) ) {
+				$text = trim($t . ' ' . substr($text, 0, strlen($text)-strlen($t)));
+			}
+		}
+
+		return $text;
+	}
+
 	public static function stripLeftPart( $string, $strip ) {
 		if ( strtolower(substr($string, 0, strlen($strip))) == strtolower($strip) ) {
 			$string = substr($string, -(strlen($string)-strlen($strip)));

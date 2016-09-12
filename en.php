@@ -1,5 +1,8 @@
 <?php
 require_once "classes/start.inc.php";
-$_SESSION['language'] = 2;
 
+//
+$oWebuser->saveSetting('language', 2);
+
+//
 goBack();

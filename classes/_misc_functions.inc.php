@@ -1,12 +1,8 @@
 <?php
 function getLanguage() {
-	$language = 1;
+	global $oWebuser;
 
-	if ( isset( $_SESSION['language'] ) && $_SESSION['language'] == 2 ) {
-		$language = 2;
-	}
-
-	$_SESSION['language'] = $language;
+	$language = $oWebuser->getUserSetting('language', 2);
 
 	return $language;
 }

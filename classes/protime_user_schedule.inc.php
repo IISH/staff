@@ -56,7 +56,6 @@ ORDER BY ${prefix}lnk_curric_profile.DATEFROM DESC, CAST(${prefix}cyc_dp.DAYNR A
 	public function getCurrentSchedule() {
 		$lastDate = '';
 		$ret = '';
-		$separator = '';
 		$lastWeekday = 0;
 
 		if ( count( $this->arr ) > 0 ) {

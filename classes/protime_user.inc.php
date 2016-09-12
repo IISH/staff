@@ -530,4 +530,16 @@ class ProtimeUser {
 
 		return $ret;
 	}
+
+	public function saveSetting($field, $value) {
+		global $dbConn;
+
+		// TODO
+		$field = addslashes($field);
+		$value = addslashes($value);
+
+		$query_update = "INSERT INTO staff_user_settings (`user_id`, `setting`, `value`) VALUES (" . $this->protime_id . ", '$field', '$value') ON DUPLICATE KEY UPDATE `value`='$value' ";
+		$stmt = $dbConn->getConnection()->prepare($query_update);
+		$stmt->execute();
+	}
 }
