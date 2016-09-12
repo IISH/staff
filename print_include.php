@@ -35,7 +35,7 @@ function createSpecialNumbersContent( ) {
 
 body {
 	font-family: Verdana;
-	font-size: 88%;
+	font-size: 83%;
 	margin: 5px;
 }
 
@@ -49,7 +49,7 @@ body {
 <div class=\"multicols\">
 ";
 
-	$ret .= "Print: " . date("Y-m-d H:i") . "<br><br>";
+	$ret .= "Print: " . date("j F Y") . "<br><br>";
 
 	// medewerkers
 	$lastChar = '';
