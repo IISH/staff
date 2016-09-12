@@ -28,14 +28,14 @@ function createSpecialNumbersContent( ) {
 	$ret = "
 <style>
 @page {
-    size: auto; /* auto is the initial value */ 
-    /* this affects the margin in the printer settings */ 
-    margin: 0mm 0mm 0mm 0mm;  
+	size: auto; /* auto is the initial value */ 
+	/* this affects the margin in the printer settings */ 
+	margin: 5mm 5mm 5mm 5mm;
 }
 
 body {
 	font-family: Verdana;
-	font-size: 83%;
+	font-size: 72%;
 	margin: 5px;
 }
 
@@ -104,7 +104,7 @@ ORDER BY $orderBy ";
 	$stmt->execute();
 	$result = $stmt->fetchAll();
 	foreach ($result as $row) {
-		$ret .= $row['object'] . "\t" . $row['number'] . "<br>";
+		$ret .= $row['object'] . " " . str_replace(' - ', '-', $row['number']) . "<br>";
 	}
 
 	$ret .= "
