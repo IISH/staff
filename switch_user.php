@@ -60,10 +60,10 @@ function createChangeUserContent() {
 <form name=\"frmA\" method=\"POST\">
 <tr>
 	<td>" . Translations::get('loginname') . ":</td>
-	<td><input type=\"text\" name=\"fldUserName\" class=\"login\" maxlength=\"50\" value=\"" . $fldUserName . "\"> <i>" . Translations::get('loginname_help') . "</i></td>
+	<td><input type=\"text\" name=\"fldUserName\" class=\"login\" maxlength=\"50\" value=\"" . $fldUserName . "\" placeholder=\"" . Translations::get('loginname_placeholder') . "\"></td>
 </tr>
 <tr>
-	<td align=\"right\"><!-- <input class=\"button_login\" type=\"reset\" name=\"btnReset\" value=\"" . Translations::get('btn_clear') . "\"> // -->&nbsp;</td>
+	<td align=\"right\">&nbsp;</td>
 	<td>&nbsp;<input class=\"button_login\" type=\"submit\" name=\"btnSubmit\" value=\"" . Translations::get('btn_login') . "\"></td>
 </tr>
 </form>
