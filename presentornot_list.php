@@ -111,8 +111,14 @@ foreach ($result as $row) {
 ";
 
 		$photo = $oEmployee->getPhoto();
-		$photo = checkImageExists( Settings::get('staff_images_directory') . $photo, Settings::get('noimage_file') );
-		$photo = "<img src=\"$photo\"  style=\"height:140px;\">";
+        if ( checkPhotoExists(Settings::get('staff_images_directory') . $photo) ) {
+            $alttitle = '';
+            $photo = Settings::get('staff_images_directory') . $photo;
+        } else {
+            $alttitle = 'Missing photo: &quot;' . $photo . '&quot;';
+            $photo = Settings::get('noimage_file');
+        }
+		$photo = "<img src=\"$photo\"  style=\"height:140px;\" title=\"$alttitle\">";
 		$tmp = str_replace('::PHOTO::', $photo, $tmp);
 	}
 

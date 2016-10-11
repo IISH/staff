@@ -332,8 +332,9 @@ class ProtimeUser {
 			}
 
 			$ret .= '.jpg';
-			$ret = strtolower($ret);
 		}
+
+        $ret = strtolower($ret);
 
 		return $ret;
 	}

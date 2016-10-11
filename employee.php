@@ -48,8 +48,14 @@ function createStaffContent( $staff ) {
 ";
 
 	$photo = $staff->getPhoto();
-	$photo = checkImageExists( Settings::get('staff_images_directory') . $photo, Settings::get('noimage_file') );
-	$photo = "<img src=\"$photo\">";
+	if ( checkPhotoExists(Settings::get('staff_images_directory') . $photo) ) {
+        $alttitle = '';
+	    $photo = Settings::get('staff_images_directory') . $photo;
+	} else {
+        $alttitle = 'Missing photo: &quot;' . $photo . '&quot;';
+        $photo = Settings::get('noimage_file');
+	}
+	$photo = "<img src=\"$photo\" title=\"$alttitle\">";
 
 	// NAAM
 	$ret .= "

@@ -15,13 +15,13 @@ function valueOr( $value, $or = '?' ) {
 	return ( ( trim($value) != '' ) ? $value : $or );
 }
 
-function checkImageExists( $photo, $imageIfNotExists = '' ) {
+function checkPhotoExists( $photo ) {
 	if ( !file_exists ( $_SERVER['DOCUMENT_ROOT'] . '/' . $photo ) ) {
 		error_log("Error: Image does not exist: " . $_SERVER['DOCUMENT_ROOT'] . '/' . $photo);
-		$photo = $imageIfNotExists;
+        return false;
 	}
 
-	return $photo;
+	return true;
 }
 
 function createUrl( $parts ) {
