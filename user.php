@@ -33,11 +33,13 @@ function createUserContent( ) {
 ";
 
 	$photo = $oWebuser->getPhoto();
+    $alttitle = '';
     if ( checkPhotoExists(Settings::get('staff_images_directory') . $photo) ) {
-        $alttitle = '';
         $photo = Settings::get('staff_images_directory') . $photo;
     } else {
-        $alttitle = 'Missing photo: &quot;' . $photo . '&quot;';
+        if ( $oWebuser->isAdmin() ) {
+            $alttitle = 'Missing photo: &quot;' . Settings::get('staff_images_directory') . $photo . '&quot;';
+        }
         $photo = Settings::get('noimage_file');
     }
 	$photo = "<img src=\"$photo\" title=\"$alttitle\">";
