@@ -1,9 +1,8 @@
 <?php
 
 class Authentication {
-
 	public static function authenticate( $login, $password ) {
-		return Authentication::check_ldap('iisgnet\\' . $login, $password, array("sa-dc01.iisg.nl", "sa-dc02.iisg.nl"));
+		return Authentication::check_ldap('iisgnet\\' . $login, $password, explode(' ', Settings::get('ms_active_directories')));
 	}
 
 	public static function check_ldap($user, $pw, $servers) {

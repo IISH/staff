@@ -254,24 +254,25 @@ function getBackUrl() {
 	$ret = '';
 
 	if ( $ret == '' ) {
-		if ( isset( $_GET["parentbackurl"] ) ) {
-			$ret = $_GET["parentbackurl"];
-		}
-	}
-
-	if ( $ret == '' ) {
 		if ( isset( $_GET["backurl"] ) ) {
 			$ret = $_GET["backurl"];
 		}
 	}
 
-	if ( $ret == '' ) {
+    if ( $ret == '' ) {
+        if ( isset( $_GET["burl"] ) ) {
+            $ret = $_GET["burl"];
+        }
+    }
+
+    if ( $ret == '' ) {
 		$scriptNameStrippedEdit = str_replace('_edit', '', $_SERVER['SCRIPT_NAME']);
 		if ( $_SERVER['SCRIPT_NAME'] != $scriptNameStrippedEdit ) {
 			$ret = $scriptNameStrippedEdit;
 		}
 	}
 
+    // simple javascript protection
 	$ret = str_replace('<', ' ', $ret);
 	$ret = str_replace('>', ' ', $ret);
 

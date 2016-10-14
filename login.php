@@ -45,7 +45,10 @@ function createLoginPage() {
 				$_SESSION["loginname"] = $fldLogin;
 
 				//
-				$burl = 'presentornot.php';
+                $burl = getBackUrl();
+                if ( $burl == '' ) {
+                    $burl = 'presentornot.php';
+                }
 				Header("Location: " . $burl);
 				die(Translations::get('go_to') . " <a href=\"" . $burl . "\">next</a>");
 			} else {
@@ -67,7 +70,7 @@ function createLoginPage() {
 	}
 
 	$ret .= "
-<form name=\"frmA\" method=\"POST\" action=\"login.php\">
+<form name=\"frmA\" method=\"POST\" action=\"?" . $_SERVER["QUERY_STRING"] . "\">
 <table border=\"0\" cellspacing=\"0\" cellpadding=\"2\">
 <tr>
 	<td>" . Translations::get('loginname') . ":</td>
