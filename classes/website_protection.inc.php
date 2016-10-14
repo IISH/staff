@@ -29,8 +29,8 @@ class WebsiteProtection {
 			$message .= "Date: " . date("Y-m-d") . $eol;
 			$message .= "Time: " . date("H:i:s") . $eol;
 			$message .= "URL: " . $this->getLongUrl() . $eol;
-			$message .= "IP address: " . $this->get_remote_addr() . $eol;
-			$message .= "IP Location: " . $iplocator . $this->get_remote_addr() . $eol . $eol;
+			$message .= "IP address: " . Misc::get_remote_addr() . $eol;
+			$message .= "IP Location: " . $iplocator . Misc::get_remote_addr() . $eol . $eol;
 			$message .= "Warning: " . $tekst;
 
 			// send email
@@ -50,21 +50,6 @@ class WebsiteProtection {
 
 	public function getLongUrl() {
 		return 'https://' . ( isset($_SERVER["HTTP_X_FORWARDED_HOST"]) && $_SERVER["HTTP_X_FORWARDED_HOST"] != '' ? $_SERVER["HTTP_X_FORWARDED_HOST"] : $_SERVER["SERVER_NAME"] ) . $this->getShortUrl();
-	}
-
-	public function get_remote_addr() {
-		$retval = '';
-		if ( isset( $_SERVER["HTTP_X_FORWARDED_FOR"] ) ) {
-			$retval = trim($_SERVER["HTTP_X_FORWARDED_FOR"]);
-		}
-
-		if ( $retval == '' ) {
-			if ( isset( $_SERVER["REMOTE_ADDR"] ) ) {
-				$retval = trim($_SERVER["REMOTE_ADDR"]);
-			}
-		}
-
-		return $retval;
 	}
 
 	public function sendErrorToBrowser($tekst) {

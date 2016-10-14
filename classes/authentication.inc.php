@@ -34,6 +34,10 @@ class Authentication {
 			}
 		}
 
+        if ( $login_correct == 0 ) {
+            error_log("LOGIN FAILED $user from " . Misc::get_remote_addr() . " (AD: " . trim(Settings::get('ms_active_directories')) . ")");
+        }
+
 		return $login_correct;
 	}
 }

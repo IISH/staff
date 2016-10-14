@@ -7,6 +7,21 @@ function preprint( $object ) {
 
 class Misc {
 
+    public static function get_remote_addr() {
+        $retval = '';
+        if ( isset( $_SERVER["HTTP_X_FORWARDED_FOR"] ) ) {
+            $retval = trim($_SERVER["HTTP_X_FORWARDED_FOR"]);
+        }
+
+        if ( $retval == '' ) {
+            if ( isset( $_SERVER["REMOTE_ADDR"] ) ) {
+                $retval = trim($_SERVER["REMOTE_ADDR"]);
+            }
+        }
+
+        return $retval;
+    }
+
 	public static function removeJobFunctionFromName( $string ) {
 		$string = str_ireplace('(vrijwilliger)', '', $string);
 		$string = str_ireplace('(vrijwillig)', '', $string);
