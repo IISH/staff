@@ -2,7 +2,8 @@
 
 class Authentication {
 	public static function authenticate( $login, $password ) {
-		return Authentication::check_ldap('iisgnet\\' . $login, $password, explode(' ', Settings::get('ms_active_directories')));
+	    global $active_directories;
+		return Authentication::check_ldap('iisgnet\\' . $login, $password, $active_directories);
 	}
 
 	public static function check_ldap($user, $pw, $servers) {
