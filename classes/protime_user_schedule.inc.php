@@ -1,15 +1,15 @@
 <?php
 class ProtimeUserSchedule {
 	private $persnr;
-	private $last_year;
+	private $date_from;
 	private $arr = array();
 
-	function __construct( $persnr, $last_year ) {
+	function __construct($persnr, $date_from ) {
 		global $databases;
 		$this->databases = $databases;
 
 		$this->persnr = $persnr;
-		$this->last_year = $last_year;
+		$this->date_from = $date_from;
 
 		$this->initValues();
 	}
@@ -28,9 +28,11 @@ FROM ${prefix}lnk_curric_profile
 	LEFT JOIN ${prefix}dayprog ON ${prefix}cyc_dp.dayprog = ${prefix}dayprog.DAYPROG
 WHERE PROFILETYPE = '4'
 	AND ${prefix}lnk_curric_profile.PERSNR = '" . $this->persnr . "'
-	AND ${prefix}lnk_curric_profile.DATEFROM < '" . ($this->last_year+1)  . "'
+    AND ${prefix}lnk_curric_profile.DATEFROM <= '" . ($this->date_from+1)  . "'
 ORDER BY ${prefix}lnk_curric_profile.DATEFROM DESC, CAST(${prefix}cyc_dp.DAYNR AS UNSIGNED) ASC
 ";
+
+//echo $query . ' ++<br>';
 
 		$stmt = $dbConn->getConnection()->prepare($query);
 		$stmt->execute();

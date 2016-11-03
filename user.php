@@ -123,7 +123,7 @@ function createUserContent( ) {
 ";
 
 	// SCHEDULE
-	$currentSchedule = new ProtimeUserSchedule($oWebuser->getId(), 2015);
+	$currentSchedule = new ProtimeUserSchedule($oWebuser->getId(), date("Ymd"));
 	$ret .= "
 <tr>
 	<td valign=top>" . Translations::get('lbl_schedule') . ":</td>

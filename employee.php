@@ -140,7 +140,7 @@ function createStaffContent( $staff ) {
 ";
 
 	// SCHEDULE
-	$currentSchedule = new ProtimeUserSchedule($staff->getId(), 2015);
+	$currentSchedule = new ProtimeUserSchedule($staff->getId(), date("Ymd"));
 	$ret .= "
 <tr>
 	<td valign=top>" . Translations::get('lbl_schedule') . ":</td>
