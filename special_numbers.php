@@ -34,13 +34,18 @@ function createSpecialNumbersContent( ) {
 	$ret .= "<br>
 <table class=\"special_numbers\">
 <tr>
-	<th align=\"left\">" . Translations::get('lbl_object') . "</th>
-	<th>" . Translations::get('lbl_number') . "</th>
+	<th align=\"left\" style=\"padding-right:10px;\">" . Translations::get('lbl_specnumber_object') . "</th>
+	<th align=\"left\" style=\"padding-right:10px;\">" . Translations::get('lbl_specnumber_number') . "</th>
+	<th align=\"left\" style=\"padding-right:10px;\">" . Translations::get('lbl_specnumber_extra') . "</th>
+	<th align=\"left\" style=\"padding-right:10px;\">" . Translations::get('lbl_specnumber_location') . "</th>
+	<th align=\"left\" style=\"padding-right:10px;\">" . Translations::get('lbl_specnumber_room') . "</th>
+	<th align=\"left\" style=\"padding-right:10px;\">" . Translations::get('lbl_specnumber_fax') . "</th>
+	<th align=\"left\">" . Translations::get('lbl_specnumber_email') . "</th>
 </tr>
 ";
 
 	//
-	$query = 'SELECT ID, object, number FROM staff_special_numbers WHERE isdeleted=0 ORDER BY object ASC ';
+	$query = 'SELECT ID, object, extra, email, number, fax, room, location FROM staff_special_numbers WHERE isdeleted=0 ORDER BY object ASC ';
 	$stmt = $dbConn->getConnection()->prepare($query);
 	$stmt->execute();
 	$result = $stmt->fetchAll();
@@ -51,10 +56,20 @@ function createSpecialNumbersContent( ) {
 			$object = $row['object'];
 		}
 
+        $formattedEmail = trim($row['email']);
+        if ( $formattedEmail != '' ) {
+            $formattedEmail = "<a href=\"mailto:" . $formattedEmail . "\">" . $formattedEmail . "</a>";
+        }
+
 		$ret .= "
 <tr>
-	<td>" . $object . "</td>
-	<td>" . Telephone::getTelephonesHref($row['number']) . "</td>
+	<td style=\"padding-right:10px;\">" . $object . "</td>
+	<td style=\"padding-right:10px;\">" . Telephone::getTelephonesHref($row['number']) . "</td>
+	<td style=\"padding-right:10px;\">" . $row['extra'] . "</td>
+	<td style=\"padding-right:10px;\">" . $row['location'] . "</td>
+	<td style=\"padding-right:10px;\">" . $row['room'] . "</td>
+	<td style=\"padding-right:10px;\">" . $row['fax'] . "</td>
+	<td>" . $formattedEmail . "</td>
 </tr>
 ";
 	}

@@ -45,16 +45,40 @@ function createSpecialNumbersContent( ) {
 
 	$oForm->add_field( new class_field_string ( array(
 		'fieldname' => 'object'
-		, 'fieldlabel' => 'Object'
+		, 'fieldlabel' => Translations::get('lbl_specnumber_object')
 		)));
 
-	$oForm->add_field( new class_field_string ( array(
-		'fieldname' => 'number'
-		, 'fieldlabel' => 'Number'
-		)));
+    $oForm->add_field( new class_field_string ( array(
+        'fieldname' => 'number'
+        , 'fieldlabel' => Translations::get('lbl_specnumber_number')
+        )));
 
+    $oForm->add_field( new class_field_string ( array(
+        'fieldname' => 'extra'
+        , 'fieldlabel' => Translations::get('lbl_specnumber_extra')
+        )));
 
-	$oForm->add_field( new class_field_hidden ( array(
+    $oForm->add_field( new class_field_string ( array(
+        'fieldname' => 'location'
+        , 'fieldlabel' => Translations::get('lbl_specnumber_location')
+        )));
+
+    $oForm->add_field( new class_field_string ( array(
+        'fieldname' => 'room'
+        , 'fieldlabel' => Translations::get('lbl_specnumber_room')
+        )));
+
+    $oForm->add_field( new class_field_string ( array(
+        'fieldname' => 'fax'
+        , 'fieldlabel' =>  Translations::get('lbl_specnumber_fax')
+        )));
+
+    $oForm->add_field( new class_field_string ( array(
+        'fieldname' => 'email'
+        , 'fieldlabel' =>  Translations::get('lbl_specnumber_email')
+        )));
+
+    $oForm->add_field( new class_field_hidden ( array(
 		'fieldname' => 'isdeleted'
 		, 'fieldlabel' => 'isdeleted'
 		)));

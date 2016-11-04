@@ -4,8 +4,7 @@ var browser_SAFARI = (navigator.userAgent.indexOf('Safari')>-1) ? 1 : 0;
 
 // TODOEXPLAIN
 function open_page(url) {
-  //window.open(url, '_top');
-  window.open(url);
+  window.open(url, '_top');
 
 	return false;
 }
