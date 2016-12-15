@@ -55,7 +55,7 @@ function createNationalHolidaysContent( ) {
 	$ret .= $oView->generate_view();
 
 	// add source
-	$ret .= "<br>" . Translations::get('lbl_source') . ": <a href=\"https://intranet.iisg.nl/nl/manual/feest-en-sluitingsdagen\" target=\"_blank\">https://intranet.iisg.nl/nl/manual/feest-en-sluitingsdagen</a>";
+	//$ret .= "<br>" . Translations::get('lbl_source') . ": <a href=\"https://intranet.iisg.nl/nl/manual/feest-en-sluitingsdagen\" target=\"_blank\">https://intranet.iisg.nl/nl/manual/feest-en-sluitingsdagen</a>";
 
 	return $ret;
 }

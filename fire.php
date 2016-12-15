@@ -113,7 +113,6 @@ function createBrandContent( ) {
 				$ret .= $tmp;
 			}
 		}
-
 	}
 	$ret .= "
 </table><br>

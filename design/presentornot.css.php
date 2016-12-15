@@ -337,8 +337,8 @@ table.fire {
 }
 
 table.fire tr th {
-	font-size: 140%;
-	padding: 7px;
+	/* font-size: 110%; */
+	padding: 6px;
 	text-align: left;
 	border-style: solid;
 	border-width: thin;
@@ -346,15 +346,15 @@ table.fire tr th {
 }
 
 table.fire tr td {
-	font-size: 140%;
-	padding: 7px;
+	/* font-size: 110%; */
+	padding: 6px;
 	border-style: solid;
 	border-width: thin;
 	border-color: grey;
 }
 
 .fire_header {
-	font-size: 140% !important;
+	/* font-size: 110% !important; */
 	border-style: none !important;
 }
 
