@@ -49,7 +49,7 @@ for( $i=0 ; $i <= $nrOfLevels; $i++ ) {
 
 // TODOGCU
 $querySelect = "
-SELECT " . Settings::get('protime_tables_prefix') . "curric.PERSNR
+SELECT DISTINCT " . Settings::get('protime_tables_prefix') . "curric.PERSNR
 FROM " . Settings::get('protime_tables_prefix') . "curric
 	LEFT JOIN staff_today_checkinout ON protime_curric.PERSNR = staff_today_checkinout.PERSNR AND  staff_today_checkinout.BOOKDATE = '" . date("Ymd") . "'
 WHERE ". $dateOutCriterium . "

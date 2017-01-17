@@ -58,7 +58,7 @@ if ( $s == '-a-' ) {
 
 // TODOGCU
 $querySelect = "
-SELECT " . Settings::get('protime_tables_prefix') . "curric.PERSNR, " . Settings::get('protime_tables_prefix') . "curric.NAME, " . Settings::get('protime_tables_prefix') . "curric.FIRSTNAME
+SELECT DISTINCT " . Settings::get('protime_tables_prefix') . "curric.PERSNR, " . Settings::get('protime_tables_prefix') . "curric.NAME, " . Settings::get('protime_tables_prefix') . "curric.FIRSTNAME
 FROM " . Settings::get('protime_tables_prefix') . "curric
 	LEFT JOIN staff_today_checkinout ON protime_curric.PERSNR = staff_today_checkinout.PERSNR AND  staff_today_checkinout.BOOKDATE = '" . date("Ymd") . "'
 	LEFT JOIN " . Settings::get('protime_tables_prefix') . "depart ON " . Settings::get('protime_tables_prefix') . "curric.DEPART = " . Settings::get('protime_tables_prefix') . "depart.DEPART
