@@ -139,6 +139,16 @@ function createStaffContent( $staff ) {
 </tr>
 ";
 
+	// UITDIENST
+	$dateOut = $staff->getDateOut();
+	if ( $dateOut != '' && $dateOut != '0' && $dateOut < date("Ymd") ) {
+		$ret .= "
+<tr>
+	<td>" . Translations::get('lbl_date_out') . ":</td>
+	<td>" . class_datetime::formatDate($dateOut) . "</td>
+</tr>
+";
+	}
 	// SCHEDULE
 	$currentSchedule = new ProtimeUserSchedule($staff->getId(), date("Ymd"));
 	$ret .= "

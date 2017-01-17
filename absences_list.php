@@ -26,7 +26,7 @@ $to_short = 0;
 if ( $s == '' ) {
 	// no search
 	// use favourites
-	$queryCriterium = ' AND PERSNR IN (' . $favIds . ') ';
+	$queryCriterium = ' AND ' . Settings::get('protime_tables_prefix') . 'curric.PERSNR IN (' . $favIds . ') ';
 } else {
 	$to_short = strlen(str_replace(' ', '', $s)) < 3;
 	if ( $to_short == 1 ) {
@@ -66,13 +66,18 @@ $arrHolidays = getNationalHolidays($selectedYear, $selectedMonth );
 
 if ( $to_short != 1 ) {
 
+	// TODOGCU
 	// loop employees
 	$querySelect = "
-SELECT *
+SELECT " . Settings::get('protime_tables_prefix') . "curric.PERSNR
 FROM " . Settings::get('protime_tables_prefix') . "curric
+	LEFT JOIN staff_today_checkinout ON protime_curric.PERSNR = staff_today_checkinout.PERSNR AND  staff_today_checkinout.BOOKDATE = '" . date("Ymd") . "'
 	LEFT JOIN " . Settings::get('protime_tables_prefix') . "depart ON " . Settings::get('protime_tables_prefix') . "curric.DEPART = " . Settings::get('protime_tables_prefix') . "depart.DEPART
-WHERE " . $dateOutCriterium . $queryCriterium . Misc::getNeverShowPersonsCriterium() . " ORDER BY FIRSTNAME, NAME
+WHERE " . $dateOutCriterium . $queryCriterium . Misc::getNeverShowPersonsCriterium() . "
+ORDER BY " . Settings::get('protime_tables_prefix') . "curric.FIRSTNAME, " . Settings::get('protime_tables_prefix') . "curric.NAME
 ";
+
+//echo $querySelect;
 
 	$stmt = $dbConn->getConnection()->prepare($querySelect);
 	$stmt->execute();

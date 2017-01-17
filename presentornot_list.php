@@ -31,6 +31,7 @@ $checkInOutIds = implode(',', $oWebuser->getFavourites('checkinout'));
 
 // CRITERIUM
 $queryCriterium = '';
+$queryCriterium2 = '';
 $title = '';
 if ( $s == '-a-' ) {
 	//
@@ -44,22 +45,28 @@ if ( $s == '-a-' ) {
 } elseif ( $s == '' ) {
 	// no search
 	// use favourites
-	$queryCriterium = ' AND PERSNR IN (' . $favIds . ') ';
+	$queryCriterium = ' AND ' . Settings::get('protime_tables_prefix') . 'curric.PERSNR IN (' . $favIds . ') ';
+	$queryCriterium2 = $queryCriterium;
+
 	$title = Translations::get('your_favourites');
 } else {
 	// search
 	$queryCriterium = Generate_Query(array("NAME", "FIRSTNAME", "EMAIL", "USER02", Settings::get('curric_room'), "SHORT_" . getLanguage()), explode(' ', $s));
+	$queryCriterium2 = Generate_Query(array("NAME", "FIRSTNAME", "EMAIL", "USER02", Settings::get('curric_room')), explode(' ', $s));
 	$title = 'Search: ' . $s;
 }
 
-//
-
-//
+// TODOGCU
 $querySelect = "
-SELECT *
+SELECT " . Settings::get('protime_tables_prefix') . "curric.PERSNR, " . Settings::get('protime_tables_prefix') . "curric.NAME, " . Settings::get('protime_tables_prefix') . "curric.FIRSTNAME
 FROM " . Settings::get('protime_tables_prefix') . "curric
+	LEFT JOIN staff_today_checkinout ON protime_curric.PERSNR = staff_today_checkinout.PERSNR AND  staff_today_checkinout.BOOKDATE = '" . date("Ymd") . "'
 	LEFT JOIN " . Settings::get('protime_tables_prefix') . "depart ON " . Settings::get('protime_tables_prefix') . "curric.DEPART = " . Settings::get('protime_tables_prefix') . "depart.DEPART
-WHERE " . $dateOutCriterium . $queryCriterium . Misc::getNeverShowPersonsCriterium() . " ORDER BY FIRSTNAME, NAME ";
+WHERE " . $dateOutCriterium . $queryCriterium . Misc::getNeverShowPersonsCriterium() . "
+
+ORDER BY FIRSTNAME, NAME ";
+
+//echo $querySelect;
 
 $totaal["aanwezig"] = 0;
 $totaal["afwezig"] = 0;

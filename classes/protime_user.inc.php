@@ -78,6 +78,8 @@ class ProtimeUser {
 	protected $oDepartment;
 	protected $arrSubEmployees = array();
 	protected $arrUserSettings = array();
+	protected $dateIn;
+	protected $dateOut;
 
 	function __construct($protimeId) {
 		if ( !is_array( $protimeId ) ) {
@@ -108,6 +110,9 @@ class ProtimeUser {
 			$this->telephones =  $row[Settings::get('curric_telephone')];
 			$this->photo = trim($row["PHOTO"]);
 			$this->department = $row["DEPART"];
+			$this->dateIn = $row["DATE_IN"];
+			$this->dateOut = $row["DATE_OUT"];
+
 			$this->oDepartment = new Department( $row["DEPART"] );
 			$this->roles = $row[Settings::get('curric_roles')];
 
@@ -376,6 +381,14 @@ class ProtimeUser {
 
 	public function getDepartment() {
 		return $this->oDepartment;
+	}
+
+	public function getDateIn() {
+		return $this->dateIn;
+	}
+
+	public function getDateOut() {
+		return $this->dateOut;
 	}
 
 	//

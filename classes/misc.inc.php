@@ -54,7 +54,7 @@ class Misc {
 	public static function getNeverShowPersonsCriterium() {
 		$never_show_persnr = '0,' . preg_replace('/[^0-9]/', ',', trim(Settings::get("never_show_persnr")));
 		$never_show_persnr = preg_replace('/,{2,}/', ',', $never_show_persnr);
-		$never_show_persnr = ' AND PERSNR NOT IN (' . $never_show_persnr . ') ';
+		$never_show_persnr = ' AND ' . Settings::get('protime_tables_prefix') . 'curric.PERSNR NOT IN (' . $never_show_persnr . ') ';
 
 		return $never_show_persnr;
 	}

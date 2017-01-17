@@ -35,9 +35,6 @@ $retval = "
 $checkInOutIds = implode(',', $oWebuser->getFavourites('checkinout'));
 
 //
-//$never_show_persnr = '0,' . preg_replace('/[^0-9]/', ',', trim(Settings::get("never_show_persnr")));
-//$never_show_persnr = preg_replace('/,{2,}/', ',', $never_show_persnr);
-
 $totaal["aanwezig"] = 0;
 $totaal["afwezig"] = 0;
 
@@ -50,7 +47,17 @@ for( $i=0 ; $i <= $nrOfLevels; $i++ ) {
 	$ontruimersAanwezigOpVerdieping[$i] = 0;
 }
 
-$querySelect = "SELECT * FROM " . Settings::get('protime_tables_prefix') . "curric WHERE ". $dateOutCriterium . " AND " . $oBeo->getQuery() . Misc::getNeverShowPersonsCriterium() . " ORDER BY FIRSTNAME, NAME ";
+// TODOGCU
+$querySelect = "
+SELECT " . Settings::get('protime_tables_prefix') . "curric.PERSNR
+FROM " . Settings::get('protime_tables_prefix') . "curric
+	LEFT JOIN staff_today_checkinout ON protime_curric.PERSNR = staff_today_checkinout.PERSNR AND  staff_today_checkinout.BOOKDATE = '" . date("Ymd") . "'
+WHERE ". $dateOutCriterium . "
+	AND " . $oBeo->getQuery() . Misc::getNeverShowPersonsCriterium() . "
+ORDER BY " . Settings::get('protime_tables_prefix') . "curric.FIRSTNAME, " . Settings::get('protime_tables_prefix') . "curric.NAME ";
+
+//echo $querySelect;
+
 $stmt = $dbConn->getConnection()->prepare($querySelect);
 $stmt->execute();
 $result = $stmt->fetchAll();
