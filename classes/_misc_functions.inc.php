@@ -2,7 +2,10 @@
 function getLanguage() {
 	global $oWebuser;
 
-	$language = $oWebuser->getUserSetting('language', 2);
+	// TODO: move default language to settings table
+	// 1 - dutch
+	// 2 - english
+	$language = $oWebuser->getUserSetting('language', 1);
 
 	return $language;
 }
