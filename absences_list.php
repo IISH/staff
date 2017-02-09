@@ -241,8 +241,13 @@ function getStyle($selectedYear, $selectedMonth, $day, $absences = array(), $hol
 					$hrefStyle = 'color:white';
 					$alt = 'Leave';
 				} else {
-					$tdStyle = class_colors::get(strtolower($absences[$i]["code"]))->getBackgroundColor();
-					$hrefStyle = class_colors::get(strtolower($absences[$i]["code"]))->getFontColor();
+					if ( class_colors::get(strtolower($absences[$i]["code"])) !== null ) {
+						$tdStyle = class_colors::get(strtolower($absences[$i]["code"]))->getBackgroundColor();
+						$hrefStyle = class_colors::get(strtolower($absences[$i]["code"]))->getFontColor();
+					} else {
+						$tdStyle = Settings::get('no_color_defined');
+						$hrefStyle = '';
+					}
 					$alt = $absences[$i]["description"];
 				}
 			}

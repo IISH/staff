@@ -52,7 +52,7 @@ FROM ${prefix}absence
 			self::load();
 		}
 
-		$value = self::$settings[$setting_name];
+		$value = isset ( self::$settings[$setting_name] ) ? self::$settings[$setting_name] : null;
 
 		return $value;
 	}
