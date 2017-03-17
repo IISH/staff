@@ -60,8 +60,26 @@ function goBack() {
 	Header("Location: " . $url);
 }
 
+function getListOfIdsOfCheckedInEmployees() {
+	global $dbConn;
+
+	$ret = array();
+
+	$date = date("Ymd");
+
+	$query = "SELECT PERSNR, COUNT(*) FROM staff_today_checkinout WHERE BOOKDATE='$date' AND BOOKTIME<>9999 GROUP BY PERSNR HAVING COUNT(*) % 2  > 0";
+	$stmt = $dbConn->getConnection()->prepare($query);
+	$stmt->execute();
+	$result = $stmt->fetchAll();
+	foreach ($result as $row) {
+		$ret[] = $row['PERSNR'];
+	}
+
+	return $ret;
+}
+
 function getCurrentDayCheckInoutState( $persnr ) {
-	global $databases, $oWebuser, $dbConn;
+	global $oWebuser, $dbConn;
 
 	$date = date("Ymd");
 

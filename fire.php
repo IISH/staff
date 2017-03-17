@@ -60,6 +60,9 @@ function createBrandContent( ) {
 ";
 
 	//
+	$checkedInEmployees = getListOfIdsOfCheckedInEmployees();
+
+	//
 	foreach( $loop as $item ) {
 		$ret .= "
 <TR>
@@ -83,12 +86,8 @@ function createBrandContent( ) {
 		foreach ($result as $row) {
 			$oEmployee = new ProtimeUser($row["PERSNR"]);
 
-			// TODO: dit moet anders
-			//
-			$status = getCurrentDayCheckInoutState($oEmployee->getId());
-
-			// check if employee is present, if so, show the employee
-			if ( $status["aanwezig"] == 1 ) {
+			// check if employee can be found in the the array of checked employees
+			if ( in_array( $oEmployee->getId(), $checkedInEmployees) ) {
 				if ( $item['count_total'] ) {
 					$total_of_present_employees++;
 				}

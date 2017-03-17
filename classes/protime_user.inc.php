@@ -556,4 +556,55 @@ class ProtimeUser {
 		$stmt = $dbConn->getConnection()->prepare($query_update);
 		$stmt->execute();
 	}
+
+	public function getAuthorisations() {
+		$arr = array();
+
+		if ( $this->isSuperAdmin() ) {
+			$arr[] = 'Superadmin';
+		} elseif ( $this->isAdmin() ) {
+			$arr[] = 'Admin';
+		}
+
+		if (  $this->isBhv() ) {
+			$arr[] = 'BHV';
+		}
+
+		if (  $this->isEhbo() ) {
+			$arr[] = 'EHBO';
+		}
+
+		if (  $this->isOntruimer() ) {
+			$arr[] = 'Ontruimer';
+		}
+
+		if (  $this->hasAuthorisationTabAbsences() ) {
+			$arr[] = 'TabAbsences';
+		}
+
+		if (  $this->hasAuthorisationTabFire() ) {
+			$arr[] = 'TabFire';
+		}
+
+		if (  $this->hasAuthorisationTabOntruimer() ) {
+			$arr[] = 'TabOntruimer';
+		}
+
+		if (  $this->hasAuthorisationReasonOfAbsenceAll() ) {
+			$arr[] = 'ReasonOfAbsenceAll';
+		} elseif (  $this->hasAuthorisationReasonOfAbsenceDepartment() ) {
+			$arr[] = 'ReasonOfAbsenceDepartment';
+		}
+
+		if (  $this->hasAuthorisationBeoTelephone() ) {
+			$arr[] = 'BeoTelephone';
+		}
+
+		//
+		if ( count($arr) == 0 ) {
+			$arr[] = 'default authorisation';
+		}
+
+		return $arr;
+	}
 }

@@ -131,6 +131,21 @@ function createUserContent( ) {
 </tr>
 ";
 
+/*
+	if ( $oWebuser->isAdmin() ) {
+		if ( count($oWebuser->getAuthorisations()) > 0 ) {
+
+			$ret .= "
+<tr>
+	<td valign=top>" . Translations::get('lbl_authorisation') . ":</td>
+	<td>" . implode('<br>', $oWebuser->getAuthorisations()) . "</td>
+</tr>
+";
+
+		}
+	}
+*/
+
 	$ret .= "
 </table>
 </div>
@@ -170,6 +185,8 @@ function createUserContent( ) {
 //	<td valign=top>" . $choices[$callViaSmarthphone] . " <a href=\"switch.php?s=callviamobile&v=$callViaSmarthphone\">Switch</a></td>
 //</tr>
 //";
+
+
 
 	$ret .= "
 </table>

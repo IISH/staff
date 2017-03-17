@@ -158,6 +158,20 @@ function createStaffContent( $staff ) {
 </tr>
 ";
 
+
+	if ( $oWebuser->isAdmin() ) {
+		if ( count($staff->getAuthorisations()) > 0 ) {
+
+			$ret .= "
+<tr>
+	<td valign=top>" . Translations::get('lbl_authorisation') . ":</td>
+	<td>" . implode('<br>', $staff->getAuthorisations()) . "</td>
+</tr>
+";
+
+		}
+	}
+
 	$ret .= "
 </table>
 </div>
