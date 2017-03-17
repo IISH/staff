@@ -234,6 +234,10 @@ if ( count($retvalArray) > 0 ) {
 	$retval .= "<br><font size=-1><i>" . Translations::get('lbl_present') . ": " . $totaal["aanwezig"] . "<br>
 		" . Translations::get('lbl_not_present') . ": " . $totaal["afwezig"] . "<br><br>
 		" . Translations::get('lbl_page_refreshes_every') . " " . date("H:i:s") . "</i></font>";
+} elseif ( $s != '' ) {
+	$retval .= '<br><span class="error">' . Translations::get('nothing_found') . '</span>';
+} else {
+	$retval .= '<br>' . Translations::get('start_searching');
 }
 
 $retval = "<h1>$title</h1>" . $retval;

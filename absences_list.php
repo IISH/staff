@@ -195,6 +195,10 @@ ORDER BY " . Settings::get('protime_tables_prefix') . "curric.FIRSTNAME, " . Set
 </TR>
 " . $retval . "
 </table><br>";
+	} elseif ( $s != '' ) {
+		$retval .= '<span class="error">' . Translations::get('nothing_found') . '</span>';
+	} else {
+		$retval .= Translations::get('start_searching');
 	}
 }
 
