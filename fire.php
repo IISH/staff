@@ -26,6 +26,7 @@ echo $oPage->getPage();
 function createBrandContent( ) {
 	global $dbConn, $oWebuser;
 
+	$groupCounter = 0;
 	$total_of_present_employees = 0;
 	$title = Translations::get('header_fire');
 	$ret = "<h1>$title</h1>
@@ -39,20 +40,33 @@ function createBrandContent( ) {
 	// Remark: the queries return all employees
 	// checking if an employee is present or not, is done below
 	// Remark: in fire page, sorting always on (last)name, firstname
+
+	$aTotEnMet = 'L';
+	$vanafTotEnMetZ = chr(ord($aTotEnMet)+1);
+
 	$loop[] = array(
-		'label' => Translations::get('present_employees_long')
-		, 'query' => "SELECT * FROM " . Settings::get('protime_tables_prefix') . "curric ORDER BY NAME, FIRSTNAME "
+		'label' => Translations::get('present_employees_long') . " (A - $aTotEnMet)"
+		, 'query' => "SELECT * FROM " . Settings::get('protime_tables_prefix') . "curric WHERE NAME < '$vanafTotEnMetZ' ORDER BY NAME, FIRSTNAME "
 		, 'count_total' => true
+		, 'reset_group_counter' => true
+	);
+	$loop[] = array(
+		'label' => Translations::get('present_employees_long') . " ($vanafTotEnMetZ - Z)"
+		, 'query' => "SELECT * FROM " . Settings::get('protime_tables_prefix') . "curric WHERE NAME >= '$vanafTotEnMetZ' ORDER BY NAME, FIRSTNAME "
+		, 'count_total' => true
+		, 'reset_group_counter' => false
 	);
 	$loop[] = array(
 		'label' => Translations::get('present_evacuators')
 		, 'query' => "SELECT * FROM " . Settings::get('protime_tables_prefix') . "curric WHERE " . $oBeoOntruimer->getQuery() . " ORDER BY NAME, FIRSTNAME "
 		, 'count_total' => false
+		, 'reset_group_counter' => true
 	);
 	$loop[] = array(
 		'label' => Translations::get('present_ert')
 		, 'query' => "SELECT * FROM " . Settings::get('protime_tables_prefix') . "curric WHERE " . $oBeoBhv->getQuery() . " ORDER BY NAME, FIRSTNAME "
 		, 'count_total' => false
+		, 'reset_group_counter' => true
 	);
 
 	$ret .= "
@@ -77,7 +91,9 @@ function createBrandContent( ) {
 </TR>
 ";
 
-		$groupCounter = 0;
+		if ( $item['reset_group_counter'] ) {
+			$groupCounter = 0;
+		}
 
 		//
 		$stmt = $dbConn->getConnection()->prepare( $item['query'] );
