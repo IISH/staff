@@ -6,6 +6,7 @@
 	<script language="JavaScript" src="javascript/shared.js"></script>
 	<meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
 	<meta name="Robots" content="noindex,nofollow">
+	<link rel="icon" type="img/ico" href="{favicon}">
 	<style type="text/css" media="all">@import url("/design/presentornot.css.php?c={color}");</style>
 <script language="Javascript">
 <!--

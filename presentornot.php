@@ -16,7 +16,7 @@ $date = class_datetime::get_date($protect);
 
 // create webpage
 $oPage = new Page('design/page.php', $settings);
-$oPage->setTitle('Staff | ' . $pageSettings['title']);
+$oPage->setTitle('Staff - ' . $pageSettings['title']);
 $oPage->setContent(createPresentContent( $pageSettings ));
 
 // show page

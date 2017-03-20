@@ -16,7 +16,7 @@ $date = class_datetime::get_date($protect);
 
 // create webpage
 $oPage = new Page('design/page.php', $settings);
-$oPage->setTitle('Staff | ' . Translations::get('menu_absences'));
+$oPage->setTitle('Staff - ' . Translations::get('menu_absences'));
 $oPage->setContent(createPresentContent( ));
 
 // show page

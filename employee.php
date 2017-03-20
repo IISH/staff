@@ -16,7 +16,7 @@ $staff = new ProtimeUser($id);
 
 // create webpage
 $oPage = new Page('design/page.php', $settings);
-$oPage->setTitle(Translations::get('iisg_employee') . ' | ' . $staff->getNiceFirstLastname());
+$oPage->setTitle(Translations::get('iisg_employee') . ' - ' . $staff->getNiceFirstLastname());
 $oPage->setContent(createStaffContent( $staff ));
 
 // show page

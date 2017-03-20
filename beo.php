@@ -16,7 +16,7 @@ $date = class_datetime::get_date($protect);
 
 // create webpage
 $oPage = new Page('design/page.php', $settings);
-$oPage->setTitle('Staff | ' . strip_tags($oBeo->getLabel()));
+$oPage->setTitle('Staff - ' . strip_tags($oBeo->getLabel()));
 $oPage->setContent(createBhvEhboContent( $oBeo ));
 
 // show page

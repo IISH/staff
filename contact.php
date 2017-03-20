@@ -8,7 +8,7 @@ if ( !isset($settings) ) {
 
 // create webpage
 $oPage = new Page('design/page.php', $settings);
-$oPage->setTitle('Staff | ' . Translations::get('contact'));
+$oPage->setTitle('Staff - ' . Translations::get('contact'));
 $oPage->setContent(createContactContent( ));
 
 // show page

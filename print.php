@@ -10,7 +10,7 @@ $oWebuser->checkLoggedIn();
 
 // create webpage
 $oPage = new Page('design/page.php', $settings);
-$oPage->setTitle('Staff | ' . Translations::get('header_print'));
+$oPage->setTitle('Staff - ' . Translations::get('header_print'));
 $oPage->setContent(createSpecialNumbersContent( ));
 
 // show page

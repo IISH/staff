@@ -17,7 +17,8 @@ $date = class_datetime::get_date($protect);
 
 // create webpage
 $oPage = new Page('design/page.php', $settings);
-$oPage->setTitle('Staff | ' . Translations::get('menu_fire'));
+$oPage->setTitle('Staff - ' . Translations::get('menu_fire'));
+$oPage->setFavicon("images/misc/fire.ico");
 $oPage->setContent(createBrandContent( ));
 
 // show page

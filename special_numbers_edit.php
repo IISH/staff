@@ -14,7 +14,7 @@ if ( !$oWebuser->isAdmin() ) {
 
 // create webpage
 $oPage = new Page('design/page.php', $settings);
-$oPage->setTitle('Staff | ' . Translations::get('header_specialnumbers'));
+$oPage->setTitle('Staff - ' . Translations::get('header_specialnumbers'));
 $oPage->setContent(createSpecialNumbersContent( ));
 
 // show page

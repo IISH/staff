@@ -9,6 +9,7 @@ class Page {
 	protected $tab;
 	protected $title;
 	protected $color;
+	protected $favicon;
 
 	function __construct($page_template) {
 		$this->page_template = $page_template;
@@ -16,6 +17,7 @@ class Page {
 		$this->tab = 0;
 		$this->title = '';
 		$this->color = '73A0C9';
+		$this->favicon = 'favicon.ico';
 	}
 
 	public function getPage() {
@@ -25,10 +27,11 @@ class Page {
 		$page = $oFile->getFileSource($this->page_template);
 		$page = str_replace('{url}', $this->getUrl(), $page);
 
-		$page = str_replace('{content}', $this->getContent(), $page);
+		$page = str_replace('{content}', $this->content, $page);
 
-		$page = str_replace('{title}', $this->getTitle(), $page);
-		$page = str_replace('{color}', $this->getColor(), $page);
+		$page = str_replace('{title}', $this->title, $page);
+		$page = str_replace('{favicon}', $this->favicon, $page);
+		$page = str_replace('{color}', $this->color, $page);
 
 		$page = str_replace('{menu}', $this->createMenu(), $page);
 
@@ -81,6 +84,10 @@ class Page {
 
 	public function setContent( $content ) {
 		$this->content = $content;
+	}
+
+	public function setFavicon( $favicon ) {
+		$this->favicon = $favicon;
 	}
 
 	public function getContent() {
