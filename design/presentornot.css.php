@@ -285,7 +285,7 @@ th.employee_schedule {
 	border-width: thin;
 	border-color: grey;
 	font-size: 90%;
-	width: 28px;
+	width: 35px;
 	text-align: center;
 }
 

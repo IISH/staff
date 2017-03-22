@@ -53,6 +53,7 @@ ORDER BY ${prefix}lnk_curric_profile.DATEFROM DESC, CAST(${prefix}cyc_dp.DAYNR A
 
 			$this->arr[] = array( 'date' => $date, 'dayOfWeek' => $dayOfWeek, 'minutes' => $minutes );
 		}
+//		preprint($this->arr);
 	}
 
 	public function getCurrentSchedule() {
@@ -94,6 +95,12 @@ ORDER BY ${prefix}lnk_curric_profile.DATEFROM DESC, CAST(${prefix}cyc_dp.DAYNR A
 					if ( $element['dayOfWeek'] < $lastWeekday ) {
 						$ret .= "</tr>
 ";
+					}
+
+					// if by accident reception did not enter a value for a specific day, we then miss one or more values
+					// by checking the previous 'lastWeekday' with the current weekday we can calculate if we have to add extra table cells
+					if ( $element['dayOfWeek']-$lastWeekday > 1 ) {
+						$ret .= str_repeat("	<td class=\"employee_schedule\"></td>\n", $element['dayOfWeek']-$lastWeekday-1);
 					}
 
 					if ( $element['dayOfWeek'] <= $nrOfDays ) {

@@ -100,12 +100,14 @@ function createStaffContent( $staff ) {
 ";
 
 	// EMAIL
-	$ret .= "
+	if ( $staff->getEmail() != '' ) {
+		$ret .= "
 <tr>
 	<td>" . Translations::get('lbl_email') . ":</td>
 	<td><a href=\"mailto:" . $staff->getEmail() . "\">" . $staff->getEmail() . "</a></td>
 </tr>
 ";
+	}
 
 	// DEPARTMENT
 	$ret .= "
