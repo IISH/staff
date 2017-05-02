@@ -1,4 +1,5 @@
 <?php
+die('disabled by gcu');
 require_once "../classes/start.inc.php";
 
 $path_parts['filename'] = 'staff_feestdagen';

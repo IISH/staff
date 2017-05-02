@@ -245,7 +245,7 @@ class ProtimeUser {
 	}
 
 	public function hasAuthorisationTabAbsences() {
-		return ( $this->isAdmin() || in_array('tab_absences', $this->arrDepartmentRoleAuthorisation) );
+		return ( $this->isAdmin() || in_array('tab_absences', $this->arrDepartmentRoleAuthorisation) || in_array('tab_absences', $this->arrUserAuthorisation) );
 	}
 
 	public function isBhv() {
@@ -276,23 +276,23 @@ class ProtimeUser {
 	}
 
 	public function hasAuthorisationTabFire() {
-		return ( $this->isAdmin() || in_array('tab_fire', $this->arrDepartmentRoleAuthorisation) );
+		return ( $this->isAdmin() || in_array('tab_fire', $this->arrDepartmentRoleAuthorisation) || in_array('tab_fire', $this->arrUserAuthorisation) );
 	}
 
 	public function hasAuthorisationReasonOfAbsenceAll() {
-		return ( $this->isAdmin() || in_array('reason_of_absence_all', $this->arrDepartmentRoleAuthorisation) );
+		return ( $this->isAdmin() || in_array('reason_of_absence_all', $this->arrDepartmentRoleAuthorisation) || in_array('reason_of_absence_all', $this->arrUserAuthorisation) );
 	}
 
 	public function hasAuthorisationReasonOfAbsenceDepartment() {
-		return ( $this->isAdmin() || in_array('reason_of_absence_department', $this->arrDepartmentRoleAuthorisation) );
+		return ( $this->isAdmin() || in_array('reason_of_absence_department', $this->arrDepartmentRoleAuthorisation) || in_array('reason_of_absence_department', $this->arrUserAuthorisation) );
 	}
 
 	public function hasAuthorisationBeoTelephone() {
-		return ( $this->isAdmin() || in_array('beo_telephone', $this->arrDepartmentRoleAuthorisation) );
+		return ( $this->isAdmin() || in_array('beo_telephone', $this->arrDepartmentRoleAuthorisation) || in_array('beo_telephone', $this->arrUserAuthorisation) );
 	}
 
 	public function hasAuthorisationTabOntruimer() {
-		return ( $this->isAdmin() || in_array('tab_ontruimer', $this->arrDepartmentRoleAuthorisation) );
+		return ( $this->isAdmin() || in_array('tab_ontruimer', $this->arrDepartmentRoleAuthorisation) || in_array('tab_ontruimer', $this->arrUserAuthorisation) );
 	}
 
 	public function getId() {
@@ -402,7 +402,7 @@ class ProtimeUser {
 	}
 
 	public function hasInOutTimeAuthorisation() {
-		return ( $this->isAdmin() || in_array('inout_time', $this->arrDepartmentRoleAuthorisation) );
+		return ( $this->isAdmin() || in_array('inout_time', $this->arrDepartmentRoleAuthorisation) || in_array('inout_time', $this->arrUserAuthorisation) );
 	}
 
 	public function isHeadOfDepartment() {
@@ -472,6 +472,7 @@ class ProtimeUser {
 		$string = str_ireplace('(vrijwillig)', '', $string);
 		$string = str_ireplace('(stz)', '', $string);
 		$string = str_ireplace('(rec)', '', $string);
+		$string = str_ireplace('(kantine)', '', $string);
 		$string = str_ireplace('(uu)', '', $string);
 
 		return $string;

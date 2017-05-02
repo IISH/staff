@@ -201,38 +201,6 @@ function getAndProtectSearch($field = 's') {
 	return $s;
 }
 
-function getAbsencesAndHolidays($eid, $year, $month ) {
-	global $databases, $dbConn;
-	$language = getLanguage();
-	$min_minutes = 120;
-
-	$ret = array();
-
-	$yearMonth = createDateAsString($year, $month);
-
-	$prefix = Settings::get('protime_tables_prefix');
-
-	// SHORT_1 - dutch, SHORT_2 - english
-	$query = "
-SELECT CODE, ${prefix}p_absence.REC_NR, ${prefix}p_absence.PERSNR, ${prefix}p_absence.BOOKDATE, ${prefix}p_absence.ABSENCE_VALUE, ${prefix}p_absence.ABSENCE_STATUS, ${prefix}absence.SHORT_" . $language . ", ${prefix}p_absence.ABSENCE
-FROM ${prefix}p_absence
-	LEFT OUTER JOIN ${prefix}absence ON ${prefix}p_absence.ABSENCE = ${prefix}absence.ABSENCE
-WHERE ${prefix}p_absence.PERSNR=" . $eid . " AND ${prefix}p_absence.BOOKDATE LIKE '" . $yearMonth . "%' AND ${prefix}p_absence.ABSENCE NOT IN (5, 19)
-AND ( ${prefix}p_absence.ABSENCE_VALUE>=" . $min_minutes . " OR ${prefix}p_absence.ABSENCE_VALUE=0 )
-ORDER BY ${prefix}p_absence.BOOKDATE, ${prefix}p_absence.REC_NR
-";
-
-	$stmt = $dbConn->getConnection()->prepare($query);
-	$stmt->execute();
-	$result = $stmt->fetchAll();
-	foreach ($result as $row) {
-		// SHORT_1 - dutch, SHORT_2 - english
-		$ret[] = array( 'code' => $row["CODE"], 'date' => $row["BOOKDATE"], 'description' => strtolower($row["SHORT_" . $language]) );
-	}
-
-	return $ret;
-}
-
 function Generate_Query($arrField, $arrSearch) {
 	$retval = '';
 	$separatorBetweenValues = '';

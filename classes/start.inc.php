@@ -14,6 +14,8 @@ if ( !isset($_SESSION["loginname"]) ) {
 
 //
 require_once dirname(__FILE__) . "/_misc_functions.inc.php";
+require_once dirname(__FILE__) . "/absence_calendar.inc.php";
+require_once dirname(__FILE__) . "/absence_calendar_format.inc.php";
 require_once dirname(__FILE__) . "/allowed_visible_absences.inc.php";
 require_once dirname(__FILE__) . "/authentication.inc.php";
 require_once dirname(__FILE__) . "/color.inc.php";

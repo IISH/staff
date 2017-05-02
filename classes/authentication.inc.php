@@ -2,7 +2,7 @@
 
 class Authentication {
 	public static function authenticate( $login, $password ) {
-	    global $active_directories;
+		global $active_directories;
 		return Authentication::check_ldap('iisgnet\\' . $login, $password, $active_directories);
 	}
 
@@ -29,7 +29,7 @@ class Authentication {
 				if ($bd) {
 					$login_correct = 1;
 				} else {
-                    error_log("LOGIN FAILED $user from " . Misc::get_remote_addr() . " (AD: " . $server . ")");
+					error_log("LOGIN FAILED $user from " . Misc::get_remote_addr() . " (AD: " . $server . ")");
 				}
 
 				// never forget to unbind!

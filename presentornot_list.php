@@ -30,18 +30,22 @@ $favIds = implode(',', $oWebuser->getFavourites('present'));
 $checkInOutIds = implode(',', $oWebuser->getFavourites('checkinout'));
 
 // CRITERIUM
+$showCalendar = 0;
 $queryCriterium = '';
 $queryCriterium2 = '';
 $title = '';
 if ( $s == '-a-' ) {
 	//
 	$title = Translations::get('all_employees');
+	$showCalendar = 0;
 } elseif ( $s == '-r-' ) {
 	//
 	$title = Translations::get('absent_employes');
+	$showCalendar = 0;
 } elseif ( $s == '-g-' ) {
 	//
 	$title = Translations::get('present_employees');
+	$showCalendar = 0;
 } elseif ( $s == '' ) {
 	// no search
 	// use favourites
@@ -49,11 +53,13 @@ if ( $s == '-a-' ) {
 	$queryCriterium2 = $queryCriterium;
 
 	$title = Translations::get('your_favourites');
+	$showCalendar = 1;
 } else {
 	// search
 	$queryCriterium = Generate_Query(array("NAME", "FIRSTNAME", "EMAIL", "USER02", Settings::get('curric_room'), "SHORT_" . getLanguage()), explode(' ', $s));
 	$queryCriterium2 = Generate_Query(array("NAME", "FIRSTNAME", "EMAIL", "USER02", Settings::get('curric_room')), explode(' ', $s));
 	$title = 'Search: ' . $s;
+	$showCalendar = 1;
 }
 
 // TODOGCU
@@ -94,20 +100,43 @@ foreach ($result as $row) {
 </tr>
 ";
 	} else {
+		$absenceCalendarWeek = '';
+
+		if ( $showCalendar ) {
+			$arrHolidays = getNationalHolidays(date("Y"), date("m"));
+
+			$oAbsenceCalendar = new AbsenceCalendar( $oEmployee->getId());
+			$arrAbsences = $oAbsenceCalendar->getAbsencesAndHolidaysWeek(date("Y"), date("m"), date("d") );
+
+			$firstDayOfChosenWeek = DateTime::createFromFormat('Y-m-d', date("Y-m-d"));
+			$firstDayOfChosenWeek->modify('-' . ( date("w") - 1 ) . ' day');
+
+			$absenceCalendarWeek = AbsenceCalendarFormat::InWeekFormat( date("Y"), date("m"), $firstDayOfChosenWeek->format('d'), $arrAbsences, $arrHolidays );
+		}
 
 		$tmp = "
 <table class=\"photobook\">
 <tr class=\"photobook\">
-	<td  class=\"photobook\" colspan=4>" . createUrl( array( 'url' => 'employee.php?id=' . $oEmployee->getId(), 'label' => '::PHOTO::' ) ) . "</td>
+	<td class=\"photobook\" colspan=4>" . createUrl( array( 'url' => 'employee.php?id=' . $oEmployee->getId(), 'label' => '::PHOTO::' ) ) . "</td>
 </tr>
 <tr>
-	<td  class=\"photobook\" colspan=4>" . createUrl( array( 'url' => 'employee.php?id=' . $oEmployee->getId(), 'label' => $oEmployee->getNiceFirstLastname() ) ) . "</td>
+	<td class=\"photobook\" colspan=4>" . createUrl( array( 'url' => 'employee.php?id=' . $oEmployee->getId(), 'label' => $oEmployee->getNiceFirstLastname() ) ) . "</td>
 </tr>
 <tr>
 	<td class=\"photobook\"><div id=\"divAddRemove" . $oEmployee->getId() . "\">::ADDREMOVE::</div></td>
 	<td class=\"photobook\"><div id=\"divCheckInOut" . $oEmployee->getId() . "\">::CHECKINOUT::</div></td>
 	<td class=\"photobook presentornot_absence\" colspan=2 width=\"100px\" style=\"::STATUS_STYLE::\"><A class=\"checkinouttime\" TITLE=\"::STATUS_ALT::\">::STATUS_TEXT::</A></td>
 </tr>
+";
+		if ( $showCalendar ) {
+			$tmp .= "
+<tr>
+	<td class=\"photobook\" colspan=\"4\">::ABSENCE::</td>
+</tr>
+";
+		}
+
+		$tmp .= "
 <tr>
 	<td class=\"photobook\" colspan=4>" . Translations::get('lbl_telephone_short') . ": " . valueOr(Telephone::getTelephonesHref($oEmployee->getTelephones())) . "</td>
 </tr>
@@ -129,6 +158,8 @@ foreach ($result as $row) {
         }
 		$photo = "<img src=\"$photo\"  style=\"height:140px;\" title=\"$alttitle\">";
 		$tmp = str_replace('::PHOTO::', $photo, $tmp);
+
+		$tmp = str_replace('::ABSENCE::', $absenceCalendarWeek, $tmp);
 	}
 
 	//
@@ -237,7 +268,7 @@ if ( count($retvalArray) > 0 ) {
 } elseif ( $s != '' ) {
 	$retval .= '<br><span class="error">' . Translations::get('nothing_found') . '</span>';
 } else {
-	$retval .= '<br>' . Translations::get('start_searching');
+	$retval .= '<br><span class="error">' . Translations::get('start_searching') . '</span>';
 }
 
 $retval = "<h1>$title</h1>" . $retval;

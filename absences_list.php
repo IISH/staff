@@ -18,7 +18,8 @@ $s = getAndProtectSearch();
 $retval = '';
 
 //
-$favIds = implode(',', $oWebuser->getFavourites('vakantie'));
+//$favIds = implode(',', $oWebuser->getFavourites('vakantie'));
+$favIds = implode(',', $oWebuser->getFavourites('present'));
 
 // CRITERIUM
 $queryCriterium = '';
@@ -59,7 +60,6 @@ if ( $selectedYear < date("Y")-1 ) {
 
 $daysInCurrentMonth = cal_days_in_month(CAL_GREGORIAN, $selectedMonth, $selectedYear);
 
-//$cellWidth = 18;
 $cellWidth = 23;
 
 $arrHolidays = getNationalHolidays($selectedYear, $selectedMonth );
@@ -69,7 +69,7 @@ if ( $to_short != 1 ) {
 	// TODOGCU
 	// loop employees
 	$querySelect = "
-SELECT DISTINCT " . Settings::get('protime_tables_prefix') . "curric.PERSNR
+SELECT DISTINCT " . Settings::get('protime_tables_prefix') . "curric.PERSNR, " . Settings::get('protime_tables_prefix') . "curric.FIRSTNAME, " . Settings::get('protime_tables_prefix') . "curric.NAME
 FROM " . Settings::get('protime_tables_prefix') . "curric
 	LEFT JOIN staff_today_checkinout ON protime_curric.PERSNR = staff_today_checkinout.PERSNR AND  staff_today_checkinout.BOOKDATE = '" . date("Ymd") . "'
 	LEFT JOIN " . Settings::get('protime_tables_prefix') . "depart ON " . Settings::get('protime_tables_prefix') . "curric.DEPART = " . Settings::get('protime_tables_prefix') . "depart.DEPART
@@ -112,39 +112,10 @@ ORDER BY " . Settings::get('protime_tables_prefix') . "curric.FIRSTNAME, " . Set
 		}
 
 		//
-		$arrVakantie = getAbsencesAndHolidays($oEmployee->getId(), $selectedYear, $selectedMonth );
+		$oAbsenceCalendar = new AbsenceCalendar($oEmployee->getId());
+		$arrVakantie = $oAbsenceCalendar->getAbsencesAndHolidaysMonth($selectedYear, $selectedMonth );
 
-		$vak = '';
-
-		for ( $i = 1; $i <= $daysInCurrentMonth; $i++ ) {
-			$style = "border: thin solid white;";
-			//
-			$celValue = '&nbsp;&nbsp;';
-
-			$cellStyle = getStyle($selectedYear, $selectedMonth, $i, $arrVakantie, $arrHolidays);
-
-			$style .= $cellStyle["tdStyle"];
-			if ( $cellStyle["alt"] != '' ) {
-				$cellStyleAlt = $cellStyle["alt"];
-				$cellStyleHrefStyle = $cellStyle["hrefStyle"];
-
-				//
-				if ( !$oWebuser->isAdmin() && !$oWebuser->isHeadOfDepartment() && !$oWebuser->hasAuthorisationReasonOfAbsenceAll() && !$oWebuser->hasInOutTimeAuthorisation() ) {
-					$cellStyleAlt = '';
-					$cellStyleHrefStyle = 'color:white;';
-				}
-
-				//
-				$celValue = '<a title="' . $cellStyleAlt . '" style="' . $cellStyleHrefStyle . '">' . $i . '</a>';
-			}
-
-			// width
-			$style .= "width: " . $cellWidth . "px;";
-
-			$vak .= "<TD style=\"" . $style . "\" align=\"center\" ><font size=-3>" . $celValue . "</font></TD>";
-		}
-
-		$vak = str_replace('::VAK::', $vak, "<TABLE border=0 cellspacing=0 cellpadding=0><TR>::VAK::</TR></table>");
+		$vak = AbsenceCalendarFormat::inMonthListFormat($selectedYear, $selectedMonth, $arrVakantie, $arrHolidays );
 
 		$tmp = str_replace('::VAKANTIE::', $vak, $tmp);
 
@@ -159,7 +130,7 @@ ORDER BY " . Settings::get('protime_tables_prefix') . "curric.FIRSTNAME, " . Set
 
 		$celValue = $i;
 
-		$cellStyle = getStyle($selectedYear, $selectedMonth, $i, array(), $arrHolidays);
+		$cellStyle = getStyle($selectedYear, $selectedMonth, $i, array(), $arrHolidays,1 );
 
 		$extrastyle .= $cellStyle["tdStyle"];
 
@@ -205,100 +176,6 @@ ORDER BY " . Settings::get('protime_tables_prefix') . "curric.FIRSTNAME, " . Set
 //
 echo $retval;
 
-function calculateNrOfDaysForMonth($year, $month) {
-	return cal_days_in_month(CAL_GREGORIAN, $month, $year);
-}
-
-function getStyle($selectedYear, $selectedMonth, $day, $absences = array(), $holidays = array()) {
-	global $oWebuser;
-
-	$tdStyle = '';
-	$hrefStyle = '';
-	$alt = '';
-
-	$datum = createDateAsString($selectedYear, $selectedMonth, $day);
-	$dayOfWeek = date("w", mktime(0,0,0,$selectedMonth, $day, $selectedYear));
-
-	// if
-	if ( $tdStyle == '' && $dayOfWeek != 0 && $dayOfWeek != 6 ) {
-		for ($i = 0; $i < count($holidays); $i++) {
-			if ( $datum == str_replace('-', '', $holidays[$i]->getDate()) ) {
-				if ( strtolower($holidays[$i]->getDescription()) == 'bridgeday' ) {
-					$tdStyle = class_colors::get('bridgeday')->getBackgroundColor();
-					$hrefStyle = class_colors::get('bridgeday')->getFontColor();
-				} else {
-					$tdStyle = class_colors::get('fst')->getBackgroundColor();
-					$hrefStyle = class_colors::get('fst')->getFontColor();
-				}
-				$alt = $holidays[$i]->getDescription();
-			}
-		}
-	}
-
-	// absences
-	if ( $tdStyle == '' && $dayOfWeek != 0 && $dayOfWeek != 6 ) {
-		for ($i = 0; $i < count($absences); $i++) {
-			if ( $datum == $absences[$i]["date"] ) {
-				//
-				if ( !$oWebuser->hasInOutTimeAuthorisation() && !$oWebuser->isAdmin() && !$oWebuser->hasAuthorisationTabAbsences() && !$oWebuser->isHeadOfDepartment() && !$oWebuser->hasInOutTimeAuthorisation() ) {
-					$tdStyle = 'background-color: #C62431;';
-					$hrefStyle = 'color:white';
-					$alt = 'Leave';
-				} else {
-					if ( class_colors::get(strtolower($absences[$i]["code"])) !== null ) {
-						$tdStyle = class_colors::get(strtolower($absences[$i]["code"]))->getBackgroundColor();
-						$hrefStyle = class_colors::get(strtolower($absences[$i]["code"]))->getFontColor();
-					} else {
-						$tdStyle = Settings::get('no_color_defined');
-						$hrefStyle = '';
-					}
-					$alt = $absences[$i]["description"];
-				}
-			}
-		}
-	}
-
-	if ( $tdStyle == '' ) {
-		if ( $day == date("d") && $selectedMonth == date("m") && $selectedYear == date("Y") ) {
-			// current day
-			$tdStyle = class_colors::get(strtolower('today'))->getBackgroundColor();
-			$hrefStyle = class_colors::get(strtolower('today'))->getFontColor();
-		} elseif ( $dayOfWeek == 0 || $dayOfWeek == 6 ) {
-			// weekend
-			$tdStyle = class_colors::get(strtolower('weekend'))->getBackgroundColor();
-			$hrefStyle = class_colors::get(strtolower('weekend'))->getFontColor();
-		}
-	}
-
-	$style["tdStyle"] = $tdStyle;
-	$style["hrefStyle"] = $hrefStyle;
-	$style["alt"] = $alt;
-
-	return $style;
-}
-
-function isHoliday($datum, $holidays) {
-	for ($i = 0; $i < count($holidays); $i++) {
-		if ( $datum == $holidays[$i]->getDate() ) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
-function getNationalHolidays($year, $month) {
-	global $dbConn;
-
-	$arr = array();
-
-    $query = "SELECT * FROM staff_feestdagen WHERE datum LIKE '" . $year . '-' . substr("0" . $month,-2) . "-%' AND isdeleted=0 ";
-	$stmt = $dbConn->getConnection()->prepare($query);
-	$stmt->execute();
-	$result = $stmt->fetchAll();
-	foreach ($result as $row) {
-   		$arr[] = new Holiday($row["ID"]);
-    }
-
-	return $arr;
-}
+//function calculateNrOfDaysForMonth($year, $month) {
+//	return cal_days_in_month(CAL_GREGORIAN, $month, $year);
+//}

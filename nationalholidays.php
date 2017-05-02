@@ -27,7 +27,7 @@ function createNationalHolidaysContent( ) {
 	$oView = new View();
 
 	$oView->set_view( array(
-		'query' => 'SELECT * FROM staff_feestdagen WHERE isdeleted=0 AND datum >= \'' . date('Y-m-d') . '\' ORDER BY datum ASC '
+		'query' => 'SELECT * FROM staff_feestdagen WHERE isdeleted=0 AND datum >= \'' . date('Y-m-d') . '\' AND datum <= \'' . (date('Y')+1) . '-01-02\' ORDER BY datum ASC '
 		, 'count_source_type' => 'query'
 		, 'table_parameters' => ' cellspacing="0" cellpadding="0" border="0" '
 		));
@@ -42,7 +42,7 @@ function createNationalHolidaysContent( ) {
 		'fieldname' => 'omschrijving'
 		, 'fieldlabel' => Translations::get('lbl_description')
 		)));
-
+/*
 	$oView->add_field( new FieldBit ( array(
 		'fieldname' => 'vooreigenrekening'
 		, 'fieldlabel' => Translations::get('lbl_bridgeday')
@@ -50,7 +50,7 @@ function createNationalHolidaysContent( ) {
 		, 'different_true_value' => Translations::get('lbl_bridgeday_yes')
 		, 'different_false_value' => Translations::get('lbl_bridgeday_no')
 		)));
-
+*/
 	// calculate and show view
 	$ret .= $oView->generate_view();
 

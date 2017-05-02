@@ -62,6 +62,8 @@ if (!xmlhttpCheckInOut && window.createRequest) {
 }
 
 function tcRefreshSearch() {
+//	document.getElementById('tcContentSearch').innerHTML = '<center><img src=\"images/misc/loading.gif\"></center>';
+
 	var strDesign = document.getElementById('fldDesign').value;
 	xmlhttpSearch.open(\"GET\", \"" . $oBeo->getScriptName() . "?l=\" + escape(strDesign), true);
 	xmlhttpSearch.onreadystatechange=function() {
@@ -107,7 +109,7 @@ function setDesign(fldValue) {
 // -->
 </div>
 </form>
-<div id=\"tcContentSearch\"><br></div>
+<div id=\"tcContentSearch\"><center><img src=\"images/misc/loading.gif\"></center></div>
 <script type=\"text/javascript\">
 <!--
 tcRefreshSearchStart();

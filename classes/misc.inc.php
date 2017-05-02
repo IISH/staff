@@ -5,6 +5,102 @@ function preprint( $object ) {
 	echo '</pre>';
 }
 
+function getStyle($selectedYear, $selectedMonth, $day, $absences = array(), $holidays = array(), $colorInCurrentDay = 1) {
+	global $oWebuser;
+
+	$tdStyle = '';
+	$hrefStyle = '';
+	$alt = '';
+
+	$datum = createDateAsString($selectedYear, $selectedMonth, $day);
+	$dayOfWeek = date("w", mktime(0,0,0,$selectedMonth, $day, $selectedYear));
+
+	// if
+	if ( $tdStyle == '' && $dayOfWeek != 0 && $dayOfWeek != 6 ) {
+		for ($i = 0; $i < count($holidays); $i++) {
+			if ( $datum == str_replace('-', '', $holidays[$i]->getDate()) ) {
+				if ( strtolower($holidays[$i]->getDescription()) == 'bridgeday' ) {
+					$tdStyle = class_colors::get('bridgeday')->getBackgroundColor();
+					$hrefStyle = class_colors::get('bridgeday')->getFontColor();
+				} else {
+					$tdStyle = class_colors::get('fst')->getBackgroundColor();
+					$hrefStyle = class_colors::get('fst')->getFontColor();
+				}
+				$alt = $holidays[$i]->getDescription();
+			}
+		}
+	}
+
+	// absences
+	if ( $tdStyle == '' && $dayOfWeek != 0 && $dayOfWeek != 6 ) {
+		for ($i = 0; $i < count($absences); $i++) {
+			if ( $datum == $absences[$i]["date"] ) {
+				//
+				if ( !$oWebuser->hasInOutTimeAuthorisation() && !$oWebuser->isAdmin() && !$oWebuser->hasAuthorisationTabAbsences() && !$oWebuser->isHeadOfDepartment() && !$oWebuser->hasInOutTimeAuthorisation() ) {
+					$tdStyle = 'background-color: #C62431;';
+					$hrefStyle = 'color:white';
+					$alt = 'Leave';
+				} else {
+					if ( class_colors::get(strtolower($absences[$i]["code"])) !== null ) {
+						$tdStyle = class_colors::get(strtolower($absences[$i]["code"]))->getBackgroundColor();
+						$hrefStyle = class_colors::get(strtolower($absences[$i]["code"]))->getFontColor();
+					} else {
+						$tdStyle = Settings::get('no_color_defined');
+						$hrefStyle = '';
+					}
+					$alt = $absences[$i]["description"];
+				}
+			}
+		}
+	}
+
+	if ( $tdStyle == '' ) {
+		if ( $day == date("d") && $selectedMonth == date("m") && $selectedYear == date("Y") ) {
+			// current day
+			if ( $colorInCurrentDay == 1 ) {
+				$tdStyle = class_colors::get(strtolower('today'))->getBackgroundColor();
+				$hrefStyle = class_colors::get(strtolower('today'))->getFontColor();
+			}
+		} elseif ( $dayOfWeek == 0 || $dayOfWeek == 6 ) {
+			// weekend
+			$tdStyle = class_colors::get(strtolower('weekend'))->getBackgroundColor();
+			$hrefStyle = class_colors::get(strtolower('weekend'))->getFontColor();
+		}
+	}
+
+	$style["tdStyle"] = $tdStyle;
+	$style["hrefStyle"] = $hrefStyle;
+	$style["alt"] = $alt;
+
+	return $style;
+}
+
+function isHoliday($datum, $holidays) {
+	for ($i = 0; $i < count($holidays); $i++) {
+		if ( $datum == $holidays[$i]->getDate() ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+function getNationalHolidays($year, $month) {
+	global $dbConn;
+
+	$arr = array();
+
+	$query = "SELECT * FROM staff_feestdagen WHERE datum LIKE '" . $year . '-' . substr("0" . $month,-2) . "-%' AND isdeleted=0 ";
+	$stmt = $dbConn->getConnection()->prepare($query);
+	$stmt->execute();
+	$result = $stmt->fetchAll();
+	foreach ($result as $row) {
+		$arr[] = new Holiday($row["ID"]);
+	}
+
+	return $arr;
+}
+
 class Misc {
 
     public static function get_remote_addr() {
@@ -27,6 +123,7 @@ class Misc {
 		$string = str_ireplace('(vrijwillig)', '', $string);
 		$string = str_ireplace('(stz)', '', $string);
 		$string = str_ireplace('(rec)', '', $string);
+		$string = str_ireplace('(kantine)', '', $string);
 		$string = str_ireplace('(uu)', '', $string);
 
 		return $string;

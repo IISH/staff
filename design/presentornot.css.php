@@ -399,3 +399,7 @@ table.fire a
 :-moz-placeholder { /* Firefox 18- */
 	color: darkgrey;
 }
+
+.minxcharacters {
+    font-size: 80%;
+}

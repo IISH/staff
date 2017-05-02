@@ -92,14 +92,26 @@ function setMonth(value) {
 }
 
 function tcRefreshSearch() {
+	//document.getElementById('tcContentSearch').innerHTML = '<center><img src=\"images/misc/loading.gif\"></center>';
+
 	var strSearch = document.getElementById('fldSearch').value;
-	xmlhttpSearch.open(\"GET\", \"absences_list.php?s=\" + escape(strSearch) + \"&y=\" + escape(document.getElementById('fldYear').value) + \"&m=\" + escape(document.getElementById('fldMonth').value), true);
-	xmlhttpSearch.onreadystatechange=function() {
-		if (xmlhttpSearch.readyState==4) {
-			document.getElementById('tcContentSearch').innerHTML = xmlhttpSearch.responseText;
+
+	if ( strSearch.length == 0 || strSearch.length >= 3 ) {
+
+		if ( strSearch != document.getElementById('fldPreviousSearch').value ) {
+			document.getElementById('tcContentSearch').innerHTML = '<center><img src=\"images/misc/loading.gif\"></center>';
 		}
+
+		xmlhttpSearch.open(\"GET\", \"absences_list.php?s=\" + escape(strSearch) + \"&y=\" + escape(document.getElementById('fldYear').value) + \"&m=\" + escape(document.getElementById('fldMonth').value), true);
+		xmlhttpSearch.onreadystatechange=function() {
+			if (xmlhttpSearch.readyState==4) {
+				document.getElementById('tcContentSearch').innerHTML = xmlhttpSearch.responseText;
+				document.getElementById('fldPreviousSearch').value = strSearch;
+			}
+		}
+		xmlhttpSearch.send(null);
+
 	}
-	xmlhttpSearch.send(null);
 }
 
 function tcRefreshSearchStart() {
@@ -133,7 +145,8 @@ function setSearchField(fldValue) {
 	<TD>
 
 " . Translations::get('lbl_quick_search') . ": <input type=\"\" name=\"fldSearch\" id=\"fldSearch\" maxlength=\"20\" onkeyup=\"tcRefreshSearch();\" value=\"" . $s . "\">
-<em>" . Translations::get('min_x_characters') . "</em> &nbsp; <a href=\"#\" onclick=\"javascript:setSearchField('');\">" . Translations::get('lbl_show_favourites') . "</a> &nbsp; <font size=-2></font>
+<span class=\"minxcharacters\">" . Translations::get('min_x_characters') . "</span> &nbsp; <a href=\"#\" onclick=\"javascript:setSearchField('');\">" . Translations::get('lbl_show_favourites') . "</a> &nbsp; 
+<input type=\"hidden\" name=\"fldPreviousSearch\" id=\"fldPreviousSearch\" value=\"\"> 
 	</TD>
 	<TD align=\"right\">
 <input type=\"hidden\" name=\"fldYear\" id=\"fldYear\" value=\"" . date("Y") . "\">
@@ -147,7 +160,7 @@ function setSearchField(fldValue) {
 </table>
 </form>
 <br>
-<div id=\"tcContentSearch\"></div>
+<div id=\"tcContentSearch\"><center><img src=\"images/misc/loading.gif\"></center></div>
 <script type=\"text/javascript\">
 <!--
 tcRefreshSearchStart();
