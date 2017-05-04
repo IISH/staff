@@ -394,12 +394,22 @@ table.fire a
 	color: darkgrey;
 }
 :-ms-input-placeholder { /* IE 10+ */
-	color: darkgrey;
+    color: darkgrey;
 }
 :-moz-placeholder { /* Firefox 18- */
-	color: darkgrey;
+    color: darkgrey;
 }
 
 .minxcharacters {
     font-size: 80%;
+}
+
+.blink {
+    animation: blinker 3s linear infinite;
+    color: #C62431;
+    font-weight: bold;
+}
+
+@keyframes blinker {
+    50% { opacity: 0; }
 }

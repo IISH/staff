@@ -151,6 +151,7 @@ function createStaffContent( $staff ) {
 </tr>
 ";
 	}
+
 	// SCHEDULE
 	$currentSchedule = new ProtimeUserSchedule($staff->getId(), date("Ymd"));
 	$ret .= "

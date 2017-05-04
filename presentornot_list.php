@@ -92,7 +92,7 @@ foreach ($result as $row) {
 <tr>
 	<td><div id=\"divAddRemove" . $oEmployee->getId() . "\">::ADDREMOVE::</div></td>
 	<td><div id=\"divCheckInOut" . $oEmployee->getId() . "\">::CHECKINOUT::</div></td>
-	<td>" . createUrl( array( 'url' => 'employee.php?id=' . $oEmployee->getId(), 'label' => $oEmployee->getNiceFirstLastname() ) ) . "</td>
+	<td>::UITDIENST::" . createUrl( array( 'url' => 'employee.php?id=' . $oEmployee->getId(), 'label' => $oEmployee->getNiceFirstLastname() ) ) . "</td>
 	<td class=\"presentornot_absence\" style=\"::STATUS_STYLE::\"><A class=\"checkinouttime\" TITLE=\"::STATUS_ALT::\">::STATUS_TEXT::</A></td>
 	<td align=\"center\">" . Telephone::getTelephonesHref($oEmployee->getTelephones()) . "</td>
 	<td align=\"center\">" . static_Room::createRoomUrl( $oEmployee->getRoom() ) . "</td>
@@ -117,7 +117,7 @@ foreach ($result as $row) {
 		$tmp = "
 <table class=\"photobook\">
 <tr class=\"photobook\">
-	<td class=\"photobook\" colspan=4>" . createUrl( array( 'url' => 'employee.php?id=' . $oEmployee->getId(), 'label' => '::PHOTO::' ) ) . "</td>
+	<td class=\"photobook\" colspan=4>::UITDIENST::" . createUrl( array( 'url' => 'employee.php?id=' . $oEmployee->getId(), 'label' => '::PHOTO::' ) ) . "</td>
 </tr>
 <tr>
 	<td class=\"photobook\" colspan=4>" . createUrl( array( 'url' => 'employee.php?id=' . $oEmployee->getId(), 'label' => $oEmployee->getNiceFirstLastname() ) ) . "</td>
@@ -146,6 +146,7 @@ foreach ($result as $row) {
 </table>
 ";
 
+		//
 		$photo = $oEmployee->getPhoto();
         $alttitle = '';
         if ( checkPhotoExists(Settings::get('staff_images_directory') . $photo) ) {
@@ -159,8 +160,23 @@ foreach ($result as $row) {
 		$photo = "<img src=\"$photo\"  style=\"height:140px;\" title=\"$alttitle\">";
 		$tmp = str_replace('::PHOTO::', $photo, $tmp);
 
+		// absence
 		$tmp = str_replace('::ABSENCE::', $absenceCalendarWeek, $tmp);
 	}
+
+	// show person is 'uit dienst' if date_out is in the past
+	// only front desk and administrators
+	$dateOutWarning = '';
+	if ( ( $oWebuser->isAdmin() || $oWebuser->hasAuthorisationTabFire() ) && $oEmployee->getDateOut() != '0' && $oEmployee->getDateOut() < date("Y-m-d") ) {
+		if ( $layout == 'tabular' ) {
+			$separator = ' ';
+		} else {
+			$separator = '<br>';
+		}
+		$dateOutFormatted = class_datetime::formatDate($oEmployee->getDateOut());
+		$dateOutWarning = '<a title="' . str_replace('::DATE::', $dateOutFormatted, Translations::get("warning_uit_dienst_explanation")) . '" class="blink">' . Translations::get("warning_uit_dienst") . '</a>' . $separator;
+	}
+	$tmp = str_replace('::UITDIENST::', $dateOutWarning, $tmp);
 
 	//
 	if ( strpos(',' . $favIds . ',', ',' . $oEmployee->getId() . ',') !== false ) {
