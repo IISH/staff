@@ -28,7 +28,7 @@ class AbsenceCalendarFormat {
 				}
 			}
 
-			$celValue = '<a title="' . $cellStyleAlt . '" style="' . $cellStyleHrefStyle . '">' . substr($oDate->format('l'), 0, 2) . '</a>';
+			$celValue = '<a title="' . $cellStyleAlt . '" style="' . $cellStyleHrefStyle . '">' . substr(Translations::get('day' . $oDate->format('w')), 0, 2) . '</a>';
 
 			$vak .= "<TD style=\"" . $style . "\" align=\"center\" width=\"14%\"><font size=-3>" . $celValue . "</font></TD>";
 		}
