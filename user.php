@@ -149,50 +149,10 @@ function createUserContent( ) {
 	$ret .= "
 </table>
 </div>
-";
 
-	$ret .= "
 <div class=\"personalpage\">$photo</div>
+<br class=\"clearBoth\">
 ";
-
-	$smallerFontInstitutePrefix = $oWebuser->getUserSetting('smaller_font_institute_prefix', 0);
-//	$callViaComputer = $oWebuser->getUserSetting('call_via_computer', 0);
-//	$callViaTablet = $oWebuser->getUserSetting('call_via_tablet', 0);
-//	$callViaSmarthphone = $oWebuser->getUserSetting('call_via_mobile', 0);
-	$choices = array('No', 'Yes');
-
-	$ret .= "
-<div class=\"personalpage\">
-<b>Preferences</b><br>
-<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\">
-<tr>
-	<td>Smaller font institute prefix:&nbsp;</td>
-	<td valign=top>" . $choices[$smallerFontInstitutePrefix] . " <a href=\"switch.php?s=smallerfont&v=$smallerFontInstitutePrefix\">Switch</a></td>
-</tr>
-";
-
-//	$ret .= "
-//<tr>
-//	<td>Enable calls via computer:&nbsp;</td>
-//	<td valign=top>" . $choices[$callViaComputer] . " <a href=\"switch.php?s=callviacomputer&v=$callViaComputer\">Switch</a></td>
-//</tr>
-//<tr>
-//	<td>Enable calls via tablet:&nbsp;</td>
-//	<td valign=top>" . $choices[$callViaTablet] . " <a href=\"switch.php?s=callviatablet&v=$callViaTablet\">Switch</a></td>
-//</tr>
-//<tr>
-//	<td>Enable calls via mobile phone:&nbsp;</td>
-//	<td valign=top>" . $choices[$callViaSmarthphone] . " <a href=\"switch.php?s=callviamobile&v=$callViaSmarthphone\">Switch</a></td>
-//</tr>
-//";
-
-
-
-	$ret .= "
-</table>
-</div>";
-
-	$ret .= "<br class=\"clearBoth\">";
 
 	return $ret;
 }

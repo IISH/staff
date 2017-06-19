@@ -9,17 +9,15 @@ class Telephone {
 		$tel = Telephone::splitTelephoneInParts( $telephone );
 
 		foreach ( $tel as $part ) {
-			$telephoneStyled = Telephone::styleTelephone($part, $doStyling);
-
 			if ( $deviceType == 'phone' ) {
 				$telephoneHref = Telephone::createTelephoneUrlLink($part);
 				if ( $telephoneHref != '' ) {
-					$ret .= '<a href="tel:' . $telephoneHref . '">' . $telephoneStyled . '</a>';
+					$ret .= '<a href="tel:' . $telephoneHref . '">' . $part . '</a>';
 				} else {
-					$ret .= $telephoneStyled;
+					$ret .= $part;
 				}
 			} else {
-				$ret .= $telephoneStyled;
+				$ret .= $part;
 			}
 		}
 
@@ -48,31 +46,6 @@ class Telephone {
 		}
 
 		return $href;
-	}
-
-	public static function styleTelephone( $telephone, $doStyling = true ) {
-		global $oWebuser;
-
-		// lowercase institute prefix
-		if ( $doStyling && $oWebuser->getUserSetting('smaller_font_institute_prefix', 0) == 1 ) {
-			$pre = '<span style="font-size:70%;">';
-			$post = '</span>';
-
-			$lengthInstitutePrefix = strlen(Settings::get('institute_prefix'));
-			$lengthShortTelephoneNumber = Settings::get('max_length_short_company_telephone_number');
-			$pattern = '/^' . Settings::get('institute_prefix') . '[0-9]{' . $lengthShortTelephoneNumber . ',' . $lengthShortTelephoneNumber . '}$/';
-
-			// style
-			if ( preg_match($pattern, $telephone) ) {
-				$styled = $pre . substr($telephone, 0, $lengthInstitutePrefix) . $post . substr($telephone, $lengthInstitutePrefix, strlen($telephone)-$lengthInstitutePrefix);
-			} else {
-				$styled = $telephone;
-			}
-		} else {
-			$styled = $telephone;
-		}
-
-		return $styled;
 	}
 
 	public static function addCountryPrefixToTelephone($telephone) {

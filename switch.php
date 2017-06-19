@@ -1,4 +1,6 @@
 <?php
+die('deprecated. disabled by gcu');
+
 require_once "classes/start.inc.php";
 
 //
@@ -12,10 +14,6 @@ $switch = $protect->request('get', "s");
 $value = $protect->requestPositiveNumberOrEmpty('get', "v");
 
 switch ( $switch ) {
-	case "smallerfont":
-		$field = 'smaller_font_institute_prefix';
-		$howManyChoices = 2;
-		break;
 	case "callviacomputer":
 		$field = 'call_via_computer';
 		$howManyChoices = 2;

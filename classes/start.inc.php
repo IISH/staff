@@ -8,6 +8,7 @@ session_start();
 $settings = array();
 require_once dirname(__FILE__) . "/../sites/default/staff.settings.php";
 
+//
 if ( !isset($_SESSION["loginname"]) ) {
 	$_SESSION["loginname"] = '';
 }
