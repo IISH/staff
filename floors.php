@@ -12,17 +12,22 @@ $oPage->setTitle(Translations::get('iisg_employee') . ' | Floor plans');
 $oPage->setContent(createFloorsContent());
 
 // show page
-echo $oPage->getPage();
+echo $twig->render('design.html', $oPage->getPageAttributes() );
 
 function createFloorsContent() {
-	$ret = "";
+	global $twig;
+
+	$floorImages = array();
 
 	$numberOfLevels = Settings::get('number_of_levels');
 	if ( $numberOfLevels != '' && $numberOfLevels >= 0 ) {
 		for ( $i = 0; $i <= $numberOfLevels; $i++ ) {
-			$ret .= "<img src=\"" . Settings::get('floorplan_level' . $i) . "\"><br><br>";
+			$floorImages[] = Settings::get('floorplan_level' . $i);
 		}
 	}
 
-	return $ret;
+	return $twig->render('floors.html', array(
+		'title' => 'Floors'
+		, 'floorImages' => $floorImages
+	));
 }

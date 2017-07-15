@@ -12,14 +12,15 @@ $oPage->setTitle('Staff | Login');
 $oPage->setContent(createLoginPage());
 
 // show page
-echo $oPage->getPage();
+echo $twig->render('design.html', $oPage->getPageAttributes() );
 
 function createLoginPage() {
-	global $protect, $settings;
+	global $protect, $twig;
 
 	$fldLogin = '';
 	$error = '';
 
+	//
 	if ( $_SERVER['REQUEST_METHOD'] == 'POST' ) {
 		// get values
 		$fldLogin = $protect->request('post', 'fldLogin');
@@ -61,43 +62,24 @@ function createLoginPage() {
 		}
 	}
 
-	$ret = "
-<h1>" . Translations::get('please_log_in') . "</h1>
-";
-
-	if ( $error != '' ) {
-		$ret .= "<span class=\"error\">" . $error . "</span><br>";
-	}
-
-	$ret .= "
-<form name=\"frmA\" method=\"POST\" action=\"?" . $_SERVER["QUERY_STRING"] . "\">
-<table border=\"0\" cellspacing=\"0\" cellpadding=\"2\">
-<tr>
-	<td>" . Translations::get('loginname') . ":</td>
-	<td><input type=\"text\" name=\"fldLogin\" class=\"login\" maxlength=\"50\" value=\"" . $fldLogin . "\" placeholder=\"" . Translations::get('loginname_placeholder') . "\"> <i>" . Translations::get('loginname_help') . "</i></td>
-</tr>
-<tr>
-	<td>" . Translations::get('password') . ":&nbsp;</td>
-	<td><input type=\"password\" name=\"fldPassword\" class=\"password\" maxlength=\"50\" autocomplete=\"on\" placeholder=\"" . Translations::get('password_placeholder') . "\"></td>
-</tr>
-
-<tr>
-	<td align=\"right\"><!-- <input class=\"button_login\" type=\"reset\" name=\"btnReset\" value=\"" . Translations::get('btn_clear') . "\"> // -->&nbsp;</td>
-	<td>&nbsp;<input class=\"button_login\" type=\"submit\" name=\"btnSubmit\" value=\"" . Translations::get('btn_login') . "\"></td>
-</tr>
-</table>
-</form>
-";
-
-	$ret .= Translations::get('your_login_credentials_are');
-
-	$ret .= "
+	return $twig->render('login.html', array(
+		'title' => Translations::get('please_log_in')
+		, 'your_login_credentials_are' => Translations::get('your_login_credentials_are')
+		, 'error' => $error
+		, 'loginname' => $fldLogin
+		, 'action' => "?" . $_SERVER["QUERY_STRING"]
+		, 'btn_login' => Translations::get('btn_login')
+		, 'loginname_placeholder' => Translations::get('loginname_placeholder')
+		, 'loginname_help' => Translations::get('loginname_help')
+		, 'password_placeholder' => Translations::get('password_placeholder')
+		, 'lblPassword' => Translations::get('password')
+		, 'lblLoginname' => Translations::get('loginname')
+		, 'focusjavascriptcode' => "
 <script language=\"javascript\">
 <!--
 document.frmA.fldLogin.focus();
 // -->
 </script>
-";
-
-	return $ret;
+"
+	));
 }

@@ -1,0 +1,14 @@
+<h1>{{title}}</h1>
+
+<table class="nationalholidays">
+	<tr>
+		<th><a class="nolink">{{lblDate}}</a></th>
+		<th><a class="nolink">{{lblDescription}}</a></th>
+	</tr>
+	{% for day in days %}
+	<tr>
+		<td>{{day.date}}</td>
+		<td>{{day.description}}</td>
+	</tr>
+	{% endfor %}
+</table>

@@ -5,10 +5,14 @@ ini_set('display_errors', '1');
 session_start();
 
 //
+require_once dirname(__FILE__) . "/../vendor/autoload.php";
+
+//
 $settings = array();
 require_once dirname(__FILE__) . "/../sites/default/staff.settings.php";
 
 //
+//$_SESSION["loginname"] = 'gordan.cupac';
 if ( !isset($_SESSION["loginname"]) ) {
 	$_SESSION["loginname"] = '';
 }
@@ -80,7 +84,6 @@ if ( $_SESSION["FIRE_KEY_CORRECT"] != '1' ) {
 //
 $menu = array();
 $menu[] = new MenuItem(Translations::get('menu_presentornot'), 'presentornot.php');
-//$menu[] = new MenuItem(Translations::get('menu_photobook'), 'photobook.php');
 if ( $oWebuser->hasAuthorisationTabAbsences() ) {
 	$menu[] = new MenuItem(Translations::get('menu_absences'), 'absences.php');
 }
@@ -98,4 +101,7 @@ if ( $oWebuser->isSuperAdmin() ) {
 if ( $_SESSION["FIRE_KEY_CORRECT"] == '1' || $oWebuser->hasAuthorisationTabFire() ) {
 	$menu[] = new MenuItem(Translations::get('menu_fire'), 'fire.php', 'fire');
 }
-//$menu[] = new MenuItem(Translations::get('menu_contact'), 'contact.php');
+
+// load twig
+$loader = new Twig_Loader_Filesystem('templates');
+$twig = new Twig_Environment( $loader);

@@ -12,50 +12,27 @@ $oPage->setTitle('Staff - ' . Translations::get('header_nationalholidays'));
 $oPage->setContent(createNationalHolidaysContent( ));
 
 // show page
-echo $oPage->getPage();
+echo $twig->render('design.html', $oPage->getPageAttributes() );
 
 function createNationalHolidaysContent( ) {
-    global $databases;
+	global $dbConn, $twig;
 
-	$ret = "<h1>" . Translations::get('header_nationalholidays') . "</h1>";
+	$days = array();
+	$query = 'SELECT * FROM staff_feestdagen WHERE isdeleted=0 AND datum >= \'' . date('Y-m-d') . '\' AND datum <= \'' . (date('Y')+1) . '-01-02\' ORDER BY datum ASC ';
+	$stmt = $dbConn->getConnection()->prepare($query);
+	$stmt->execute();
+	$result = $stmt->fetchAll();
+	foreach ($result as $row) {
+		$days[] = array(
+			'date' => date('D j F Y', strtotime($row['datum']))
+			, 'description' => $row['omschrijving']
+		);
+	}
 
-	require_once("./classes/class_view/view.inc.php");
-	require_once("./classes/class_view/fieldtypes/field_date.inc.php");
-	require_once("./classes/class_view/fieldtypes/field.inc.php");
-	require_once("./classes/class_view/fieldtypes/field_bit.inc.php");
-
-	$oView = new View();
-
-	$oView->set_view( array(
-		'query' => 'SELECT * FROM staff_feestdagen WHERE isdeleted=0 AND datum >= \'' . date('Y-m-d') . '\' AND datum <= \'' . (date('Y')+1) . '-01-02\' ORDER BY datum ASC '
-		, 'count_source_type' => 'query'
-		, 'table_parameters' => ' cellspacing="0" cellpadding="0" border="0" '
-		));
-
-	$oView->add_field( new FieldDate ( array(
-		'fieldname' => 'datum'
-		, 'fieldlabel' => Translations::get('lbl_date')
-		, 'format' => 'D j F Y'
-		)));
-
-	$oView->add_field( new Field ( array(
-		'fieldname' => 'omschrijving'
-		, 'fieldlabel' => Translations::get('lbl_description')
-		)));
-/*
-	$oView->add_field( new FieldBit ( array(
-		'fieldname' => 'vooreigenrekening'
-		, 'fieldlabel' => Translations::get('lbl_bridgeday')
-		, 'show_different_values' => 1
-		, 'different_true_value' => Translations::get('lbl_bridgeday_yes')
-		, 'different_false_value' => Translations::get('lbl_bridgeday_no')
-		)));
-*/
-	// calculate and show view
-	$ret .= $oView->generate_view();
-
-	// add source
-	//$ret .= "<br>" . Translations::get('lbl_source') . ": <a href=\"https://intranet.iisg.nl/nl/manual/feest-en-sluitingsdagen\" target=\"_blank\">https://intranet.iisg.nl/nl/manual/feest-en-sluitingsdagen</a>";
-
-	return $ret;
+	return $twig->render('nationalholidays.html', array(
+		'title' => Translations::get('header_nationalholidays')
+		, 'lblDate' => Translations::get('lbl_date')
+		, 'lblDescription' => Translations::get('lbl_description')
+		, 'days' => $days
+	));
 }

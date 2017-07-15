@@ -14,18 +14,20 @@ $oPage->setTitle(Translations::get('iisg_employee') . ' | Floor plan level ' . $
 $oPage->setContent(createFloorContent( $f ));
 
 // show page
-echo $oPage->getPage();
+echo $twig->render('design.html', $oPage->getPageAttributes() );
 
 function createFloorContent( $floor ) {
-	$ret = "<a href=\"#\" onClick=\"window.history.back();\">Go back</a><br>";
+	global $twig;
 
 	$floorImage = Settings::get('floorplan_level' . $floor);
 	if ( $floorImage != '' ) {
-		$ret .= "<a href=\"#\" onClick=\"window.history.back();\" alt=\"Click to go back\" title=\"Click to go back\"><img src=\"" . $floorImage . "\"></a>";
+		$floor = "<a href=\"#\" onClick=\"window.history.back();\" alt=\"Click to go back\" title=\"Click to go back\"><img src=\"" . $floorImage . "\"></a>";
 	} else {
-		$ret .= 'Unknown floor';
+		$floor = 'Unknown floor';
 	}
 
-	return $ret;
+	return $twig->render('floor.html', array(
+		'go back' => 'Floors'
+		, 'floor' => $floor
+	));
 }
-

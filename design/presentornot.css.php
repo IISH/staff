@@ -413,3 +413,19 @@ table.fire a
 @keyframes blinker {
     50% { opacity: 0; }
 }
+
+
+/* NATIONAL HOLIDAYS */
+table.nationalholidays {
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+table.nationalholidays tr th {
+    padding: 0px 6px 0px 0px;
+    text-align: left;
+}
+
+table.nationalholidays tr td {
+    padding: 0px 6px 0px 0px;
+}
