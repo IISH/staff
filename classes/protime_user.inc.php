@@ -344,6 +344,22 @@ class ProtimeUser {
 		return $ret;
 	}
 
+	public function getPhotoImg() {
+		global $oWebuser;
+
+		$photo = $this->getPhoto();
+		$alttitle = '';
+		if ( checkPhotoExists(Settings::get('staff_images_directory') . $photo) ) {
+			$photo = Settings::get('staff_images_directory') . $photo;
+		} else {
+			if ( $oWebuser->isAdmin() ) {
+				$alttitle = 'Missing photo: &quot;' . Settings::get('staff_images_directory') . $photo . '&quot;';
+			}
+			$photo = Settings::get('noimage_file');
+		}
+		return "<img src=\"$photo\" style=\"height:140px;\" title=\"$alttitle\">";
+	}
+
 	public function getLastname() {
 		return $this->fixBrokenChars($this->lastname);
 	}

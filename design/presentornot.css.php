@@ -327,6 +327,7 @@ div.personalpage {
 	float: left;
 	margin-right: 15px;
 }
+
 .clearBoth {
 	clear: both;
 }

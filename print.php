@@ -14,30 +14,26 @@ $oPage->setTitle('Staff - ' . Translations::get('header_print'));
 $oPage->setContent(createSpecialNumbersContent( ));
 
 // show page
-echo $oPage->getPage();
+echo $twig->render('design.html', $oPage->getPageAttributes() );
 
 // disconnect database connection
 $dbConn->close();
 
 function createSpecialNumbersContent( ) {
-	global $oWebuser;
+	global $oWebuser, $twig;
 
-	$ret = "
-<h1>" . Translations::get('header_print') . "</h1>
-<i><font size=-1>(" . Translations::get('sorted_on') . ":)</font></i><br>
-<ol>
-	<li><a href=\"print_firstname.php\" target=\"_blank\">" . Translations::get('lbl_firstname') . " <img src=\"images/misc/popup.png\"></a></li>
-	<li><a href=\"print_lastname.php\" target=\"_blank\">" . Translations::get('lbl_lastname') . " <img src=\"images/misc/popup.png\"></a>";
-
-	// show fire link only when allowed to see the fire tab
+	$show_fire = 0;
 	if ( $_SESSION["FIRE_KEY_CORRECT"] == '1' || $oWebuser->hasAuthorisationTabFire() ) {
-		$ret .= "<br><br>" . Translations::get('or_go_to') . "<br><br></li>
-			<li><a href=\"fire.php\">" . strtoupper(Translations::get('menu_fire')) . "</a><br><br>";
+		$show_fire = 1;
 	}
 
-	$ret .= "</li>
-</ol>
-";
-
-	return $ret;
+	return $twig->render('print.html', array(
+		'title' => Translations::get('header_print')
+		, 'show_fire' => $show_fire
+		, 'sorted_on' => Translations::get('sorted_on')
+		, 'lbl_firstname' => Translations::get('lbl_firstname')
+		, 'lbl_lastname' => Translations::get('lbl_lastname')
+		, 'or_go_to' => Translations::get('or_go_to')
+		, 'menu_fire' => strtoupper(Translations::get('menu_fire'))
+	));
 }

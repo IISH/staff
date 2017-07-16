@@ -1,0 +1,43 @@
+<h1>{{title}}</h1>
+
+{% if error != '' %}
+	<span class="error">{{error|raw}}</span>
+	<br>
+{% endif %}
+
+{% for item in items %}
+<div style="margin: 0px 15px 15px 0px;float:left;">
+<table class="photobook">
+	<tr class="photobook">
+		<td class="photobook" colspan=4>{{item.uitdienst}}{{item.url_photo|raw}}</td>
+	</tr>
+	<tr>
+		<td class="photobook" colspan=4>{{item.url|raw}}</td>
+	</tr>
+	<tr>
+		<td class="photobook"><div id="divAddRemove{{id}}">{{item.addremove|raw}}</div></td>
+		<td class="photobook"><div id="divCheckInOut{{id}}">{{item.checkinout|raw}}</div></td>
+		<td class="photobook presentornot_absence" colspan=2 width="100px" style="{{item.status_style}}"><A class="checkinouttime" TITLE="{{item.status_alt}}">{{item.status_text|raw}}</A></td>
+	</tr>
+
+	{% if item.showCalendar == '1' %}
+	<tr>
+		<td class="photobook" colspan="4">{{item.absenceCalendarWeek|raw}}</td>
+	</tr>
+	{% endif %}
+
+	<tr>
+		<td class="photobook" colspan=4>{{item.lbl_telephone_short}}: {{item.telephone|raw}}</td>
+	</tr>
+	<tr>
+		<td class="photobook" colspan=4>{{item.lbl_room_short}}: {{item.room|raw}}</td>
+	</tr>
+</table>
+</div>
+{% endfor %}
+
+<br class="clearBoth" />
+
+<font size=-1><i>{{lbl_present}}: {{totaal_aanwezig}}<br>
+{{lbl_not_present}}: {{totaal_afwezig}}<br><br>
+{{lbl_page_refreshes_every}} {{date}}</i></font>
