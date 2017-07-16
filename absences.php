@@ -20,158 +20,16 @@ $oPage->setTitle('Staff - ' . Translations::get('menu_absences'));
 $oPage->setContent(createPresentContent( ));
 
 // show page
-echo $oPage->getPage();
+echo $twig->render('design.html', $oPage->getPageAttributes() );
 
-function createPresentContent( ) {
-	global $oWebuser;
-
-	$refreshAfterXSeconds = 60;
+function createPresentContent() {
+	global $oWebuser, $twig;
 
 	//
 	$s = getAndProtectSearch();
 
-	$ret = "
-<h1>" . Translations::get('menu_absences') . "</h1>
-
-<script type=\"text/javascript\">
-<!--
-var xmlhttpSearch=false;
-var xmlhttpAddRemove=false;
-
-if (!xmlhttpSearch && typeof XMLHttpRequest!='undefined') {
-	try {
-		xmlhttpSearch = new XMLHttpRequest();
-	} catch (e) {
-		xmlhttpSearch=false;
-	}
-}
-if (!xmlhttpSearch && window.createRequest) {
-	try {
-		xmlhttpSearch = window.createRequest();
-	} catch (e) {
-		xmlhttpSearch=false;
-	}
-}
-
-if (!xmlhttpAddRemove && typeof XMLHttpRequest!='undefined') {
-	try {
-		xmlhttpAddRemove = new XMLHttpRequest();
-	} catch (e) {
-		xmlhttpAddRemove=false;
-	}
-}
-if (!xmlhttpAddRemove && window.createRequest) {
-	try {
-		xmlhttpAddRemove = window.createRequest();
-	} catch (e) {
-		xmlhttpAddRemove=false;
-	}
-}
-
-function setYearMonth(year, month) {
-	document.getElementById('fldMonth').value = month;
-	document.getElementById('fldYear').value = year;
-
-	//
-	tcRefreshSearch();
-}
-
-function setMonth(value) {
-	var month = parseInt(document.getElementById('fldMonth').value,10);
-	var year = parseInt(document.getElementById('fldYear').value,10);
-	month = month + value;
-	if ( month < 1 ) {
-		month = 12;
-		year = year - 1;
-	} else if ( month > 12 ) {
-		month = 1;
-		year = year + 1;
-	}
-
-	setYearMonth(year, month);
-}
-
-function tcRefreshSearch() {
-	//document.getElementById('tcContentSearch').innerHTML = '<center><img src=\"images/misc/loading.gif\"></center>';
-
-	var strSearch = document.getElementById('fldSearch').value;
-
-	if ( strSearch.length == 0 || strSearch.length >= 3 ) {
-
-		if ( strSearch != document.getElementById('fldPreviousSearch').value ) {
-			document.getElementById('tcContentSearch').innerHTML = '<center><img src=\"images/misc/loading.gif\"></center>';
-		}
-
-		xmlhttpSearch.open(\"GET\", \"absences_list.php?s=\" + escape(strSearch) + \"&y=\" + escape(document.getElementById('fldYear').value) + \"&m=\" + escape(document.getElementById('fldMonth').value), true);
-		xmlhttpSearch.onreadystatechange=function() {
-			if (xmlhttpSearch.readyState==4) {
-				document.getElementById('tcContentSearch').innerHTML = xmlhttpSearch.responseText;
-				document.getElementById('fldPreviousSearch').value = strSearch;
-			}
-		}
-		xmlhttpSearch.send(null);
-
-	}
-}
-
-function tcRefreshSearchStart() {
-	tcRefreshSearch();
-
-	// refresh automatically after X seconds
-	var t = setTimeout(\"tcRefreshSearchStart()\", " . $refreshAfterXSeconds . " * 1000);
-}
-
-function addRemove(pid, dowhat) {
-	document.getElementById('divAddRemove'+pid).innerHTML = '';
-	xmlhttpAddRemove.open(\"GET\", \"addremove_favourite.php?id=\" + pid + \"&dowhat=\" + dowhat + \"&fav=vakantie\", true);
-	xmlhttpAddRemove.onreadystatechange=function() {
-		if (xmlhttpAddRemove.readyState==4) {
-			document.getElementById('divAddRemove'+pid).innerHTML = xmlhttpAddRemove.responseText;
-		}
-	}
-	xmlhttpAddRemove.send(null);
-}
-
-function setSearchField(fldValue) {
-	document.getElementById('fldSearch').value = fldValue;
-	tcRefreshSearch();
-	return false;
-}
-// -->
-</script>
-<form name=\"frmTc\" method=\"GET\" onsubmit=\"return false;\">
-<TABLE width=\"100%\">
-<TR>
-	<TD>
-
-" . Translations::get('lbl_quick_search') . ": <input type=\"\" name=\"fldSearch\" id=\"fldSearch\" maxlength=\"20\" onkeyup=\"tcRefreshSearch();\" value=\"" . $s . "\">
-<span class=\"minxcharacters\">" . Translations::get('min_x_characters') . "</span> &nbsp; <a href=\"#\" onclick=\"javascript:setSearchField('');\">" . Translations::get('lbl_show_favourites') . "</a> &nbsp; 
-<input type=\"hidden\" name=\"fldPreviousSearch\" id=\"fldPreviousSearch\" value=\"\"> 
-	</TD>
-	<TD align=\"right\">
-<input type=\"hidden\" name=\"fldYear\" id=\"fldYear\" value=\"" . date("Y") . "\">
-<input type=\"hidden\" name=\"fldMonth\" id=\"fldMonth\" value=\"" . date("m") . "\">
-" . Translations::get('go_to') . " &nbsp; &nbsp;
-<a href=\"#\" onclick=\"javascript:setYearMonth(" . date("Y") . ", " . date("m") . ");\" title=\"" . Translations::get('go_to_current_month') . "\">*</a> &nbsp; &nbsp;
-<a href=\"#\" onclick=\"javascript:setMonth(-1);\" title=\"" . Translations::get('go_to_previous_month') . "\">" . Translations::get('prev') . "</a> &nbsp;
-<a href=\"#\" onclick=\"javascript:setMonth(+1);\" title=\"" . Translations::get('go_to_next_month') . "\">" . Translations::get('next') . "</a>
-	</TD>
-</TR>
-</table>
-</form>
-<br>
-<div id=\"tcContentSearch\"><center><img src=\"images/misc/loading.gif\"></center></div>
-<script type=\"text/javascript\">
-<!--
-tcRefreshSearchStart();
-// -->
-</script>
-";
-
 	// Legenda
 	$arrLegenda = array();
-	$ret .= "<br>" . Translations::get('lbl_legenda') . ":<br>";
-
 	$legenda = new Legenda();
 	// create array of legenda items
 	foreach ( $legenda->getAll() as $item ) {
@@ -184,9 +42,28 @@ tcRefreshSearchStart();
 	ksort($arrLegenda);
 
 	//
+	$legendas = array();
 	foreach ( $arrLegenda as $item ) {
-		$ret .= $item;
+		$legendas[] = $item;
 	}
 
-	return $ret;
+	//
+	return $twig->render('absences.html', array(
+		'title' => Translations::get('menu_absences')
+		, 's' => $s
+		, 'refreshAfterXSeconds' => 60
+		, 'currentYear' => date("Y")
+		, 'currentMonth' => date("m")
+		, 'lbl_quick_search' => Translations::get('lbl_quick_search')
+		, 'min_x_characters' => Translations::get('min_x_characters')
+		, 'lbl_show_favourites' => Translations::get('lbl_show_favourites')
+		, 'go_to' => Translations::get('go_to')
+		, 'go_to_current_month' => Translations::get('go_to_current_month')
+		, 'go_to_previous_month' => Translations::get('go_to_previous_month')
+		, 'go_to_next_month' => Translations::get('go_to_next_month')
+		, 'prev' => Translations::get('prev')
+		, 'next' => Translations::get('next')
+		, 'lblLegenda' => Translations::get('lbl_legenda')
+		, 'legendas' => $legendas
+	));
 }

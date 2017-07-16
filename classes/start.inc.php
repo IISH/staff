@@ -12,7 +12,6 @@ $settings = array();
 require_once dirname(__FILE__) . "/../sites/default/staff.settings.php";
 
 //
-//$_SESSION["loginname"] = 'gordan.cupac';
 if ( !isset($_SESSION["loginname"]) ) {
 	$_SESSION["loginname"] = '';
 }

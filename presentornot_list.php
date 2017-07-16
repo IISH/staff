@@ -1,6 +1,9 @@
 <?php
 require_once "classes/start.inc.php";
 
+// show page
+//echo $oPage->getPage();
+
 //
 if ( !isset($settings) ) {
 	$settings = array();

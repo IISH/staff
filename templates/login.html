@@ -1,8 +1,8 @@
 <h1>{{title}}</h1>
 
 {% if error != '' %}
-<span class="error">{{error}}</span>
-<br>
+	<span class="error">{{error|raw}}</span>
+	<br>
 {% endif %}
 
 <form name="frmA" method="POST" action="{{action}}">

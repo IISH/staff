@@ -1,0 +1,42 @@
+
+{% if error != '' %}
+	<span class="error">{{error|raw}}</span>
+	<br>
+{% endif %}
+
+{% if not (users is empty) %}
+<TABLE border=0 cellspacing=1 cellpadding=0>
+	<TR>
+		<TD width=25></TD>
+		<TD width=220><font size=-1><b>{{lbl_name}}</b></font></TD>
+		<TD width=100 align="center"><font size=-1><b>{{lbl_today}}</b></font></TD>
+		<TD width=18 align="center"></TD>
+		<TD style="width:{{vakantieWidth}}px;" align="center"><font size=-1><b>{{lbl_holidayabsences}} {{selectedMonth}} {{selectedYear}}</b></font></TD>
+	</TR>
+	<TR>
+		<TD></TD>
+		<TD></TD>
+		<TD></TD>
+		<TD></TD>
+		<TD align=center>
+			<TABLE border=0 cellspacing=0 cellpadding=0>
+				<TR>{{headerDays|raw}}</TR>
+			</TABLE>
+		</TD>
+	</TR>
+
+	{% for user in users %}
+
+		<TR>
+			<TD><div id="divAddRemove{{user.employeeId}}">{{user.addremove|raw}}</div></TD>
+			<TD>{{user.url|raw}}</TD>
+			<td class="presentornot_absence" style="{{user.status_style}}"><A class="checkinouttime" TITLE="{{user.status_alt}}">{{user.status_text}}</A></td>
+			<TD></TD>
+			<TD align="center">{{user.vakantie|raw}}</TD>
+		</TR>
+
+	{% endfor %}
+
+</table>
+<br>
+{% endif %}
