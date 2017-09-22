@@ -474,6 +474,7 @@ class ProtimeUser {
 		$string = str_ireplace('(rec)', '', $string);
 		$string = str_ireplace('(kantine)', '', $string);
 		$string = str_ireplace('(uu)', '', $string);
+		$string = str_ireplace('(pm)', '', $string);
 
 		return $string;
 	}
