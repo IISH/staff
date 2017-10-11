@@ -99,7 +99,7 @@ ORDER BY $orderBy ";
 
 	// Speciale nummers
 	$ret .= "<b>Speciale nummers</b><br>";
-	$query = 'SELECT ID, object, number FROM staff_special_numbers WHERE isdeleted=0 ORDER BY object ASC ';
+	$query = 'SELECT `ID`, `object`, `number` FROM `staff_special_numbers` WHERE `isdeleted`=0 AND `number` != \'\' ORDER BY `object` ASC ';
 	$stmt = $dbConn->getConnection()->prepare($query);
 	$stmt->execute();
 	$result = $stmt->fetchAll();

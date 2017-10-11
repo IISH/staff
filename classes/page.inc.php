@@ -1,7 +1,7 @@
 <?php 
 
-require_once dirname(__FILE__) . "/file.inc.php";
-require_once dirname(__FILE__) . "/misc.inc.php";
+require_once __DIR__ . "/file.inc.php";
+require_once __DIR__ . "/misc.inc.php";
 
 class Page {
 	protected $page_template;

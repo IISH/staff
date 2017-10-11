@@ -1,5 +1,5 @@
 <?php
-require_once dirname(__FILE__) . "/../sites/default/staff.settings.php";
+require_once __DIR__ . "/../sites/default/staff.settings.php";
 
 class Feestdag {
 	private $id;

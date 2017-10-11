@@ -6,7 +6,7 @@ session_start();
 
 //
 $settings = array();
-require_once dirname(__FILE__) . "/../sites/default/staff.settings.php";
+require_once __DIR__ . "/../sites/default/staff.settings.php";
 
 //
 if ( !isset($_SESSION["loginname"]) ) {
@@ -14,34 +14,34 @@ if ( !isset($_SESSION["loginname"]) ) {
 }
 
 //
-require_once dirname(__FILE__) . "/_misc_functions.inc.php";
-require_once dirname(__FILE__) . "/absence_calendar.inc.php";
-require_once dirname(__FILE__) . "/absence_calendar_format.inc.php";
-require_once dirname(__FILE__) . "/allowed_visible_absences.inc.php";
-require_once dirname(__FILE__) . "/authentication.inc.php";
-require_once dirname(__FILE__) . "/color.inc.php";
-require_once dirname(__FILE__) . "/colors.inc.php";
-require_once dirname(__FILE__) . "/date.inc.php";
-require_once dirname(__FILE__) . "/datetime.inc.php";
-require_once dirname(__FILE__) . "/department.inc.php";
-require_once dirname(__FILE__) . "/feestdag.inc.php";
-require_once dirname(__FILE__) . "/holiday.inc.php";
-require_once dirname(__FILE__) . "/legenda.inc.php";
-require_once dirname(__FILE__) . "/menu.inc.php";
-require_once dirname(__FILE__) . "/page.inc.php";
-require_once dirname(__FILE__) . "/pdo.inc.php";
-require_once dirname(__FILE__) . "/protime_user.inc.php";
-require_once dirname(__FILE__) . "/protime_user_schedule.inc.php";
-require_once dirname(__FILE__) . "/role_authorisation.inc.php";
-require_once dirname(__FILE__) . "/room.inc.php";
-require_once dirname(__FILE__) . "/settings.inc.php";
-require_once dirname(__FILE__) . "/syncinfo.inc.php";
-require_once dirname(__FILE__) . "/syncprotimemysql.inc.php";
-require_once dirname(__FILE__) . "/telephone.inc.php";
-require_once dirname(__FILE__) . "/tcdatetime.inc.php";
-require_once dirname(__FILE__) . "/translations.inc.php";
-require_once dirname(__FILE__) . "/website_protection.inc.php";
-require_once dirname(__FILE__) . "/Mobile_Detect.php";
+require_once __DIR__ . "/_misc_functions.inc.php";
+require_once __DIR__ . "/absence_calendar.inc.php";
+require_once __DIR__ . "/absence_calendar_format.inc.php";
+require_once __DIR__ . "/allowed_visible_absences.inc.php";
+require_once __DIR__ . "/authentication.inc.php";
+require_once __DIR__ . "/color.inc.php";
+require_once __DIR__ . "/colors.inc.php";
+require_once __DIR__ . "/date.inc.php";
+require_once __DIR__ . "/datetime.inc.php";
+require_once __DIR__ . "/department.inc.php";
+require_once __DIR__ . "/feestdag.inc.php";
+require_once __DIR__ . "/holiday.inc.php";
+require_once __DIR__ . "/legenda.inc.php";
+require_once __DIR__ . "/menu.inc.php";
+require_once __DIR__ . "/page.inc.php";
+require_once __DIR__ . "/pdo.inc.php";
+require_once __DIR__ . "/protime_user.inc.php";
+require_once __DIR__ . "/protime_user_schedule.inc.php";
+require_once __DIR__ . "/role_authorisation.inc.php";
+require_once __DIR__ . "/room.inc.php";
+require_once __DIR__ . "/settings.inc.php";
+require_once __DIR__ . "/syncinfo.inc.php";
+require_once __DIR__ . "/syncprotimemysql.inc.php";
+require_once __DIR__ . "/telephone.inc.php";
+require_once __DIR__ . "/tcdatetime.inc.php";
+require_once __DIR__ . "/translations.inc.php";
+require_once __DIR__ . "/website_protection.inc.php";
+require_once __DIR__ . "/Mobile_Detect.php";
 
 //
 $protect = new WebsiteProtection();
