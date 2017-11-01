@@ -3,7 +3,7 @@ require_once "role_authorisation.inc.php";
 
 class static_protime_user {
 	public static function getProtimeUserByLoginName( $loginname ) {
-		global $dbConn, $dateOutCriterium;
+		global $dbConn;
 		$id = array();
 
 		//
@@ -12,43 +12,21 @@ class static_protime_user {
 		if ( $loginname != '' ) {
 
 			// Remark: don't check date_out here, sometimes they make errors when a person is re-hired they forget to remove the date_out value
-			$query = "SELECT * FROM " . Settings::get('protime_tables_prefix') .  "curric WHERE ( CONCAT(TRIM(FIRSTNAME),'.',TRIM(NAME))='" . $loginname . "' OR TRIM(" . Settings::get('curric_loginname') . ")='" . $loginname . "' ) ORDER BY PERSNR ASC ";
+			$query = "
+				SELECT *
+				FROM " . Settings::get('protime_tables_prefix') .  "curric
+					WHERE 
+						CONCAT(TRIM(FIRSTNAME),'.',TRIM(NAME))='" . $loginname . "'
+						OR TRIM(" . Settings::get('curric_loginname') . ")='" . $loginname . "'
+						OR TRIM(" . Settings::get('curric_loginname_knaw') . ")='" . $loginname . "'
+				ORDER BY PERSNR ASC
+				LIMIT 0,1";
+
 			$stmt = $dbConn->getConnection()->prepare($query);
 			$stmt->execute();
 			$result = $stmt->fetchAll();
 			foreach ($result as $row) {
 				$id[] = $row['PERSNR'];
-			}
-
-			// if id still 0, try different way to find protime user
-			if ( count( $id ) == 0 ) {
-
-				// TODO TODOGCU
-				// DIT STUKJE MOET EIGENLIJK HELEMAAL WEG
-				// ER MOET EIGENLIJK EEN MELDING KOMEN DAT MEN WEL INGELOGD MAAR DAT MEN GEWONE GEBRUIKERS RECHTEN HEEFT
-				// OMDAT ER GEEN KOPPELING GEMAAKT KAN WORDEN MET DE JUISTE PROTIME RECORD
-				// WAARSCHIJNLIJK WEGENS TUSSENVOEGSELS, SPATIES, STREEPJES
-				// IN HET VELD LOGINNAAM (IN DE TAB VARIABLES MOET BIJ DE PERSOON HET VELD LOGINNAAM INGEVULD WORDEN
-				// MET DE LOGIN DIE ZE GEBRUIKEN VOOR STAFF.IISG.NL MEESTAL FIRSTNAME.LASTNAME ZONDER SPATIES
-				$arrLoginname = explode('.', $loginname);
-				if ( count( $arrLoginname ) >= 2 ) {
-					// dirty solution
-					$arrLoginname[1] = trim(Misc::stripLeftPart($arrLoginname[1], 'vanden'));
-					$arrLoginname[1] = trim(Misc::stripLeftPart($arrLoginname[1], 'vander'));
-					$arrLoginname[1] = trim(Misc::stripLeftPart($arrLoginname[1], 'vande'));
-					$arrLoginname[1] = trim(Misc::stripLeftPart($arrLoginname[1], 'van'));
-				}
-
-				$query2 = "SELECT * FROM " . Settings::get('protime_tables_prefix') .  "curric WHERE FIRSTNAME LIKE '%" . $arrLoginname[0] . "%'  AND NAME LIKE '%" . $arrLoginname[1] . "%' ";
-				$stmt = $dbConn->getConnection()->prepare($query2);
-				$stmt->execute();
-				$result = $stmt->fetchAll();
-				foreach ($result as $row2) {
-					$oEmp2 = new ProtimeUser( $row2['PERSNR']);
-					if ( $oEmp2->getLoginname() == $loginname ) {
-						$id[] = $oEmp2->getId();
-					}
-				}
 			}
 		}
 
@@ -63,6 +41,7 @@ class static_protime_user {
 class ProtimeUser {
 	protected $protime_id = 0;
 	protected $loginname = '';
+	protected $loginnameknaw = '';
 	protected $firstname = '';
 	protected $lastname = '';
 	protected $email = '';
@@ -106,6 +85,7 @@ class ProtimeUser {
 			$this->firstname = trim($row["FIRSTNAME"]);
 			$this->email = trim($row["EMAIL"]);
 			$this->loginname = trim(strtolower($row[Settings::get('curric_loginname')]));
+			$this->loginnameknaw = trim(strtolower($row[Settings::get('curric_loginname_knaw')]));
 			$this->room =  trim($row[Settings::get('curric_room')]);
 			$this->telephones =  $row[Settings::get('curric_telephone')];
 			$this->photo = trim($row["PHOTO"]);

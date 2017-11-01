@@ -147,8 +147,7 @@ ORDER BY FIRSTNAME, NAME ";
 
 		$firstDayOfChosenWeek = DateTime::createFromFormat('Y-m-d', date("Y-m-d"));
 		$firstDayOfChosenWeek->modify('-' . (date("w") - 1) . ' day');
-
-		$absenceCalendarWeek = AbsenceCalendarFormat::InWeekFormat(date("Y"), date("m"), $firstDayOfChosenWeek->format('d'), $arrAbsences, $arrHolidays);
+		$absenceCalendarWeek = AbsenceCalendarFormat::InWeekFormat($firstDayOfChosenWeek->format("Y"), $firstDayOfChosenWeek->format("m"), $firstDayOfChosenWeek->format('d'), $arrAbsences, $arrHolidays);
 		$item['absenceCalendarWeek'] = $absenceCalendarWeek;
 
 		//

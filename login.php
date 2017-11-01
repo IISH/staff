@@ -39,6 +39,9 @@ function createLoginPage() {
 		// check if both field are entered
 		if ( $fldLogin != '' && $fldPassword != '' ) {
 
+			// TEMPORARY DISABLED
+			// TODO TODOGCU
+//			$result_login_check  = 1;
 			$result_login_check = Authentication::authenticate($fldLogin, $fldPassword);
 
 			if ( $result_login_check == 1 ) {

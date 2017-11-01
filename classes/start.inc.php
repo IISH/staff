@@ -38,6 +38,7 @@ require_once __DIR__ . "/protime_user_schedule.inc.php";
 require_once __DIR__ . "/role_authorisation.inc.php";
 require_once __DIR__ . "/room.inc.php";
 require_once __DIR__ . "/settings.inc.php";
+require_once __DIR__ . "/statistics.inc.php";
 require_once __DIR__ . "/syncinfo.inc.php";
 require_once __DIR__ . "/syncprotimemysql.inc.php";
 require_once __DIR__ . "/telephone.inc.php";
@@ -104,3 +105,6 @@ if ( $_SESSION["FIRE_KEY_CORRECT"] == '1' || $oWebuser->hasAuthorisationTabFire(
 // load twig
 $loader = new Twig_Loader_Filesystem('templates');
 $twig = new Twig_Environment( $loader);
+
+//
+Statistics::ping( $_SESSION["loginname"] );
