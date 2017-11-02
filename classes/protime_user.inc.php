@@ -15,12 +15,16 @@ class static_protime_user {
 			$query = "
 				SELECT *
 				FROM " . Settings::get('protime_tables_prefix') .  "curric
-					WHERE 
-						CONCAT(TRIM(FIRSTNAME),'.',TRIM(NAME))='" . $loginname . "'
-						OR TRIM(" . Settings::get('curric_loginname') . ")='" . $loginname . "'
-						OR TRIM(" . Settings::get('curric_loginname_knaw') . ")='" . $loginname . "'
+					WHERE
+						(
+							CONCAT(TRIM(FIRSTNAME),'.',TRIM(NAME))='" . $loginname . "'
+							OR TRIM(" . Settings::get('curric_loginname') . ")='" . $loginname . "'
+							OR TRIM(" . Settings::get('curric_loginname_knaw') . ")='" . $loginname . "'
+						) " . Settings::get('exclude_protime_users') . "
 				ORDER BY PERSNR ASC
-				LIMIT 0,1";
+				";
+
+//preprint( $query );
 
 			$stmt = $dbConn->getConnection()->prepare($query);
 			$stmt->execute();
@@ -28,6 +32,45 @@ class static_protime_user {
 			foreach ($result as $row) {
 				$id[] = $row['PERSNR'];
 			}
+
+
+			// if id still 0, try different way to find protime user
+			if ( count( $id ) == 0 ) {
+				// TODO TODOGCU
+				// DIT STUKJE MOET EIGENLIJK HELEMAAL WEG
+				// ER MOET EIGENLIJK EEN MELDING KOMEN DAT MEN WEL INGELOGD MAAR DAT MEN GEWONE GEBRUIKERS RECHTEN HEEFT
+				// OMDAT ER GEEN KOPPELING GEMAAKT KAN WORDEN MET DE JUISTE PROTIME RECORD
+				// WAARSCHIJNLIJK WEGENS TUSSENVOEGSELS, SPATIES, STREEPJES
+				// IN HET VELD LOGINNAAM (IN DE TAB VARIABLES MOET BIJ DE PERSOON HET VELD LOGINNAAM INGEVULD WORDEN
+				// MET DE LOGIN DIE ZE GEBRUIKEN VOOR STAFF.IISG.NL MEESTAL FIRSTNAME.LASTNAME ZONDER SPATIES
+				$arrLoginname = explode('.', $loginname);
+				if ( count( $arrLoginname ) >= 2 ) {
+					// dirty solution
+					$arrLoginname[1] = trim(Misc::stripLeftPart($arrLoginname[1], 'vanden'));
+					$arrLoginname[1] = trim(Misc::stripLeftPart($arrLoginname[1], 'vander'));
+					$arrLoginname[1] = trim(Misc::stripLeftPart($arrLoginname[1], 'vande'));
+					$arrLoginname[1] = trim(Misc::stripLeftPart($arrLoginname[1], 'van'));
+				}
+				$query2 = "
+					SELECT *
+					FROM " . Settings::get('protime_tables_prefix') .  "curric
+					WHERE FIRSTNAME LIKE '%" . $arrLoginname[0] . "%'  AND NAME LIKE '%" . $arrLoginname[1] . "%'
+					" . Settings::get('exclude_protime_users') . "
+					ORDER BY PERSNR ASC
+				";
+//preprint( $query2 );
+				$stmt = $dbConn->getConnection()->prepare($query2);
+				$stmt->execute();
+				$result = $stmt->fetchAll();
+				foreach ($result as $row2) {
+					$oEmp2 = new ProtimeUser( $row2['PERSNR']);
+					if ( $oEmp2->getLoginname() == $loginname ) {
+						$id[] = $oEmp2->getId();
+					}
+				}
+			}
+
+
 		}
 
 		if ( count( $id ) == 0 ) {
@@ -51,14 +94,14 @@ class ProtimeUser {
 	protected $roles = '';
 	protected $arrRoles = array();
 	protected $arrDepartmentRoleAuthorisation = array();
-	protected $arrUserAuthorisation = array();
 	protected $is_admin = false;
-	protected $department;
+	protected $department = 0;
 	protected $oDepartment;
 	protected $arrSubEmployees = array();
 	protected $arrUserSettings = array();
 	protected $dateIn;
 	protected $dateOut;
+	protected $arrUserAuthorisation = array();
 
 	function __construct($protimeId) {
 		if ( !is_array( $protimeId ) ) {
@@ -97,11 +140,14 @@ class ProtimeUser {
 			$this->roles = $row[Settings::get('curric_roles')];
 
 			$this->calculateRoles();
-			$this->calculateDepartmentRoleAuthorisation();
-			$this->calculateUserAuthorisation();
 			$this->findSubEmployees();
 			$this->calculateUserSettings();
+			$this->calculateDepartmentRoleAuthorisation();
 		}
+
+		// outside the loop
+		// get extra authorisation via session name, this is for users not in protime but who need extra authorisation
+		$this->calculateUserAuthorisationViaSessionName();
 	}
 
 	private function calculateRoles() {
@@ -135,7 +181,6 @@ class ProtimeUser {
 			return;
 		}
 
-//		$arrAuthorisation = array();
 		$arrAuthorisation = $this->arrDepartmentRoleAuthorisation;
 
 		// Roles via department
@@ -176,34 +221,9 @@ class ProtimeUser {
 		$this->arrDepartmentRoleAuthorisation = $arrAuthorisation;
 	}
 
-	private function calculateUserAuthorisation() {
-		global $dbConn;
-
-		//$arrAuthorisation = array();
-		$arrAuthorisation = $this->arrUserAuthorisation;
-
-		// rights via user authorisation
-		$query = "SELECT * FROM staff_user_authorisation WHERE user_id IN ( " . $this->protime_id . " ) AND isdeleted=0 ";
-		$stmt = $dbConn->getConnection()->prepare($query);
-		$stmt->execute();
-		$result = $stmt->fetchAll();
-		foreach ($result as $r) {
-			$authorisation = strtolower( trim( $r["authorisation"] ) );
-			if ( trim($authorisation) != '' ) {
-				$arrAuthorisation[] = $authorisation;
-			}
-		}
-
-		// make unique
-		$arrAuthorisation = array_unique( $arrAuthorisation );
-
-		$this->arrUserAuthorisation = $arrAuthorisation;
-	}
-
 	private function calculateUserSettings() {
 		global $dbConn;
 
-//		$arrSettings = array();
 		$arrSettings = $this->arrUserSettings;
 
 		// rights via user authorisation
@@ -222,10 +242,6 @@ class ProtimeUser {
 
 	public function getUserSetting( $setting, $default = '' ) {
 		return ( isset($this->arrUserSettings[$setting]) ) ? $this->arrUserSettings[$setting] : $default;
-	}
-
-	public function hasAuthorisationTabAbsences() {
-		return ( $this->isAdmin() || in_array('tab_absences', $this->arrDepartmentRoleAuthorisation) || in_array('tab_absences', $this->arrUserAuthorisation) );
 	}
 
 	public function isBhv() {
@@ -387,24 +403,6 @@ class ProtimeUser {
 		return $this->dateOut;
 	}
 
-	//
-	public function isSuperAdmin() {
-		return ( in_array('superadmin', $this->arrUserAuthorisation) );
-	}
-
-	//
-	public function isAdmin() {
-		return ( in_array('admin', $this->arrUserAuthorisation) || $this->isSuperAdmin() );
-	}
-
-	public function hasInOutTimeAuthorisation() {
-		return ( $this->isAdmin() || in_array('inout_time', $this->arrDepartmentRoleAuthorisation) || in_array('inout_time', $this->arrUserAuthorisation) );
-	}
-
-	public function isHeadOfDepartment() {
-		return ( $this->isAdmin() || in_array('hfd', $this->arrRoles) );
-	}
-
 	public function isLoggedIn() {
 		if ( $_SESSION["loginname"] != '' ) {
 			return true;
@@ -468,6 +466,7 @@ class ProtimeUser {
 		$string = str_ireplace('(vrijwillig)', '', $string);
 		$string = str_ireplace('(stz)', '', $string);
 		$string = str_ireplace('(rec)', '', $string);
+		$string = str_ireplace('(receptie)', '', $string);
 		$string = str_ireplace('(kantine)', '', $string);
 		$string = str_ireplace('(uu)', '', $string);
 
@@ -603,5 +602,54 @@ class ProtimeUser {
 		}
 
 		return $arr;
+	}
+
+	private function calculateUserAuthorisationViaSessionName() {
+		global $dbConn;
+
+		if ( trim($_SESSION['loginname']) != '' ) {
+			$arrAuthorisation = $this->arrUserAuthorisation;
+
+			// rights via user authorisation
+	//		$query = "SELECT * FROM staff_user_authorisation WHERE user_id IN ( " . $this->protime_id . " ) AND isdeleted=0 ";
+			$query = "SELECT * FROM staff_user_authorisation_via_sessionname WHERE loginname = '" . addslashes(trim($_SESSION['loginname'])) . "' AND isdeleted=0 ";
+//preprint( $query );
+			$stmt = $dbConn->getConnection()->prepare($query);
+			$stmt->execute();
+			$result = $stmt->fetchAll();
+			foreach ($result as $r) {
+				$authorisation = strtolower( trim( $r["authorisation"] ) );
+				if ( trim($authorisation) != '' ) {
+					$arrAuthorisation[] = $authorisation;
+				}
+			}
+
+			// make unique
+			$arrAuthorisation = array_unique( $arrAuthorisation );
+
+			$this->arrUserAuthorisation = $arrAuthorisation;
+		}
+	}
+
+	public function hasAuthorisationTabAbsences() {
+		return ( $this->isAdmin() || in_array('tab_absences', $this->arrDepartmentRoleAuthorisation) || in_array('tab_absences', $this->arrUserAuthorisation) );
+	}
+
+	//
+	public function isAdmin() {
+		return ( in_array('admin', $this->arrUserAuthorisation) || $this->isSuperAdmin() );
+	}
+
+	//
+	public function isSuperAdmin() {
+		return ( in_array('superadmin', $this->arrUserAuthorisation) );
+	}
+
+	public function hasInOutTimeAuthorisation() {
+		return ( $this->isAdmin() || in_array('inout_time', $this->arrDepartmentRoleAuthorisation) || in_array('inout_time', $this->arrUserAuthorisation) );
+	}
+
+	public function isHeadOfDepartment() {
+		return ( $this->isAdmin() || in_array('hfd', $this->arrRoles) );
 	}
 }

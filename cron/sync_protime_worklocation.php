@@ -1,4 +1,5 @@
 <?php
+$includeTwig = false;
 require_once "../classes/start.inc.php";
 
 // check cron key

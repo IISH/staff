@@ -2,11 +2,6 @@
 require_once "classes/start.inc.php";
 require_once "classes/beo.inc.php";
 
-//
-if ( !isset($settings) ) {
-	$settings = array();
-}
-
 // check if key correct
 if ( $_SESSION["FIRE_KEY_CORRECT"] != '1' ) {
 	// key not correct, check if user logged in

@@ -1,10 +1,6 @@
 <?php
+$doPing = false;
 require_once "classes/start.inc.php";
-
-//
-if ( !isset($settings) ) {
-	$settings = array();
-}
 
 $oWebuser->checkLoggedIn();
 

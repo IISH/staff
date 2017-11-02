@@ -1,11 +1,6 @@
 <?php
 require_once "classes/start.inc.php";
 
-//
-if ( !isset($settings) ) {
-	$settings = array();
-}
-
 $f = substr(trim($protect->requestPositiveNumberOrEmpty('get', "f")), 0, 4);
 
 // create webpage

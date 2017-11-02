@@ -1,10 +1,6 @@
-<?php 
+<?php
+$doPing = false;
 require_once "classes/start.inc.php";
-
-//
-if ( !isset($settings) ) {
-	$settings = array();
-}
 
 //
 if ( !isset( $_GET["cron_key"] ) || Settings::get("cron_key") == '' || $_GET["cron_key"] != Settings::get("cron_key") ) {

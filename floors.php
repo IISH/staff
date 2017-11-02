@@ -1,11 +1,6 @@
 <?php
 require_once "classes/start.inc.php";
 
-//
-if ( !isset($settings) ) {
-	$settings = array();
-}
-
 // create webpage
 $oPage = new Page('design/page.php', $settings);
 $oPage->setTitle(Translations::get('iisg_employee') . ' | Floor plans');

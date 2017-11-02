@@ -5,11 +5,6 @@ $pageSettings = array(
 	'title' => Translations::get('menu_presentornot')
 );
 
-//
-if ( !isset($settings) ) {
-	$settings = array();
-}
-
 if ( !isset($chosenFilter) ) {
 	$chosenFilter = '';
 }

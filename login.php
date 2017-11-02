@@ -1,10 +1,6 @@
-<?php 
+<?php
+$doPing = false;
 require_once "classes/start.inc.php";
-
-//
-if ( !isset($settings) ) {
-	$settings = array();
-}
 
 // create webpage
 $oPage = new Page('design/page.php', $settings);
@@ -42,9 +38,16 @@ function createLoginPage() {
 			// TEMPORARY DISABLED
 			// TODO TODOGCU
 //			$result_login_check  = 1;
+			// try to authenticate
 			$result_login_check = Authentication::authenticate($fldLogin, $fldPassword);
 
 			if ( $result_login_check == 1 ) {
+				// TODO TODOGCU
+				// als login geen punt bevat dan is het een knaw account
+				// probeer iisg account te achterhalen
+				// indien iisg account achterhaald
+				// gebruik dan iisg account voor sessie
+
 				// retain login name
 				$_SESSION["loginname"] = $fldLogin;
 

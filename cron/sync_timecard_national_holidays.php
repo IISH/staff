@@ -1,5 +1,6 @@
 <?php
 die('disabled by gcu');
+$includeTwig = false;
 require_once "../classes/start.inc.php";
 
 $path_parts['filename'] = 'staff_feestdagen';

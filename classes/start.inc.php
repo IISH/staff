@@ -103,8 +103,20 @@ if ( $_SESSION["FIRE_KEY_CORRECT"] == '1' || $oWebuser->hasAuthorisationTabFire(
 }
 
 // load twig
-$loader = new Twig_Loader_Filesystem('templates');
-$twig = new Twig_Environment( $loader);
+if ( !isset($includeTwig) ) {
+	$includeTwig = true;
+}
+if ( $includeTwig ) {
+	$loader = new Twig_Loader_Filesystem('templates');
+	$twig = new Twig_Environment( $loader);
+}
 
-//
-Statistics::ping( $_SESSION["loginname"] );
+// statistics
+if ( !isset($doPing) ) {
+	$doPing = true;
+}
+if ( $doPing ) {
+	Statistics::ping($_SESSION["loginname"]);
+}
+
+//preprint( $_SESSION["loginname"] );

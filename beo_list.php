@@ -1,15 +1,11 @@
 <?php 
 //
+$doPing = false;
 require_once "classes/start.inc.php";
 require_once "classes/beo.inc.php";
 
 //
 $oBeo = new Beo((isset($type_of_beo) ? $type_of_beo : ''), $label);
-
-//
-if (!isset($settings)) {
-	$settings = array();
-}
 
 $oWebuser->checkLoggedIn();
 

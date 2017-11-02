@@ -2,11 +2,6 @@
 require_once "classes/start.inc.php";
 header('Content-Type: text/html; charset=iso-8859-1');
 
-//
-if ( !isset($settings) ) {
-	$settings = array();
-}
-
 $oWebuser->checkLoggedIn();
 
 echo createSpecialNumbersContent( );
