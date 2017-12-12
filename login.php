@@ -35,30 +35,33 @@ function createLoginPage() {
 		// check if both field are entered
 		if ( $fldLogin != '' && $fldPassword != '' ) {
 
-			// TEMPORARY DISABLED
-			// TODO TODOGCU
-//			$result_login_check  = 1;
 			// try to authenticate
 			$result_login_check = Authentication::authenticate($fldLogin, $fldPassword);
 
-			if ( $result_login_check == 1 ) {
-				// TODO TODOGCU
-				// als login geen punt bevat dan is het een knaw account
-				// probeer iisg account te achterhalen
-				// indien iisg account achterhaald
-				// gebruik dan iisg account voor sessie
+			if ($result_login_check == 1) {
+				// authenticated and authorised
+				$alert = '';
+				// als login een punt bevat dan is het een iisg account, toon melding op scherm
+				if (strpos($fldLogin, '.') !== false) {
+					$alert = '?alert=next_time';
+				}
 
 				// retain login name
 				$_SESSION["loginname"] = $fldLogin;
 
 				//
-                $burl = getBackUrl();
-                if ( $burl == '' ) {
-                    $burl = 'presentornot.php';
-                }
-				Header("Location: " . $burl);
-				die(Translations::get('go_to') . " <a href=\"" . $burl . "\">next</a>");
+				$burl = getBackUrl();
+				if ($burl == '') {
+					$burl = 'presentornot.php';
+				}
+				Header("Location: " . $burl . $alert);
+				die(Translations::get('go_to') . " <a href=\"" . $burl . $alert . "\">next</a>");
+			} elseif ( $result_login_check == 2 ) {
+				// authenticated but not authorised
+				// show error
+				$error .= "You are not authorized to use this application. Please contact IT department.";
 			} else {
+				// not authenticated
 				// show error
 				$error .= "User/Password combination incorrect.";
 			}

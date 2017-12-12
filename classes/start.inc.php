@@ -21,6 +21,7 @@ require_once __DIR__ . "/_misc_functions.inc.php";
 require_once __DIR__ . "/absence_calendar.inc.php";
 require_once __DIR__ . "/absence_calendar_format.inc.php";
 require_once __DIR__ . "/allowed_visible_absences.inc.php";
+require_once __DIR__ . "/adserver.inc.php";
 require_once __DIR__ . "/authentication.inc.php";
 require_once __DIR__ . "/color.inc.php";
 require_once __DIR__ . "/colors.inc.php";
@@ -41,6 +42,7 @@ require_once __DIR__ . "/settings.inc.php";
 require_once __DIR__ . "/statistics.inc.php";
 require_once __DIR__ . "/syncinfo.inc.php";
 require_once __DIR__ . "/syncprotimemysql.inc.php";
+require_once __DIR__ . "/synonyms.inc.php";
 require_once __DIR__ . "/telephone.inc.php";
 require_once __DIR__ . "/tcdatetime.inc.php";
 require_once __DIR__ . "/translations.inc.php";
@@ -57,6 +59,9 @@ $dbConn = new class_pdo( $databases['default'] );
 if ( !defined('ENT_XHTML') ) {
 	define('ENT_XHTML', 32);
 }
+
+//
+$alertMessage = array();
 
 // date out criterium for solving the problem when date_in > date_out
 $dateOutCriterium = " ( DATE_OUT='0' OR DATE_OUT>='" . date("Ymd") . "' OR ( DATE_IN > DATE_OUT AND DATE_IN <='" . date("Ymd") . "' ) OR staff_today_checkinout.BOOKDATE IS NOT NULL ) ";
@@ -118,5 +123,3 @@ if ( !isset($doPing) ) {
 if ( $doPing ) {
 	Statistics::ping($_SESSION["loginname"]);
 }
-
-//preprint( $_SESSION["loginname"] );

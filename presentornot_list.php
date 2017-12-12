@@ -66,7 +66,7 @@ FROM " . Settings::get('protime_tables_prefix') . "curric
 WHERE " . $dateOutCriterium . $queryCriterium . Misc::getNeverShowPersonsCriterium() . "
 ORDER BY FIRSTNAME, NAME ";
 
-//echo $querySelect;
+//preprint( $querySelect );
 
 	$totaal["aanwezig"] = 0;
 	$totaal["afwezig"] = 0;

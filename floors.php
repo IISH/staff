@@ -3,7 +3,7 @@ require_once "classes/start.inc.php";
 
 // create webpage
 $oPage = new Page('design/page.php', $settings);
-$oPage->setTitle(Translations::get('iisg_employee') . ' | Floor plans');
+$oPage->setTitle('Floor plans');
 $oPage->setContent(createFloorsContent());
 
 // show page

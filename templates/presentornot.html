@@ -86,7 +86,9 @@ function tcRefreshSearchStart() {
 }
 
 function addRemove(pid, dowhat) {
+//alert(pid);
 	document.getElementById('divAddRemove'+pid).innerHTML = '';
+//alert('b');
 	xmlhttpAddRemove.open("GET", "addremove_favourite.php?id=" + pid + "&dowhat=" + dowhat + "&fav=present", true);
 	xmlhttpAddRemove.onreadystatechange=function() {
 		if (xmlhttpAddRemove.readyState==4) {
@@ -94,6 +96,7 @@ function addRemove(pid, dowhat) {
 		}
 	}
 	xmlhttpAddRemove.send(null);
+//alert('einde');
 
 	return false;
 }

@@ -17,15 +17,13 @@ class static_protime_user {
 				FROM " . Settings::get('protime_tables_prefix') .  "curric
 					WHERE
 						(
-							CONCAT(TRIM(FIRSTNAME),'.',TRIM(NAME))='" . $loginname . "'
-							OR TRIM(" . Settings::get('curric_loginname') . ")='" . $loginname . "'
-							OR TRIM(" . Settings::get('curric_loginname_knaw') . ")='" . $loginname . "'
+							CONCAT(TRIM(FIRSTNAME),'.',TRIM(NAME))='$loginname'
+							OR TRIM(" . Settings::get('curric_loginname') . ")='$loginname'
+							OR TRIM(" . Settings::get('curric_loginname_knaw') . ")='$loginname'
 						) " . Settings::get('exclude_protime_users') . "
 				ORDER BY PERSNR ASC
 				";
-
 //preprint( $query );
-
 			$stmt = $dbConn->getConnection()->prepare($query);
 			$stmt->execute();
 			$result = $stmt->fetchAll();
@@ -33,6 +31,20 @@ class static_protime_user {
 				$id[] = $row['PERSNR'];
 			}
 
+			// if id still 0, try different way to find protime user
+			if ( count( $id ) == 0 ) {
+				if ( strpos($loginname, '.') === false ) {
+					// try to find ID by using KNAW login name
+					$tmpId = Synonyms::getIdByUsingKnawLoginName($loginname);
+				} else {
+					// try to find ID by using IISG login name
+					$tmpId = Synonyms::getIdByUsingIisgLoginName($loginname);
+				}
+
+				if ( $tmpId != '' && $tmpId != '0' ) {
+					$id[] = $tmpId;
+				}
+			}
 
 			// if id still 0, try different way to find protime user
 			if ( count( $id ) == 0 ) {
@@ -50,27 +62,27 @@ class static_protime_user {
 					$arrLoginname[1] = trim(Misc::stripLeftPart($arrLoginname[1], 'vander'));
 					$arrLoginname[1] = trim(Misc::stripLeftPart($arrLoginname[1], 'vande'));
 					$arrLoginname[1] = trim(Misc::stripLeftPart($arrLoginname[1], 'van'));
-				}
-				$query2 = "
-					SELECT *
-					FROM " . Settings::get('protime_tables_prefix') .  "curric
-					WHERE FIRSTNAME LIKE '%" . $arrLoginname[0] . "%'  AND NAME LIKE '%" . $arrLoginname[1] . "%'
-					" . Settings::get('exclude_protime_users') . "
-					ORDER BY PERSNR ASC
-				";
+
+					$query2 = "
+						SELECT *
+						FROM " . Settings::get('protime_tables_prefix') .  "curric
+						WHERE FIRSTNAME LIKE '%" . $arrLoginname[0] . "%'  AND NAME LIKE '%" . $arrLoginname[1] . "%'
+						" . Settings::get('exclude_protime_users') . "
+						ORDER BY PERSNR ASC
+					";
 //preprint( $query2 );
-				$stmt = $dbConn->getConnection()->prepare($query2);
-				$stmt->execute();
-				$result = $stmt->fetchAll();
-				foreach ($result as $row2) {
-					$oEmp2 = new ProtimeUser( $row2['PERSNR']);
-					if ( $oEmp2->getLoginname() == $loginname ) {
-						$id[] = $oEmp2->getId();
+					$stmt = $dbConn->getConnection()->prepare($query2);
+					$stmt->execute();
+					$result = $stmt->fetchAll();
+					foreach ($result as $row2) {
+						$oEmp2 = new ProtimeUser( $row2['PERSNR']);
+						// try to calculate loginname and compare it with entered loginname
+						if ( $oEmp2->getLoginname() == $loginname ) {
+							$id[] = $oEmp2->getId();
+						}
 					}
 				}
 			}
-
-
 		}
 
 		if ( count( $id ) == 0 ) {
@@ -143,11 +155,12 @@ class ProtimeUser {
 			$this->findSubEmployees();
 			$this->calculateUserSettings();
 			$this->calculateDepartmentRoleAuthorisation();
+			$this->calculateUserAuthorisation();
 		}
 
 		// outside the loop
 		// get extra authorisation via session name, this is for users not in protime but who need extra authorisation
-		$this->calculateUserAuthorisationViaSessionName();
+//		$this->calculateUserAuthorisationViaSessionName();
 	}
 
 	private function calculateRoles() {
@@ -360,6 +373,10 @@ class ProtimeUser {
 		return $this->fixBrokenChars($this->lastname);
 	}
 
+	public function getLoginnameKnaw() {
+		return trim($this->loginnameknaw);
+	}
+
 	public function getLoginname() {
 		$ret = trim($this->loginname);
 
@@ -428,7 +445,7 @@ class ProtimeUser {
 		$ids = array();
 		$ids[] = '0';
 
-		$query = 'SELECT * FROM staff_favourites WHERE user=\'' . $this->getLoginname() . '\' AND type=\'' . $type . '\' ';
+		$query = 'SELECT * FROM staff_favourites WHERE ( user=\'' . $this->getLoginname() . '\' OR user_iisg=\'' . $this->getLoginname() . '\' OR user=\'' . $_SESSION['loginname'] . '\' OR user_iisg=\'' . $_SESSION['loginname'] . '\' ) AND type=\'' . $type . '\' ';
 		$stmt = $dbConn->getConnection()->prepare($query);
 		$stmt->execute();
 		$result = $stmt->fetchAll();
@@ -556,6 +573,8 @@ class ProtimeUser {
 	public function getAuthorisations() {
 		$arr = array();
 
+//preprint( $this->getLoginname() );
+
 		if ( $this->isSuperAdmin() ) {
 			$arr[] = 'Superadmin';
 		} elseif ( $this->isAdmin() ) {
@@ -604,15 +623,15 @@ class ProtimeUser {
 		return $arr;
 	}
 
-	private function calculateUserAuthorisationViaSessionName() {
+	private function calculateUserAuthorisation() {
 		global $dbConn;
 
 		if ( trim($_SESSION['loginname']) != '' ) {
 			$arrAuthorisation = $this->arrUserAuthorisation;
 
 			// rights via user authorisation
-	//		$query = "SELECT * FROM staff_user_authorisation WHERE user_id IN ( " . $this->protime_id . " ) AND isdeleted=0 ";
-			$query = "SELECT * FROM staff_user_authorisation_via_sessionname WHERE loginname = '" . addslashes(trim($_SESSION['loginname'])) . "' AND isdeleted=0 ";
+			//		$query = "SELECT * FROM staff_user_authorisation WHERE user_id IN ( " . $this->protime_id . " ) AND isdeleted=0 ";
+			$query = "SELECT * FROM staff_user_authorisation_via_loginname WHERE loginname = '" . addslashes(trim($_SESSION['loginname'])) . "' AND isdeleted=0 ";
 //preprint( $query );
 			$stmt = $dbConn->getConnection()->prepare($query);
 			$stmt->execute();
@@ -626,10 +645,37 @@ class ProtimeUser {
 
 			// make unique
 			$arrAuthorisation = array_unique( $arrAuthorisation );
-
+//			preprint( $arrAuthorisation );
 			$this->arrUserAuthorisation = $arrAuthorisation;
 		}
 	}
+
+//	private function calculateUserAuthorisationViaSessionName() {
+//		global $dbConn;
+//
+//		if ( trim($_SESSION['loginname']) != '' ) {
+//			$arrAuthorisation = $this->arrUserAuthorisation;
+//
+//			// rights via user authorisation
+//	//		$query = "SELECT * FROM staff_user_authorisation WHERE user_id IN ( " . $this->protime_id . " ) AND isdeleted=0 ";
+//			$query = "SELECT * FROM staff_user_authorisation_via_loginname WHERE loginname = '" . addslashes(trim($_SESSION['loginname'])) . "' AND isdeleted=0 ";
+////preprint( $query );
+//			$stmt = $dbConn->getConnection()->prepare($query);
+//			$stmt->execute();
+//			$result = $stmt->fetchAll();
+//			foreach ($result as $r) {
+//				$authorisation = strtolower( trim( $r["authorisation"] ) );
+//				if ( trim($authorisation) != '' ) {
+//					$arrAuthorisation[] = $authorisation;
+//				}
+//			}
+//
+//			// make unique
+//			$arrAuthorisation = array_unique( $arrAuthorisation );
+//preprint( $arrAuthorisation );
+//			$this->arrUserAuthorisation = $arrAuthorisation;
+//		}
+//	}
 
 	public function hasAuthorisationTabAbsences() {
 		return ( $this->isAdmin() || in_array('tab_absences', $this->arrDepartmentRoleAuthorisation) || in_array('tab_absences', $this->arrUserAuthorisation) );

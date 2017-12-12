@@ -15,8 +15,8 @@
 		<td class="photobook" colspan=4>{{item.url|raw}}</td>
 	</tr>
 	<tr>
-		<td class="photobook"><div id="divAddRemove{{id}}">{{item.addremove|raw}}</div></td>
-		<td class="photobook"><div id="divCheckInOut{{id}}">{{item.checkinout|raw}}</div></td>
+		<td class="photobook"><div id="divAddRemove{{item.id}}">{{item.addremove|raw}}</div></td>
+		<td class="photobook"><div id="divCheckInOut{{item.id}}">{{item.checkinout|raw}}</div></td>
 		<td class="photobook presentornot_absence" colspan=2 width="100px" style="{{item.status_style}}"><A class="checkinouttime" TITLE="{{item.status_alt}}">{{item.status_text|raw}}</A></td>
 	</tr>
 

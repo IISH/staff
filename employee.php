@@ -11,7 +11,7 @@ $staff = new ProtimeUser($id);
 
 // create webpage
 $oPage = new Page('design/page.php', $settings);
-$oPage->setTitle(Translations::get('iisg_employee') . ' - ' . $staff->getNiceFirstLastname());
+$oPage->setTitle($staff->getNiceFirstLastname() . ' - ' . Translations::get('iisg_employee'));
 $oPage->setContent(createStaffContent( $staff ));
 
 // show page
@@ -97,6 +97,6 @@ function createStaffContent( $staff ) {
 		, 'schedule' => $currentSchedule->getCurrentSchedule()
 		, 'isAdmin' => ( $oWebuser->isAdmin() ? 1 : 0 )
 		, 'lbl_authorisation' => Translations::get('lbl_authorisation')
-		, 'authorisation' => implode('<br>', $staff->getAuthorisations())
+//		, 'authorisation' => implode('<br>', $staff->getAuthorisations())
 	));
 }

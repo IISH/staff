@@ -5,6 +5,12 @@ function preprint( $object ) {
 	echo '</pre>';
 }
 
+function preprintHidden( $object ) {
+	echo '<!-- ';
+	print_r( $object );
+	echo '</pre>' . "\n";
+}
+
 function getStyle($selectedYear, $selectedMonth, $day, $absences = array(), $holidays = array(), $colorInCurrentDay = 1) {
 	global $oWebuser;
 
@@ -153,7 +159,6 @@ class Misc {
 		$never_show_persnr = '0,' . preg_replace('/[^0-9]/', ',', trim(Settings::get("never_show_persnr")));
 		$never_show_persnr = preg_replace('/,{2,}/', ',', $never_show_persnr);
 		$never_show_persnr = ' AND ' . Settings::get('protime_tables_prefix') . 'curric.PERSNR NOT IN (' . $never_show_persnr . ') ';
-//preprint( $never_show_persnr );
 		return $never_show_persnr;
 	}
 

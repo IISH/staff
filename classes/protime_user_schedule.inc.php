@@ -32,8 +32,6 @@ WHERE PROFILETYPE = '4'
 ORDER BY ${prefix}lnk_curric_profile.DATEFROM DESC, CAST(${prefix}cyc_dp.DAYNR AS UNSIGNED) ASC
 ";
 
-//echo $query . ' ++<br>';
-
 		$stmt = $dbConn->getConnection()->prepare($query);
 		$stmt->execute();
 		$result = $stmt->fetchAll();
@@ -53,7 +51,6 @@ ORDER BY ${prefix}lnk_curric_profile.DATEFROM DESC, CAST(${prefix}cyc_dp.DAYNR A
 
 			$this->arr[] = array( 'date' => $date, 'dayOfWeek' => $dayOfWeek, 'minutes' => $minutes );
 		}
-//		preprint($this->arr);
 	}
 
 	public function getCurrentSchedule() {

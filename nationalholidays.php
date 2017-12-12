@@ -13,7 +13,11 @@ function createNationalHolidaysContent( ) {
 	global $dbConn, $twig;
 
 	$days = array();
-	$query = 'SELECT * FROM staff_feestdagen WHERE isdeleted=0 AND datum >= \'' . date('Y-m-d') . '\' AND datum <= \'' . (date('Y')+1) . '-01-02\' ORDER BY datum ASC ';
+
+	// if December show whole next year, else only current (incl. New Years day)
+	$ifDecemberExtraYear = ( date("m") == 12 ? 1 : 0 );
+	$query = 'SELECT * FROM staff_feestdagen WHERE isdeleted=0 AND datum >= \'' . date('Y-m-d') . '\' AND datum <= \'' . (date('Y') + 1 + $ifDecemberExtraYear) . '-01-02\' ORDER BY datum ASC ';
+
 	$stmt = $dbConn->getConnection()->prepare($query);
 	$stmt->execute();
 	$result = $stmt->fetchAll();

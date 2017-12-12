@@ -5,7 +5,7 @@ $f = substr(trim($protect->requestPositiveNumberOrEmpty('get', "f")), 0, 4);
 
 // create webpage
 $oPage = new Page('design/page.php', $settings);
-$oPage->setTitle(Translations::get('iisg_employee') . ' | Floor plan level ' . $f);
+$oPage->setTitle('Floor plan level ' . $f);
 $oPage->setContent(createFloorContent( $f ));
 
 // show page

@@ -430,3 +430,22 @@ table.nationalholidays tr th {
 table.nationalholidays tr td {
     padding: 0px 6px 0px 0px;
 }
+
+div.warningalert {
+	width: 60%;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	border: thin solid #C62431;
+	color: #C62431;
+	margin-bottom: 5px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	text-align: center;
+	font-weight: bold;
+}
