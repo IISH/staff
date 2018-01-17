@@ -24,7 +24,7 @@ function createExport() {
 	if ( isset($_GET['export_type']) ) {
 		$export_type = strtolower(trim($_GET['export_type']));
 	}
-	if ( !in_array($export_type, array('csv', 'xml', 'json') ) ) {
+	if ( !in_array($export_type, array('csv', 'csv_comma', 'csv_tab', 'xml', 'json') ) ) {
 		$export_type = 'csv';
 	}
 
@@ -50,7 +50,7 @@ ORDER BY NAME, FIRSTNAME, SHORT_1
 		$users[] = $user;
 	}
 
-	if ( $export_type == 'csv' ) {
+	if ( $export_type == 'csv' || $export_type == 'csv_tab' ) {
 //		$data = $twig->render("export01_csv.html", array(
 //			'users' => $users
 //		));
@@ -59,6 +59,16 @@ ORDER BY NAME, FIRSTNAME, SHORT_1
 		$data = "LASTNAME\tFIRSTNAME\tEMAIL\tDEPARTMENT\r\n";
 		foreach ( $users as $user ) {
 			$data .= $user['LASTNAME'] . "\t" . $user['FIRSTNAME'] . "\t" . $user['EMAIL'] . "\t" . $user['DEPARTMENT'] . "\r\n";
+		}
+
+		$response = new Response( $data );
+		$response->headers->set('Content-Type', 'text/csv', 'charset=iso-8859-1');
+		$response->headers->set('Content-Disposition', 'attachment; filename="export01.csv"');
+	} elseif ( $export_type == 'csv_comma' ) {
+		//
+		$data= '"LASTNAME", "FIRSTNAME", "EMAIL", "DEPARTMENT"' . "\r\n";
+		foreach ( $users as $user ) {
+			$data .= $user['LASTNAME'] . ', ' . $user['FIRSTNAME'] . ', ' . $user['EMAIL'] . ', ' . $user['DEPARTMENT'] . "\r\n";
 		}
 
 		$response = new Response( $data );
@@ -82,9 +92,15 @@ ORDER BY NAME, FIRSTNAME, SHORT_1
 }
 
 function makeSafe( $value, $export_type = 'csv', $charset = 'iso-8859-1' ) {
+	$value = trim($value);
+
 	switch ( $export_type ) {
 		case "csv":
+		case "csv_tab":
 			$value = htmlspecialchars($value, ENT_XHTML, $charset);
+			break;
+		case "csv_comma":
+			$value = '"' . htmlspecialchars($value, ENT_XHTML, $charset) . '"';
 			break;
 		case "json":
 			$value = htmlentities($value);
