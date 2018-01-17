@@ -1,4 +1,17 @@
 <?php
+function isExportKeyValid() {
+	$export_key = '';
+	if (isset($_GET["export_key"])) {
+		$export_key = trim($_GET["export_key"]);
+	}
+
+	if ( $export_key != '' && $export_key == trim(Settings::get('export_key'))) {
+		return true;
+	}
+
+	return false;
+}
+
 function preprint( $object ) {
 	echo '<pre>';
 	print_r( $object );

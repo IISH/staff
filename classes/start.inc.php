@@ -101,7 +101,8 @@ if ( $oWebuser->hasAuthorisationTabOntruimer() || $oWebuser->isOntruimer() ) {
 $menu[] = new MenuItem(Translations::get('menu_print'), 'print.php');
 $menu[] = new MenuItem(Translations::get('menu_nationalholidays'), 'nationalholidays.php');
 if ( $oWebuser->isSuperAdmin() ) {
-	$menu[] = new MenuItem(Translations::get('menu_switch_user'), 'switch_user.php');
+//	$menu[] = new MenuItem(Translations::get('menu_switch_user'), 'switch_user.php');
+	$menu[] = new MenuItem('Admin pages', 'admin.php');
 }
 if ( $_SESSION["FIRE_KEY_CORRECT"] == '1' || $oWebuser->hasAuthorisationTabFire() ) {
 	$menu[] = new MenuItem(Translations::get('menu_fire'), 'fire.php', 'fire');
