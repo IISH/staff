@@ -51,12 +51,19 @@ ORDER BY NAME, FIRSTNAME, SHORT_1
 	}
 
 	if ( $export_type == 'csv' ) {
-		$data = $twig->render("export01_csv.html", array(
-			'users' => $users
-		));
+//		$data = $twig->render("export01_csv.html", array(
+//			'users' => $users
+//		));
+
+		//
+		$data = "LASTNAME\tFIRSTNAME\tEMAIL\tDEPARTMENT\r\n";
+		foreach ( $users as $user ) {
+			$data .= $user['LASTNAME'] . "\t" . $user['FIRSTNAME'] . "\t" . $user['EMAIL'] . "\t" . $user['DEPARTMENT'] . "\r\n";
+		}
 
 		$response = new Response( $data );
-		$response->headers->set('Content-Type', 'application/csv', 'charset=iso-8859-1');
+		$response->headers->set('Content-Type', 'text/csv', 'charset=iso-8859-1');
+		$response->headers->set('Content-Disposition', 'attachment; filename="export01.csv"');
 	} elseif ( $export_type == 'xml' ) {
 		$xml =  $twig->render('export01_xml.html', array(
 			'users' => $users
