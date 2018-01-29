@@ -63,13 +63,12 @@ function tcRefreshSearch() {
 
 	var strSearch = document.getElementById('fldSearch').value;
 
-	if ( strSearch.length == 0 || strSearch.length >= 3 ) {
+	if ( strSearch.length == 0 || strSearch.length >= 2 ) {
 
 		if ( strSearch != document.getElementById('fldPreviousSearch').value ) {
 			document.getElementById('tcContentSearch').innerHTML = '<center><img src="images/misc/loading.gif"></center>';
 		}
 
-//alert( "absences_list.php?s=" + escape(strSearch) + "&y=" + escape(document.getElementById('fldYear').value) + "&m=" + escape(document.getElementById('fldMonth').value));
 		xmlhttpSearch.open("GET", "absences_list.php?s=" + escape(strSearch) + "&y=" + escape(document.getElementById('fldYear').value) + "&m=" + escape(document.getElementById('fldMonth').value), true);
 		xmlhttpSearch.onreadystatechange=function() {
 			if (xmlhttpSearch.readyState==4) {
