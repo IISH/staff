@@ -37,6 +37,7 @@ function createStaffContent( $staff ) {
 
 	//
 	$photo = $staff->getPhoto();
+	// TODOGCU
     $alttitle = '';
 	if ( checkPhotoExists(Settings::get('staff_images_directory') . $photo) ) {
 	    $photo = Settings::get('staff_images_directory') . $photo;
