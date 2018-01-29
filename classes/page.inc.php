@@ -20,47 +20,63 @@ class Page {
 		$this->favicon = 'favicon.ico';
 	}
 
-	public function getPage() {
+	public function getPageAttributes() {
 		global $oWebuser;
 
-		$oFile = new class_file();
-		$page = $oFile->getFileSource($this->page_template);
-		$page = str_replace('{url}', $this->getUrl(), $page);
+		$arr = array();
 
-		$page = str_replace('{content}', $this->content, $page);
+		$arr['content'] = $this->content;
+		$arr['title'] = $this->title;
+		$arr['favicon'] = $this->favicon;
+		$arr['color'] = $this->color;
+		$arr['menu'] = $this->createMenu();
 
-		$page = str_replace('{title}', $this->title, $page);
-		$page = str_replace('{favicon}', $this->favicon, $page);
-		$page = str_replace('{color}', $this->color, $page);
-
-		$page = str_replace('{menu}', $this->createMenu(), $page);
-
-		// 
+		//
 		$welcome = Translations::get('welcome');
-		$logout = '';
 		if ( $oWebuser->isLoggedIn() ) {
 			$niceName = trim($oWebuser->getNiceFirstLastname());
 			if ( $niceName == '' ) {
-				$niceName = '...';
+				$niceName = $_SESSION["loginname"];
+			} else {
+				$niceName = '<a href="user.php">' . $niceName . '</a>';
 			}
-			$niceName = '<a href="user.php">' . $niceName . '</a>';
-
 			$welcome .= ', ' . $niceName;
 
 			$logout = '<a href="logout.php" onclick="if (!confirm(\'' . Translations::get('confirm') . '\')) return false;">(' . Translations::get('logout') . ')</a>';
 		} else {
 			$logout = '<a href="login.php">(' . Translations::get('login') . ')</a>';;
 		}
-		$page = str_replace('{welcome}', $welcome, $page);
-		$page = str_replace('{logout}', $logout, $page);
-		$page = str_replace('{website_name}', Translations::get('website_name'), $page);
-		$page = str_replace('{contact}', Translations::get('contact'), $page);
-		$page = str_replace('{click_to_close_image}', Translations::get('click_to_close_image'), $page);
+		$arr['welcome'] = $welcome;
+		$arr['logout'] = $logout;
+		$arr['website_name'] = Translations::get('website_name');
+		$arr['contact'] = Translations::get('contact');
+		$arr['click_to_close_image'] = Translations::get('click_to_close_image');
 
-		// als laatste
-		$page = str_replace('{date}', class_datetime::getQueryDate(), $page);
+		//
+		if ( !isset($_GET['alert']) ) {
+			$_GET['alert'] = '';
+		}
+		switch ( $_GET['alert'] ) {
+			case "next_time":
+				$alertMessage = Translations::get('next_time');
+				$knawLogin = $oWebuser->getLoginnameKnaw();
+				if ( $knawLogin == '' ) {
+					// try to find knaw login
+					$knawLogin = Synonyms::getLoginName($oWebuser->getLoginname(), 'knaw_login', 'iisg_login');
+				}
+				if ( $knawLogin == '' ) {
+					$alertMessage .= '.';
+				} else {
+					$alertMessage .= ': ' . $knawLogin;
+				}
+				break;
+			default:
+				$alertMessage = '';
+		}
+		$arr['alertMessage'] = $alertMessage;
 
-		return $page;
+		//
+		return $arr;
 	}
 
 	private function createMenu() {
@@ -76,10 +92,6 @@ class Page {
 		$sMenu .= "</ul>";
 
 		return $sMenu;
-	}
-
-	public function getUrl() {
-		return 'https://' . ( isset($_SERVER["HTTP_X_FORWARDED_HOST"]) && $_SERVER["HTTP_X_FORWARDED_HOST"] != '' ? $_SERVER["HTTP_X_FORWARDED_HOST"] : $_SERVER["SERVER_NAME"] ) . $_SERVER["SCRIPT_NAME"];
 	}
 
 	public function setContent( $content ) {

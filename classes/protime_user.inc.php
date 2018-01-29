@@ -3,7 +3,7 @@ require_once "role_authorisation.inc.php";
 
 class static_protime_user {
 	public static function getProtimeUserByLoginName( $loginname ) {
-		global $dbConn, $dateOutCriterium;
+		global $dbConn;
 		$id = array();
 
 		//
@@ -12,7 +12,18 @@ class static_protime_user {
 		if ( $loginname != '' ) {
 
 			// Remark: don't check date_out here, sometimes they make errors when a person is re-hired they forget to remove the date_out value
-			$query = "SELECT * FROM " . Settings::get('protime_tables_prefix') .  "curric WHERE ( CONCAT(TRIM(FIRSTNAME),'.',TRIM(NAME))='" . $loginname . "' OR TRIM(" . Settings::get('curric_loginname') . ")='" . $loginname . "' ) ORDER BY PERSNR ASC ";
+			$query = "
+				SELECT *
+				FROM " . Settings::get('protime_tables_prefix') .  "curric
+					WHERE
+						(
+							CONCAT(TRIM(FIRSTNAME),'.',TRIM(NAME))='$loginname'
+							OR TRIM(" . Settings::get('curric_loginname') . ")='$loginname'
+							OR TRIM(" . Settings::get('curric_loginname_knaw') . ")='$loginname'
+						) " . Settings::get('exclude_protime_users') . "
+				ORDER BY PERSNR ASC
+				";
+//preprint( $query );
 			$stmt = $dbConn->getConnection()->prepare($query);
 			$stmt->execute();
 			$result = $stmt->fetchAll();
@@ -22,7 +33,21 @@ class static_protime_user {
 
 			// if id still 0, try different way to find protime user
 			if ( count( $id ) == 0 ) {
+				if ( strpos($loginname, '.') === false ) {
+					// try to find ID by using KNAW login name
+					$tmpId = Synonyms::getIdByUsingKnawLoginName($loginname);
+				} else {
+					// try to find ID by using IISG login name
+					$tmpId = Synonyms::getIdByUsingIisgLoginName($loginname);
+				}
 
+				if ( $tmpId != '' && $tmpId != '0' ) {
+					$id[] = $tmpId;
+				}
+			}
+
+			// if id still 0, try different way to find protime user
+			if ( count( $id ) == 0 ) {
 				// TODO TODOGCU
 				// DIT STUKJE MOET EIGENLIJK HELEMAAL WEG
 				// ER MOET EIGENLIJK EEN MELDING KOMEN DAT MEN WEL INGELOGD MAAR DAT MEN GEWONE GEBRUIKERS RECHTEN HEEFT
@@ -37,16 +62,24 @@ class static_protime_user {
 					$arrLoginname[1] = trim(Misc::stripLeftPart($arrLoginname[1], 'vander'));
 					$arrLoginname[1] = trim(Misc::stripLeftPart($arrLoginname[1], 'vande'));
 					$arrLoginname[1] = trim(Misc::stripLeftPart($arrLoginname[1], 'van'));
-				}
 
-				$query2 = "SELECT * FROM " . Settings::get('protime_tables_prefix') .  "curric WHERE FIRSTNAME LIKE '%" . $arrLoginname[0] . "%'  AND NAME LIKE '%" . $arrLoginname[1] . "%' ";
-				$stmt = $dbConn->getConnection()->prepare($query2);
-				$stmt->execute();
-				$result = $stmt->fetchAll();
-				foreach ($result as $row2) {
-					$oEmp2 = new ProtimeUser( $row2['PERSNR']);
-					if ( $oEmp2->getLoginname() == $loginname ) {
-						$id[] = $oEmp2->getId();
+					$query2 = "
+						SELECT *
+						FROM " . Settings::get('protime_tables_prefix') .  "curric
+						WHERE FIRSTNAME LIKE '%" . $arrLoginname[0] . "%'  AND NAME LIKE '%" . $arrLoginname[1] . "%'
+						" . Settings::get('exclude_protime_users') . "
+						ORDER BY PERSNR ASC
+					";
+//preprint( $query2 );
+					$stmt = $dbConn->getConnection()->prepare($query2);
+					$stmt->execute();
+					$result = $stmt->fetchAll();
+					foreach ($result as $row2) {
+						$oEmp2 = new ProtimeUser( $row2['PERSNR']);
+						// try to calculate loginname and compare it with entered loginname
+						if ( $oEmp2->getLoginname() == $loginname ) {
+							$id[] = $oEmp2->getId();
+						}
 					}
 				}
 			}
@@ -63,6 +96,7 @@ class static_protime_user {
 class ProtimeUser {
 	protected $protime_id = 0;
 	protected $loginname = '';
+	protected $loginnameknaw = '';
 	protected $firstname = '';
 	protected $lastname = '';
 	protected $email = '';
@@ -72,14 +106,15 @@ class ProtimeUser {
 	protected $roles = '';
 	protected $arrRoles = array();
 	protected $arrDepartmentRoleAuthorisation = array();
-	protected $arrUserAuthorisation = array();
 	protected $is_admin = false;
-	protected $department;
+	protected $department = 0;
 	protected $oDepartment;
 	protected $arrSubEmployees = array();
 	protected $arrUserSettings = array();
 	protected $dateIn;
 	protected $dateOut;
+	protected $arrUserAuthorisation = array();
+	protected $badgenr = '';
 
 	function __construct($protimeId) {
 		if ( !is_array( $protimeId ) ) {
@@ -106,22 +141,28 @@ class ProtimeUser {
 			$this->firstname = trim($row["FIRSTNAME"]);
 			$this->email = trim($row["EMAIL"]);
 			$this->loginname = trim(strtolower($row[Settings::get('curric_loginname')]));
+			$this->loginnameknaw = trim(strtolower($row[Settings::get('curric_loginname_knaw')]));
 			$this->room =  trim($row[Settings::get('curric_room')]);
 			$this->telephones =  $row[Settings::get('curric_telephone')];
 			$this->photo = trim($row["PHOTO"]);
 			$this->department = $row["DEPART"];
 			$this->dateIn = $row["DATE_IN"];
 			$this->dateOut = $row["DATE_OUT"];
+			$this->badgenr = $row["BADGENR"];
 
 			$this->oDepartment = new Department( $row["DEPART"] );
 			$this->roles = $row[Settings::get('curric_roles')];
 
 			$this->calculateRoles();
-			$this->calculateDepartmentRoleAuthorisation();
-			$this->calculateUserAuthorisation();
 			$this->findSubEmployees();
 			$this->calculateUserSettings();
+			$this->calculateDepartmentRoleAuthorisation();
+			$this->calculateUserAuthorisation();
 		}
+
+		// outside the loop
+		// get extra authorisation via session name, this is for users not in protime but who need extra authorisation
+//		$this->calculateUserAuthorisationViaSessionName();
 	}
 
 	private function calculateRoles() {
@@ -155,7 +196,6 @@ class ProtimeUser {
 			return;
 		}
 
-//		$arrAuthorisation = array();
 		$arrAuthorisation = $this->arrDepartmentRoleAuthorisation;
 
 		// Roles via department
@@ -196,34 +236,9 @@ class ProtimeUser {
 		$this->arrDepartmentRoleAuthorisation = $arrAuthorisation;
 	}
 
-	private function calculateUserAuthorisation() {
-		global $dbConn;
-
-		//$arrAuthorisation = array();
-		$arrAuthorisation = $this->arrUserAuthorisation;
-
-		// rights via user authorisation
-		$query = "SELECT * FROM staff_user_authorisation WHERE user_id IN ( " . $this->protime_id . " ) AND isdeleted=0 ";
-		$stmt = $dbConn->getConnection()->prepare($query);
-		$stmt->execute();
-		$result = $stmt->fetchAll();
-		foreach ($result as $r) {
-			$authorisation = strtolower( trim( $r["authorisation"] ) );
-			if ( trim($authorisation) != '' ) {
-				$arrAuthorisation[] = $authorisation;
-			}
-		}
-
-		// make unique
-		$arrAuthorisation = array_unique( $arrAuthorisation );
-
-		$this->arrUserAuthorisation = $arrAuthorisation;
-	}
-
 	private function calculateUserSettings() {
 		global $dbConn;
 
-//		$arrSettings = array();
 		$arrSettings = $this->arrUserSettings;
 
 		// rights via user authorisation
@@ -242,10 +257,6 @@ class ProtimeUser {
 
 	public function getUserSetting( $setting, $default = '' ) {
 		return ( isset($this->arrUserSettings[$setting]) ) ? $this->arrUserSettings[$setting] : $default;
-	}
-
-	public function hasAuthorisationTabAbsences() {
-		return ( $this->isAdmin() || in_array('tab_absences', $this->arrDepartmentRoleAuthorisation) || in_array('tab_absences', $this->arrUserAuthorisation) );
 	}
 
 	public function isBhv() {
@@ -344,8 +355,28 @@ class ProtimeUser {
 		return $ret;
 	}
 
+	public function getPhotoImg() {
+		global $oWebuser;
+
+		$photo = $this->getPhoto();
+		$alttitle = '';
+		if ( checkPhotoExists(Settings::get('staff_images_directory') . $photo) ) {
+			$photo = Settings::get('staff_images_directory') . $photo;
+		} else {
+			if ( $oWebuser->isAdmin() ) {
+				$alttitle = 'Missing photo: &quot;' . Settings::get('staff_images_directory') . $photo . '&quot;';
+			}
+			$photo = Settings::get('noimage_file');
+		}
+		return "<img src=\"$photo\" style=\"height:140px;\" title=\"$alttitle\">";
+	}
+
 	public function getLastname() {
 		return $this->fixBrokenChars($this->lastname);
+	}
+
+	public function getLoginnameKnaw() {
+		return trim($this->loginnameknaw);
 	}
 
 	public function getLoginname() {
@@ -391,30 +422,16 @@ class ProtimeUser {
 		return $this->dateOut;
 	}
 
-	//
-	public function isSuperAdmin() {
-		return ( in_array('superadmin', $this->arrUserAuthorisation) );
-	}
-
-	//
-	public function isAdmin() {
-		return ( in_array('admin', $this->arrUserAuthorisation) || $this->isSuperAdmin() );
-	}
-
-	public function hasInOutTimeAuthorisation() {
-		return ( $this->isAdmin() || in_array('inout_time', $this->arrDepartmentRoleAuthorisation) || in_array('inout_time', $this->arrUserAuthorisation) );
-	}
-
-	public function isHeadOfDepartment() {
-		return ( $this->isAdmin() || in_array('hfd', $this->arrRoles) );
-	}
-
 	public function isLoggedIn() {
 		if ( $_SESSION["loginname"] != '' ) {
 			return true;
 		}
 
 		return false;
+	}
+
+	public function getBadgenr() {
+		return $this->badgenr;
 	}
 
 	public function checkLoggedIn() {
@@ -434,7 +451,7 @@ class ProtimeUser {
 		$ids = array();
 		$ids[] = '0';
 
-		$query = 'SELECT * FROM staff_favourites WHERE user=\'' . $this->getLoginname() . '\' AND type=\'' . $type . '\' ';
+		$query = 'SELECT * FROM staff_favourites WHERE ( user=\'' . $this->getLoginname() . '\' OR user_iisg=\'' . $this->getLoginname() . '\' OR user=\'' . $_SESSION['loginname'] . '\' OR user_iisg=\'' . $_SESSION['loginname'] . '\' ) AND type=\'' . $type . '\' ';
 		$stmt = $dbConn->getConnection()->prepare($query);
 		$stmt->execute();
 		$result = $stmt->fetchAll();
@@ -472,6 +489,7 @@ class ProtimeUser {
 		$string = str_ireplace('(vrijwillig)', '', $string);
 		$string = str_ireplace('(stz)', '', $string);
 		$string = str_ireplace('(rec)', '', $string);
+		$string = str_ireplace('(receptie)', '', $string);
 		$string = str_ireplace('(kantine)', '', $string);
 		$string = str_ireplace('(uu)', '', $string);
 		$string = str_ireplace('(pm)', '', $string);
@@ -562,6 +580,8 @@ class ProtimeUser {
 	public function getAuthorisations() {
 		$arr = array();
 
+//preprint( $this->getLoginname() );
+
 		if ( $this->isSuperAdmin() ) {
 			$arr[] = 'Superadmin';
 		} elseif ( $this->isAdmin() ) {
@@ -608,5 +628,81 @@ class ProtimeUser {
 		}
 
 		return $arr;
+	}
+
+	private function calculateUserAuthorisation() {
+		global $dbConn;
+
+		if ( trim($_SESSION['loginname']) != '' ) {
+			$arrAuthorisation = $this->arrUserAuthorisation;
+
+			// rights via user authorisation
+			//		$query = "SELECT * FROM staff_user_authorisation WHERE user_id IN ( " . $this->protime_id . " ) AND isdeleted=0 ";
+			$query = "SELECT * FROM staff_user_authorisation_via_loginname WHERE loginname = '" . addslashes(trim($_SESSION['loginname'])) . "' AND isdeleted=0 ";
+//preprint( $query );
+			$stmt = $dbConn->getConnection()->prepare($query);
+			$stmt->execute();
+			$result = $stmt->fetchAll();
+			foreach ($result as $r) {
+				$authorisation = strtolower( trim( $r["authorisation"] ) );
+				if ( trim($authorisation) != '' ) {
+					$arrAuthorisation[] = $authorisation;
+				}
+			}
+
+			// make unique
+			$arrAuthorisation = array_unique( $arrAuthorisation );
+//			preprint( $arrAuthorisation );
+			$this->arrUserAuthorisation = $arrAuthorisation;
+		}
+	}
+
+//	private function calculateUserAuthorisationViaSessionName() {
+//		global $dbConn;
+//
+//		if ( trim($_SESSION['loginname']) != '' ) {
+//			$arrAuthorisation = $this->arrUserAuthorisation;
+//
+//			// rights via user authorisation
+//	//		$query = "SELECT * FROM staff_user_authorisation WHERE user_id IN ( " . $this->protime_id . " ) AND isdeleted=0 ";
+//			$query = "SELECT * FROM staff_user_authorisation_via_loginname WHERE loginname = '" . addslashes(trim($_SESSION['loginname'])) . "' AND isdeleted=0 ";
+////preprint( $query );
+//			$stmt = $dbConn->getConnection()->prepare($query);
+//			$stmt->execute();
+//			$result = $stmt->fetchAll();
+//			foreach ($result as $r) {
+//				$authorisation = strtolower( trim( $r["authorisation"] ) );
+//				if ( trim($authorisation) != '' ) {
+//					$arrAuthorisation[] = $authorisation;
+//				}
+//			}
+//
+//			// make unique
+//			$arrAuthorisation = array_unique( $arrAuthorisation );
+//preprint( $arrAuthorisation );
+//			$this->arrUserAuthorisation = $arrAuthorisation;
+//		}
+//	}
+
+	public function hasAuthorisationTabAbsences() {
+		return ( $this->isAdmin() || in_array('tab_absences', $this->arrDepartmentRoleAuthorisation) || in_array('tab_absences', $this->arrUserAuthorisation) );
+	}
+
+	//
+	public function isAdmin() {
+		return ( in_array('admin', $this->arrUserAuthorisation) || $this->isSuperAdmin() );
+	}
+
+	//
+	public function isSuperAdmin() {
+		return ( in_array('superadmin', $this->arrUserAuthorisation) );
+	}
+
+	public function hasInOutTimeAuthorisation() {
+		return ( $this->isAdmin() || in_array('inout_time', $this->arrDepartmentRoleAuthorisation) || in_array('inout_time', $this->arrUserAuthorisation) );
+	}
+
+	public function isHeadOfDepartment() {
+		return ( $this->isAdmin() || in_array('hfd', $this->arrRoles) );
 	}
 }

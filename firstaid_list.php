@@ -1,4 +1,5 @@
 <?php
+$doPing = false;
 require_once "classes/start.inc.php";
 
 $type_of_beo = "e";

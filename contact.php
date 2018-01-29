@@ -1,23 +1,16 @@
 <?php 
 require_once "classes/start.inc.php";
 
-//
-if ( !isset($settings) ) {
-	$settings = array();
-}
-
 // create webpage
 $oPage = new Page('design/page.php', $settings);
 $oPage->setTitle('Staff - ' . Translations::get('contact'));
 $oPage->setContent(createContactContent( ));
 
 // show page
-echo $oPage->getPage();
+echo $twig->render('design.twig', $oPage->getPageAttributes() );
 
 function createContactContent( ) {
-	global $oWebuser;
-
-	$ret = "<h1>" . Translations::get('contact') . "</h1>";
+	global $oWebuser, $twig;
 
 	$message = Translations::get('questions_bugs_comments');
 	if ( $oWebuser->isLoggedIn() ) {
@@ -26,7 +19,8 @@ function createContactContent( ) {
 		$message = str_replace('::NAME::', Settings::get("functional_maintainer"), $message);
 	}
 
-	$ret .= $message;
-
-	return $ret;
+	return $twig->render('contact.twig', array(
+		'title' => Translations::get('contact')
+		, 'message' => $message
+	));
 }

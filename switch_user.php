@@ -1,11 +1,6 @@
 <?php
 require_once "classes/start.inc.php";
 
-//
-if ( !isset($settings) ) {
-	$settings = array();
-}
-
 $oWebuser->checkLoggedIn();
 
 if ( !$oWebuser->isSuperAdmin() ) {
@@ -19,12 +14,10 @@ $oPage->setTitle('Timecard | Switch user');
 $oPage->setContent(createChangeUserContent());
 
 // show page
-echo $oPage->getPage();
+echo $twig->render('design.twig', $oPage->getPageAttributes() );
 
 function createChangeUserContent() {
-	global $protect, $settings;
-
-	$fldUserName = '';
+	global $protect, $twig;
 
 	if ( $_SERVER['REQUEST_METHOD'] == 'POST' ) {
 		// get values
@@ -53,29 +46,17 @@ function createChangeUserContent() {
 		}
 	}
 
-	$ret = "
-<h1>" . Translations::get('menu_switch_user') . "</h1>
-
-<table border=\"0\" cellspacing=\"0\" cellpadding=\"2\">
-<form name=\"frmA\" method=\"POST\">
-<tr>
-	<td>" . Translations::get('loginname') . ":</td>
-	<td><input type=\"text\" name=\"fldUserName\" class=\"login\" maxlength=\"50\" value=\"" . $fldUserName . "\" placeholder=\"" . Translations::get('loginname_placeholder') . "\"></td>
-</tr>
-<tr>
-	<td align=\"right\">&nbsp;</td>
-	<td>&nbsp;<input class=\"button_login\" type=\"submit\" name=\"btnSubmit\" value=\"" . Translations::get('btn_login') . "\"></td>
-</tr>
-</form>
-</table>
-
-<br>
+	return $twig->render('switch_user.twig', array(
+		'title' => Translations::get('menu_switch_user')
+		, 'btn_login' => Translations::get('btn_login')
+		, 'lblLoginname' => Translations::get('loginname')
+		, 'loginname_placeholder' => Translations::get('loginname_placeholder')
+		, 'focusjavascriptcode' => "
 <script language=\"javascript\">
 <!--
-document.frmA.fldUserName.focus();
+	document.frmA.fldUserName.focus();
 // -->
 </script>
-";
-
-	return $ret;
+"
+	));
 }

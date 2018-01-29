@@ -1,28 +1,28 @@
 <?php
 require_once "classes/start.inc.php";
 
-//
-if ( !isset($settings) ) {
-	$settings = array();
-}
-
 // create webpage
 $oPage = new Page('design/page.php', $settings);
-$oPage->setTitle(Translations::get('iisg_employee') . ' | Floor plans');
+$oPage->setTitle('Floor plans');
 $oPage->setContent(createFloorsContent());
 
 // show page
-echo $oPage->getPage();
+echo $twig->render('design.twig', $oPage->getPageAttributes() );
 
 function createFloorsContent() {
-	$ret = "";
+	global $twig;
+
+	$floorImages = array();
 
 	$numberOfLevels = Settings::get('number_of_levels');
 	if ( $numberOfLevels != '' && $numberOfLevels >= 0 ) {
 		for ( $i = 0; $i <= $numberOfLevels; $i++ ) {
-			$ret .= "<img src=\"" . Settings::get('floorplan_level' . $i) . "\"><br><br>";
+			$floorImages[] = Settings::get('floorplan_level' . $i);
 		}
 	}
 
-	return $ret;
+	return $twig->render('floors.twig', array(
+		'title' => 'Floors'
+		, 'floorImages' => $floorImages
+	));
 }

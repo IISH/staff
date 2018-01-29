@@ -12,9 +12,10 @@ class AbsenceCalendarFormat {
 
 			$style = "border: thin solid white;";
 
-			$oDate = DateTime::createFromFormat('Y-m-d', $year . '-' . $month . '-' . $i);
+			$newDate = date("Y-m-d", strtotime(" +".($i-$firstDay)." days", strtotime($year . '-' . $month . '-' . $firstDay)));
+			$oDate = DateTime::createFromFormat('Y-m-d', $newDate);
 
-			$cellStyle = getStyle($oDate->format('Y'), $oDate->format('m'), $i, $arrVakantie, $arrHolidays, 0);
+			$cellStyle = getStyle($oDate->format('Y'), $oDate->format('m'), $oDate->format('d'), $arrVakantie, $arrHolidays, 0);
 
 			$style .= $cellStyle["tdStyle"];
 			if ( $cellStyle["alt"] != '' ) {

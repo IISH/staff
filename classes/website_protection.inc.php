@@ -163,6 +163,14 @@ class WebsiteProtection {
 
 		$retval = trim($retval);
 
+		// remove accidental anchors
+		if ( strpos($retval, '#') !== false || strpos($retval, '?') !== false ) {
+			$retval = str_replace(array('#', '?'), ' ', $retval);
+			$retval = trim($retval);
+			$retval = explode(' ', $retval);
+			$retval = $retval[0];
+		}
+
 		if ($retval != '') {
 			// check if only numbers
 			$pattern = "/^[0-9]+$/";

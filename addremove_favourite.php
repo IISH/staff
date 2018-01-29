@@ -1,10 +1,6 @@
-<?php 
+<?php
+$doPing = false;
 require_once "classes/start.inc.php";
-
-//
-if ( !isset($settings) ) {
-	$settings = array();
-}
 
 $oWebuser->checkLoggedIn();
 
@@ -24,7 +20,7 @@ if ( !in_array($fav, array('', 'vakantie', 'present', 'checkinout', 'absences') 
 $query = '';
 if ( $dowhat == 'a' ) {
 	// add to database
-	$query = 'INSERT INTO staff_favourites (user, ProtimeID, type) VALUES(\'' . $oWebuser->getLoginname() . '\', ' . $id . ', \'' . $fav . '\') ';
+	$query = 'INSERT INTO staff_favourites (user, user_iisg, ProtimeID, type) VALUES(\'' . $_SESSION['loginname'] . '\', \'' . $_SESSION['loginname'] . '\', ' . $id . ', \'' . $fav . '\') ';
 	// show remove button in window
 	if ( $fav == 'checkinout' ) {
 		$alttitle = Translations::get('lbl_click_to_not_get_email_notification');
@@ -35,7 +31,7 @@ if ( $dowhat == 'a' ) {
 	}
 } elseif ( $dowhat == 'r' ) {
 	// remove from database
-	$query = 'DELETE FROM staff_favourites WHERE user=\'' . $oWebuser->getLoginname() . '\' AND ProtimeID=' . $id . ' AND type=\'' . $fav . '\' ';
+	$query = 'DELETE FROM staff_favourites WHERE ( user=\'' . $oWebuser->getLoginname() . '\' OR user_iisg=\'' . $oWebuser->getLoginname() . '\' OR user=\'' . $_SESSION['loginname'] . '\' OR user_iisg=\'' . $_SESSION['loginname'] . '\' ) AND ProtimeID=' . $id . ' AND type=\'' . $fav . '\' ';
 	// show add button in window
 	if ( $fav == 'checkinout' ) {
 		$alttitle = Translations::get('lbl_click_to_get_email_notification');

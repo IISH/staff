@@ -1,8 +1,27 @@
 <?php
+function isExportKeyValid() {
+	$export_key = '';
+	if (isset($_GET["export_key"])) {
+		$export_key = trim($_GET["export_key"]);
+	}
+
+	if ( $export_key != '' && $export_key == trim(Settings::get('export_key'))) {
+		return true;
+	}
+
+	return false;
+}
+
 function preprint( $object ) {
 	echo '<pre>';
 	print_r( $object );
 	echo '</pre>';
+}
+
+function preprintHidden( $object ) {
+	echo '<!-- ';
+	print_r( $object );
+	echo '</pre>' . "\n";
 }
 
 function getStyle($selectedYear, $selectedMonth, $day, $absences = array(), $holidays = array(), $colorInCurrentDay = 1) {
@@ -123,6 +142,7 @@ class Misc {
 		$string = str_ireplace('(vrijwillig)', '', $string);
 		$string = str_ireplace('(stz)', '', $string);
 		$string = str_ireplace('(rec)', '', $string);
+		$string = str_ireplace('(receptie)', '', $string);
 		$string = str_ireplace('(kantine)', '', $string);
 		$string = str_ireplace('(uu)', '', $string);
 
@@ -152,7 +172,6 @@ class Misc {
 		$never_show_persnr = '0,' . preg_replace('/[^0-9]/', ',', trim(Settings::get("never_show_persnr")));
 		$never_show_persnr = preg_replace('/,{2,}/', ',', $never_show_persnr);
 		$never_show_persnr = ' AND ' . Settings::get('protime_tables_prefix') . 'curric.PERSNR NOT IN (' . $never_show_persnr . ') ';
-
 		return $never_show_persnr;
 	}
 

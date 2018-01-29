@@ -1,0 +1,4 @@
+LASTNAME	FIRSTNAME	EMAIL	DEPARTMENT
+{% for user in users %}
+{{ user.LASTNAME|raw }}	{{ user.FIRSTNAME|raw }}	{{ user.EMAIL|raw }}	{{ user.DEPARTMENT|raw }}
+{% endfor %}

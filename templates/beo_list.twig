@@ -1,0 +1,49 @@
+<h1>{{title}}</h1>
+
+<div class="incaseofemergency">{{in_case_of_emergency_call}} <span class="incaseofemergencynumber">{{emergency_number}}</span></div>
+
+<table border=0 cellspacing=1 cellpadding=1>
+	<TR>
+		<TD width=25></TD>
+		<TD width=250><font size=-1><b>{{lbl_name}}</b></font></TD>
+		<td width=100 align="center"><font size=-1><b>{{lbl_check_inout}}</b></font></td>
+		{% if showTelephone == 1 %}
+			<td width=100 align="center"><font size=-1><b>{{lbl_telephone}}</b></font></td>
+		{% endif %}
+		{% if showFloors == 1 %}
+			<td width=100 align="center"><font size=-1><b>{{lbl_level}}</b></font></td>
+		{% endif %}
+	</TR>
+
+	{% for item in items %}
+	<tr>
+		<td><div id="divCheckInOut{{id}}">{{item.checkinout|raw}}</div></td>
+		<td>{{item.url|raw}}</td>
+		<td class="presentornot_absence" style="{{item.status_style}}"><A class="checkinouttime" TITLE="{{status_alt}}">{{item.status_text}}</A></td>
+		{% if showTelephone == 1 %}
+			<td align="center">{{item.telephone|raw}}</td>
+		{% endif %}
+		{% if showFloors == 1 %}
+			<td align="center">{{item.verdieping}}</td>
+		{% endif %}
+	</tr>
+	{% endfor %}
+</table>
+
+{% if showFloors == 1 %}
+<br>
+<table>
+	<tr>
+		<td><font size=-1><b>{{lbl_level}}: </b></font></td>
+		{{floors|raw}}
+	</tr>
+</table>
+{% endif %}
+
+<br>
+<font size=-1><i>
+{{lbl_present}}: {{totaal_aanwezig}}<br>
+{{lbl_not_present}}: {{totaal_afwezig}}<br>
+<br>
+{{lbl_page_refreshes_every}} {{date}}
+</i></font>

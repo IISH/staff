@@ -3,8 +3,6 @@
  * Class for loading and getting translations from the database
  */
 
-//require_once __DIR__ . "/../classes/_misc_functions.inc.php";
-
 class Translations {
 	private static $is_loaded = false;
 	private static $settings = null;

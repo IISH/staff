@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 class class_mssql {
 	private $server;
 	private $user;

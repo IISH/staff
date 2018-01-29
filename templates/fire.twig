@@ -1,0 +1,38 @@
+<h1>{{title}}</h1>
+{{print_date}}<br>
+
+<table class="fire">
+
+{% for group in groups %}
+	<tr>
+		<th colspan=5 class="fire_header"><br>{{group.label}}</th>
+	</tr>
+	<tr>
+		<th width="30">&nbsp;</th>
+		<th width="30">&nbsp;</th>
+		<th>{{group.lbl_name}}</th>
+		<th>{{group.lbl_telephone}}</th>
+		<th>{{group.lbl_roles}}</th>
+	</tr>
+
+	{% for item in group.items %}
+	<tr>
+		<td>&nbsp;</td>
+		<td align="right">{{item.groupCounter}}</td>
+		<td>{{item.empNameLink|raw}}</td>
+		<td>{{item.telephone|raw}}&nbsp;</td>
+		<td>{{item.remarks}}&nbsp;</td>
+	</tr>
+	{% endfor %}
+{% endfor %}
+
+</table>
+
+<br>
+{{total_number_of_employees}}: {{total_of_present_employees}}<br>
+
+<script LANGUAGE="JavaScript">
+<!--
+window.print();
+// -->
+</script>

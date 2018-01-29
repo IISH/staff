@@ -2,21 +2,84 @@
 
 class Authentication {
 	public static function authenticate( $login, $password ) {
-		global $active_directories;
-		return Authentication::check_ldap('iisgnet\\' . $login, $password, $active_directories);
+		if ( strpos($login, '.') !== false ) {
+			// if login contains 'dot' then IISG login
+//			return Authentication::check_ad($login, $password, 'iisg');
+			return Authentication::check_ldap($login, $password, 'iisg');
+		} else {
+			// if login does not contain 'dot' then KNAW login
+			return Authentication::check_ldap($login, $password, 'knaw');
+		}
 	}
 
-	public static function check_ldap($user, $pw, $servers) {
+//	public static function check_ad($user, $pw, $authenticationServer) {
+//		$login_correct = 0;
+//
+//		// LDAP AUTHENTICATIE VIA PHP-LDAP
+//		// php-ldap must be installed on the server
+//
+//		// get settings
+//		$auth = Authentication::getServerAuthorisationInfo($authenticationServer);
+//
+//		// add prefix
+//		$user = $auth['prefix'] . $user;
+//		// remove double prefix
+//		$user = str_replace($auth['prefix'] . $auth['prefix'], $auth['prefix'], $user);
+//
+//		foreach (AdServerStatic::getAdServers($auth['ad_servers']) as $server ) {
+//			if ( $login_correct == 0 ) {
+//				// connect
+//				$ad = ldap_connect($server->getProtocolAndServer()) or die ("Could not connect to $server. Please contact IT Servicedesk");
+//
+//				// set some variables
+//				ldap_set_option($ad, LDAP_OPT_PROTOCOL_VERSION, 3);
+//				ldap_set_option($ad, LDAP_OPT_REFERRALS, 0);
+//
+//				// bind to the ldap directory
+//				$bd = @ldap_bind($ad, $user, $pw);
+//
+//				// verify binding
+//				if ($bd) {
+//					$login_correct = 1;
+//				}
+//
+//				// never forget to unbind!
+//				ldap_unbind($ad);
+//			}
+//		}
+//
+//		if ( $login_correct == 0 ) {
+//			error_log("LOGIN FAILED $user from " . Misc::get_remote_addr() . " (AD: " . trim($auth['ad_servers']) . ")");
+//		}
+//
+//		return $login_correct;
+//	}
+
+	//
+	public static function check_ldap($user, $pw, $authenticationServer) {
 		$login_correct = 0;
 
-		// LDAP AUTHENTICATION VIA PHP-LDAP
-		// php-ldap must be installed on the server
+		// get settings
+		$auth = Authentication::getServerAuthorisationInfo($authenticationServer);
 
-		foreach ( $servers as $server ) {
+		//
+		$user = trim($user);
+
+		//
+		$sAMAccountName = $user;
+
+		// add prefix
+		$user = $auth['prefix'] . $user;
+		// remove double prefix
+		$user = str_replace($auth['prefix'] . $auth['prefix'], $auth['prefix'], $user);
+
+		// loop all Active Directory servers
+		//foreach ( unserialize($auth['servers']) as $server ) {
+		foreach ( AdServerStatic::getAdServers($auth['ad_servers']) as $server ) {
 			if ( $login_correct == 0 ) {
 
-				// try to connect to ldap server
-				$ad = ldap_connect($server);
+				// try to connect to the ldap server
+				$ad = ldap_connect($server->getProtocolAndServer(), $server->getPort());
 
 				// set some variables
 				ldap_set_option($ad, LDAP_OPT_PROTOCOL_VERSION, 3);
@@ -26,17 +89,76 @@ class Authentication {
 				$bd = @ldap_bind($ad, $user, $pw);
 
 				// verify binding, if binding succeeds then login is correct
-				if ($bd) {
-					$login_correct = 1;
-				} else {
-					error_log("LOGIN FAILED $user from " . Misc::get_remote_addr() . " (AD: " . $server . ")");
-				}
+				if ( $bd ) {
+					$whitelist = trim($auth['whitelist']);
+					$blacklist = trim($auth['blacklist']);
 
+					if ( $whitelist == '' && $blacklist == '' ) {
+						// there is no white/blacklist, so everyone who logged in via this server is okay
+						$login_correct = 1; // authenticated & authorised
+					} else {
+						$result = ldap_search($ad, $auth['ldap_dn'], "(sAMAccountName=$sAMAccountName)", array("memberof")) or exit("Unable to search LDAP server");
+						$entries = ldap_get_entries($ad, $result);
+
+						// check whitelist
+						if ( $whitelist == '' ) {
+							// there is no whitelist, so everyone who logged in via this server is whitelisted
+							$login_correct = 1; // authenticated & authorised
+						} else {
+							$login_correct = 2; // autheniticate but not authorised
+							$whitelist = explode("\n", $whitelist);
+							foreach ( $whitelist as $wl ) {
+								foreach($entries[0]['memberof'] as $grps) {
+									if ( $grps == trim($wl)) {
+										$login_correct = 1; // authenticated & authorised
+										break;
+									}
+								}
+							}
+						}
+
+						// check blacklist
+						if ( $login_correct == 1 ) {
+							if ( $blacklist != '' ) {
+								$blacklist = explode("\n", $blacklist);
+								foreach ( $blacklist as $bl ) {
+									foreach($entries[0]['memberof'] as $grps) {
+										if ( $grps == trim($bl)) {
+											$login_correct = 2; // authenticated but not authorised
+											error_log("AUTHORISATION FAILED $user from " . Misc::get_remote_addr() . " (LDAP: " . $server . ")");
+											break;
+										}
+									}
+								}
+							}
+						}
+
+					}
+				} else {
+					error_log("AUTHENTICATION FAILED $user from " . Misc::get_remote_addr() . " (LDAP: " . $server->getProtocolAndServer() . ")");
+				}
 				// never forget to unbind!
 				ldap_unbind($ad);
 			}
 		}
 
 		return $login_correct;
+	}
+
+	public static function getServerAuthorisationInfo( $authenticationServer ) {
+		global $dbConn;
+
+		// get settings
+		$query = "SELECT * FROM server_authorisation WHERE code = :code ";
+		$stmt = $dbConn->getConnection()->prepare($query);
+		$stmt->bindParam(':code', $authenticationServer, PDO::PARAM_STR);
+		$stmt->execute();
+		$result = $stmt->fetch();
+
+		return $result;
+	}
+
+	public function __toString() {
+		return "Class: " . get_class($this) . "\n";
 	}
 }

@@ -1,0 +1,38 @@
+<h1>{{title}}</h1>
+
+{% if error != '' %}
+	<span class="error">{{error|raw}}</span>
+	<br>
+{% endif %}
+
+<table border=0 cellspacing=1 cellpadding=1>
+	<TR>
+		<TD width=25></TD>
+		<TD width=25></TD>
+		<TD width=250><font size=-1><b>{{lbl_name}}</b></font></TD>
+		<td width=100 align="center"><font size=-1><b>{{lbl_check_inout}}</b></font></td>
+		<td width=100 align="center"><font size=-1><b>{{lbl_telephone}}</b></font></td>
+		<td width=100 align="center"><font size=-1><b>{{lbl_room}}</b></font></td>
+	</TR>
+
+	{% for item in items %}
+
+	<tr>
+		<td><div id="divAddRemove{{item.id}}">{{item.addremove|raw}}</div></td>
+		<td><div id="divCheckInOut{{item.id}}">{{item.checkinout|raw}}</div></td>
+		<td>{{item.uitdienst|raw}}{{item.url|raw}}</td>
+		<td class="presentornot_absence" style="{{item.status_style}}"><A class="checkinouttime" TITLE="{{item.status_alt}}">{{item.status_text|raw}}</A></td>
+		<td align="center">{{item.telephone|raw}}</td>
+		<td align="center">{{item.room|raw}}</td>
+		</td>
+	</tr>
+
+	{% endfor %}
+
+</table>
+
+<br class="clearBoth" />
+
+<font size=-1><i>{{lbl_present}}: {{totaal_aanwezig}}<br>
+{{lbl_not_present}}: {{totaal_afwezig}}<br><br>
+{{lbl_page_refreshes_every}} {{date}}</i></font>

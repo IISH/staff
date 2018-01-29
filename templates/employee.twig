@@ -1,0 +1,95 @@
+<h1>{{title}}</h1>
+
+{{go_back|raw}}<br>
+<br>
+
+<div class="personalpage">
+	<table border=0 cellpadding=2 cellspacing=0>
+
+		<tr>
+			<td>{{lbl_name}}:</td>
+			<td>{{name}}</td>
+		</tr>
+
+		<tr>
+			<td>{{lbl_check_inout}}:</td>
+			<td>
+				<table border=0 cellpadding=0 cellspacing=0>
+					<tr>
+						<td width="120px" class="presentornot_absence" style="{{status_color}}"><A class="checkinouttime" TITLE="{{status_alt}}">{{status_text|raw}}</A></td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+
+		<tr>
+			<td>{{lbl_room}}:</td>
+			<td>{{room|raw}}</td>
+		</tr>
+
+		<tr>
+			<td>{{lbl_telephone}}:</td>
+			<td>{{telephone|raw}}</td>
+		</tr>
+
+		{% if email != '' %}
+			<tr>
+				<td>{{lbl_email}}:</td>
+				<td><a href="mailto:{{email}}">{{email}}</a></td>
+			</tr>
+		{% endif %}
+
+		{% if hasBadgeAuthorisation == true %}
+		<tr>
+			<td>{{lblBadgenr}}:</td>
+			<td>{{badgenr|raw}}</td>
+		</tr>
+		{% endif %}
+
+		<tr>
+			<td>{{lbl_department}}:</td>
+			<td>{{department}}</td>
+		</tr>
+
+		<tr>
+			<td>{{lbl_ert|raw}}:</td>
+			<td>{{ert}}</td>
+		</tr>
+
+		<tr>
+			<td>{{lbl_firstaid|raw}}:</td>
+			<td>{{firstaid}}</td>
+		</tr>
+
+		<tr>
+			<td>{{lbl_evacuator|raw}}:</td>
+			<td>{{evacuator}}</td>
+		</tr>
+
+		{% if date_out != '' %}
+			<tr>
+				<td>{{lbl_date_out}}:</td>
+				<td>{{date_out}}</td>
+			</tr>
+		{% endif %}
+
+		<tr>
+			<td>{{lbl_schedule}}:</td>
+			<td>{{schedule|raw}}</td>
+		</tr>
+
+		{% if isAdmin == 1 %}
+			{% if authorisation != '' %}
+				<tr>
+					<td valign=top>{{lbl_authorisation}}:</td>
+					<td>UNDER CONSTRUCTION {{authorisation|raw}}</td>
+				</tr>
+			{% endif %}
+		{% endif %}
+
+	</table>
+</div>
+
+<div class="personalpage">{{photo|raw}}</div>
+
+<br class="clearBoth">

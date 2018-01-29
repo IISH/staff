@@ -1,11 +1,6 @@
 <?php
 require_once "classes/start.inc.php";
 
-//
-if ( !isset($settings) ) {
-	$settings = array();
-}
-
 $oWebuser->checkLoggedIn();
 
 $date = class_datetime::get_date($protect);
@@ -16,17 +11,14 @@ $staff = new ProtimeUser($id);
 
 // create webpage
 $oPage = new Page('design/page.php', $settings);
-$oPage->setTitle(Translations::get('iisg_employee') . ' - ' . $staff->getNiceFirstLastname());
+$oPage->setTitle($staff->getNiceFirstLastname() . ' - ' . Translations::get('iisg_employee'));
 $oPage->setContent(createStaffContent( $staff ));
 
 // show page
-echo $oPage->getPage();
+echo $twig->render('design.twig', $oPage->getPageAttributes() );
 
 function createStaffContent( $staff ) {
-    global $oWebuser;
-
-	// header
-	$ret = '<h1>' . $staff->getNiceFirstLastname() . '</h1>';
+    global $oWebuser, $twig;
 
 	// go back
 	$goback = ( isset( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : '' );
@@ -36,7 +28,6 @@ function createStaffContent( $staff ) {
 		$goback = stripDomainnameFromUrl( $goback );
 	}
 	$goback = createUrl( array( 'url' => $goback, 'label' => Translations::get('go_back') ) );
-	$ret .= $goback . '<br><br>';
 
 	// get check in/out status
 	$status = getCurrentDayCheckInoutState($staff->getId());
@@ -44,11 +35,7 @@ function createStaffContent( $staff ) {
 		$status["status_text"] = '&nbsp;';
 	}
 
-	$ret .= "
-<div class=\"personalpage\">
-<table border=0 cellpadding=2 cellspacing=0>
-";
-
+	//
 	$photo = $staff->getPhoto();
 	// TODOGCU
     $alttitle = '';
@@ -62,130 +49,58 @@ function createStaffContent( $staff ) {
 	}
 	$photo = "<img src=\"$photo\" title=\"$alttitle\">";
 
-	// NAAM
-	$ret .= "
-<tr>
-	<td>" . Translations::get('lbl_name') . ":</td>
-	<td>" . $staff->getNiceFirstLastname() . "</td>
-</tr>
-";
-
-	// CHECK IN/OUT
-	$ret .= "
-<tr>
-	<td>" . Translations::get('lbl_check_inout') . ":</td>
-	<td>
-		<table border=0 cellpadding=0 cellspacing=0>
-		<tr>
-			<td width=\"120px\" class=\"presentornot_absence\" style=\"" . $status["status_color"] . "\"><A class=\"checkinouttime\" TITLE=\"" . $status["status_alt"] . "\">" . $status["status_text"] . "</A></td>
-		</tr>
-		</table>
-	</td>
-</tr>
-";
-
-	// ROOM
-	$ret .= "
-<tr>
-	<td>" . Translations::get('lbl_room') . ":</td>
-	<td>" . static_Room::createRoomUrl($staff->getRoom()) . "</td>
-</tr>
-";
-
-	// TELEPHONE
-	$ret .= "
-<tr>
-	<td>" . Translations::get('lbl_telephone') . ":</td>
-	<td>" . Telephone::getTelephonesHref($staff->getTelephones()) . "</td>
-</tr>
-";
-
-	// EMAIL
-	if ( $staff->getEmail() != '' ) {
-		$ret .= "
-<tr>
-	<td>" . Translations::get('lbl_email') . ":</td>
-	<td><a href=\"mailto:" . $staff->getEmail() . "\">" . $staff->getEmail() . "</a></td>
-</tr>
-";
+	//
+	if ( $oWebuser->hasAuthorisationTabOntruimer() || $oWebuser->isOntruimer() ) {
+		$ontruimers_link = createUrl( array( 'url' => 'evacuators.php', 'label' => Translations::get('lbl_evacuator') ) );
+	} else {
+		$ontruimers_link = Translations::get('lbl_evacuator');
 	}
-
-	// DEPARTMENT
-	$ret .= "
-<tr>
-	<td>" . Translations::get('lbl_department') . ":</td>
-	<td>" . $staff->getDepartment()->getShort() . "</td>
-</tr>
-";
-
-	// BHV
-	$ret .= "
-<tr>
-	<td>" . createUrl( array( 'url' => 'ert.php', 'label' => Translations::get('lbl_ert') ) ) . ":</td>
-	<td>" . ( $staff->isBhv() ? Translations::get('yes') : Translations::get('no') ) . "</td>
-</tr>
-";
-
-	// EHBO
-	$ret .= "
-<tr>
-	<td>" . createUrl( array( 'url' => 'firstaid.php', 'label' => Translations::get('lbl_firstaid') ) ) . ":</td>
-	<td>" . ( $staff->isEhbo() ? Translations::get('yes') : Translations::get('no') ) . "</td>
-</tr>
-";
-
-	// ONTRUIMER
-	$ret .= "
-<tr>
-	<td>" . Translations::get('lbl_evacuator') . ":</td>
-	<td>" . ( $staff->isOntruimer() ? Translations::get('yes') : Translations::get('no') ) . "</td>
-</tr>
-";
 
 	// UITDIENST
 	$dateOut = $staff->getDateOut();
-	if ( $dateOut != '' && $dateOut != '0' && $dateOut < date("Ymd") ) {
-		$ret .= "
-<tr>
-	<td>" . Translations::get('lbl_date_out') . ":</td>
-	<td>" . class_datetime::formatDate($dateOut) . "</td>
-</tr>
-";
+	if ( $dateOut == '0' || $dateOut > date("Ymd") ) {
+		$dateOut = '';
+	} else {
+		$dateOut = class_datetime::formatDate($dateOut);
 	}
 
 	// SCHEDULE
 	$currentSchedule = new ProtimeUserSchedule($staff->getId(), date("Ymd"));
-	$ret .= "
-<tr>
-	<td valign=top>" . Translations::get('lbl_schedule') . ":</td>
-	<td>" . $currentSchedule->getCurrentSchedule() . "</td>
-</tr>
-";
 
-
-	if ( $oWebuser->isAdmin() ) {
-		if ( count($staff->getAuthorisations()) > 0 ) {
-
-			$ret .= "
-<tr>
-	<td valign=top>" . Translations::get('lbl_authorisation') . ":</td>
-	<td>" . implode('<br>', $staff->getAuthorisations()) . "</td>
-</tr>
-";
-
-		}
-	}
-
-	$ret .= "
-</table>
-</div>
-";
-
-	$ret .= "
-<div class=\"personalpage\">$photo</div>
-	";
-
-	$ret .= "<br class=\"clearBoth\">";
-
-	return $ret;
+	//
+	return $twig->render('employee.twig', array(
+		'title' => $staff->getNiceFirstLastname()
+		, 'photo' => $photo
+		, 'lbl_name' => Translations::get('lbl_name')
+		, 'name' => $staff->getNiceFirstLastname()
+		, 'go_back' => $goback
+		, 'lbl_check_inout' => Translations::get('lbl_check_inout')
+		, 'status_color' => $status["status_color"]
+		, 'status_alt' => $status["status_alt"]
+		, 'status_text' => $status["status_text"]
+		, 'lbl_room' => Translations::get('lbl_room')
+		, 'room' => static_Room::createRoomUrl($staff->getRoom())
+		, 'lbl_telephone' => Translations::get('lbl_telephone')
+		, 'telephone' => Telephone::getTelephonesHref($staff->getTelephones())
+		, 'lbl_email' => Translations::get('lbl_email')
+		, 'email' => $staff->getEmail()
+		, 'lbl_department' => Translations::get('lbl_department')
+		, 'department' => $staff->getDepartment()->getShort()
+		, 'lbl_ert' => createUrl( array( 'url' => 'ert.php', 'label' => Translations::get('lbl_ert') ) )
+		, 'ert' => ( $staff->isBhv() ? Translations::get('yes') : Translations::get('no') )
+		, 'lbl_firstaid' => createUrl( array( 'url' => 'firstaid.php', 'label' => Translations::get('lbl_firstaid') ) )
+		, 'firstaid' => ( $staff->isEhbo() ? Translations::get('yes') : Translations::get('no') )
+		, 'lbl_evacuator' => $ontruimers_link
+		, 'evacuator' => ( $staff->isOntruimer() ? Translations::get('yes') : Translations::get('no') )
+		, 'lbl_date_out' => Translations::get('lbl_date_out')
+		, 'date_out' => $dateOut
+		, 'lbl_schedule' => Translations::get('lbl_schedule')
+		, 'schedule' => $currentSchedule->getCurrentSchedule()
+		, 'isAdmin' => ( $oWebuser->isAdmin() ? 1 : 0 )
+		, 'lbl_authorisation' => Translations::get('lbl_authorisation')
+//		, 'authorisation' => implode('<br>', $staff->getAuthorisations())
+		, 'lblBadgenr' => Translations::get('lbl_badgenr')
+		, 'badgenr' => $staff->getBadgenr()
+		, 'hasBadgeAuthorisation' => $staff->hasAuthorisationTabFire() || $staff->getId() == $oWebuser->getId()
+	));
 }

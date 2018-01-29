@@ -33,7 +33,3 @@ $databases = array (
 			'prefix' => '',
 		),
 );
-
-$active_directories = array(
-    ''
-);

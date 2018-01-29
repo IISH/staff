@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<users>
+{% for user in users %}
+	<user>
+		<LASTNAME>{{ user.LASTNAME|raw }}</LASTNAME>
+		<FIRSTNAME>{{ user.FIRSTNAME|raw }}</FIRSTNAME>
+		<EMAIL>{{ user.EMAIL|raw }}</EMAIL>
+		<DEPARTMENT>{{ user.DEPARTMENT|raw }}</DEPARTMENT>
+	</user>
+{% endfor %}
+</users>

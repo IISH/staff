@@ -1,0 +1,31 @@
+<h1>{{title}}</h1>
+
+{% if isAdmin == 1 %}
+<input type="button" class="button" name="addNewButton" value="Add new" onClick="open_page('special_numbers_edit.php?ID=0');"><br>
+{% endif %}
+
+<br>
+<table class="special_numbers">
+	<tr>
+		<th align="left" style="padding-right:10px;">{{lbl_specnumber_object}}</th>
+		<th align="left" style="padding-right:10px;">{{lbl_specnumber_number}}</th>
+		<th align="left" style="padding-right:10px;">{{lbl_specnumber_extra}}</th>
+		<th align="left" style="padding-right:10px;">{{lbl_specnumber_location}}</th>
+		<th align="left" style="padding-right:10px;">{{lbl_specnumber_room}}</th>
+		<th align="left" style="padding-right:10px;">{{lbl_specnumber_fax}}</th>
+		<th align="left">{{lbl_specnumber_email}}</th>
+	</tr>
+
+	{% for object in objects%}
+	<tr>
+		<td style="padding-right:10px;">{{object.object|raw}}</td>
+		<td style="padding-right:10px;">{{object.telephone|raw}}</td>
+		<td style="padding-right:10px;">{{object.functie}}</td>
+		<td style="padding-right:10px;">{{object.location}}</td>
+		<td style="padding-right:10px;">{{object.room}}</td>
+		<td style="padding-right:10px;">{{object.fax}}</td>
+		<td>{{object.email|raw}}</td>
+	</tr>
+	{% endfor %}
+
+</table>
