@@ -9,7 +9,7 @@ $oPage->setTitle('Staff - ' . Translations::get('header_user'));
 $oPage->setContent(createUserContent( ));
 
 // show page
-echo $twig->render('design.html', $oPage->getPageAttributes() );
+echo $twig->render('design.twig', $oPage->getPageAttributes() );
 
 function createUserContent( ) {
     global $oWebuser, $twig;
@@ -46,7 +46,7 @@ function createUserContent( ) {
 	}
 
 	//
-	return $twig->render('user.html', array(
+	return $twig->render('user.twig', array(
 		'title' => Translations::get('header_user')
 		, 'photo' => $photo
 		, 'lblName' => Translations::get('lbl_name')
@@ -71,5 +71,7 @@ function createUserContent( ) {
 		, 'ontruimer' => ( $oWebuser->isOntruimer() ? Translations::get('yes') : Translations::get('no') )
 		, 'lblSchedule' => Translations::get('lbl_schedule')
 		, 'schedule' => $currentSchedule->getCurrentSchedule()
+		, 'lblBadgenr' => Translations::get('lbl_badgenr')
+		, 'badgenr' => $oWebuser->getBadgenr()
 	));
 }

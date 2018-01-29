@@ -39,6 +39,13 @@
 			</tr>
 		{% endif %}
 
+		{% if hasBadgeAuthorisation == true %}
+		<tr>
+			<td>{{lblBadgenr}}:</td>
+			<td>{{badgenr|raw}}</td>
+		</tr>
+		{% endif %}
+
 		<tr>
 			<td>{{lbl_department}}:</td>
 			<td>{{department}}</td>

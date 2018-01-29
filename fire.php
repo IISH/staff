@@ -17,7 +17,7 @@ $oPage->setFavicon("images/misc/fire.ico");
 $oPage->setContent(createBrandContent( ));
 
 // show page
-echo $twig->render('design.html', $oPage->getPageAttributes() );
+echo $twig->render('design.twig', $oPage->getPageAttributes() );
 
 function createBrandContent( ) {
 	global $dbConn, $oWebuser, $twig;
@@ -119,7 +119,7 @@ function createBrandContent( ) {
 		$groups[] = $group;
 	}
 
-	return $twig->render('fire.html', array(
+	return $twig->render('fire.twig', array(
 		'title' => Translations::get('header_fire')
 		, 'print_date' => Translations::get('printed_on') . ": " . date("d") . ' ' . Translations::get('month' . (date("m")+0)) . ' ' . date("Y H:i")
 		, 'total_number_of_employees' => Translations::get('total_number_of_employees')

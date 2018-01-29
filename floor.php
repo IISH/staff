@@ -9,7 +9,7 @@ $oPage->setTitle('Floor plan level ' . $f);
 $oPage->setContent(createFloorContent( $f ));
 
 // show page
-echo $twig->render('design.html', $oPage->getPageAttributes() );
+echo $twig->render('design.twig', $oPage->getPageAttributes() );
 
 function createFloorContent( $floor ) {
 	global $twig;
@@ -21,7 +21,7 @@ function createFloorContent( $floor ) {
 		$floor = 'Unknown floor';
 	}
 
-	return $twig->render('floor.html', array(
+	return $twig->render('floor.twig', array(
 		'go back' => 'Floors'
 		, 'floor' => $floor
 	));

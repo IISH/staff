@@ -7,7 +7,7 @@ $oPage->setTitle('Staff - ' . Translations::get('contact'));
 $oPage->setContent(createContactContent( ));
 
 // show page
-echo $twig->render('design.html', $oPage->getPageAttributes() );
+echo $twig->render('design.twig', $oPage->getPageAttributes() );
 
 function createContactContent( ) {
 	global $oWebuser, $twig;
@@ -19,7 +19,7 @@ function createContactContent( ) {
 		$message = str_replace('::NAME::', Settings::get("functional_maintainer"), $message);
 	}
 
-	return $twig->render('contact.html', array(
+	return $twig->render('contact.twig', array(
 		'title' => Translations::get('contact')
 		, 'message' => $message
 	));

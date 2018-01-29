@@ -123,7 +123,7 @@ function createBeoListContent() {
 	}
 
 	//
-	return $twig->render('beo_list.html', array(
+	return $twig->render('beo_list.twig', array(
 		'title' => $oBeo->getLabel()
 		, 'in_case_of_emergency_call' => Translations::get('in_case_of_emergency_call')
 		, 'emergency_number' => Settings::get('emergency_number')

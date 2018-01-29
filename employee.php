@@ -15,7 +15,7 @@ $oPage->setTitle($staff->getNiceFirstLastname() . ' - ' . Translations::get('iis
 $oPage->setContent(createStaffContent( $staff ));
 
 // show page
-echo $twig->render('design.html', $oPage->getPageAttributes() );
+echo $twig->render('design.twig', $oPage->getPageAttributes() );
 
 function createStaffContent( $staff ) {
     global $oWebuser, $twig;
@@ -67,7 +67,7 @@ function createStaffContent( $staff ) {
 	$currentSchedule = new ProtimeUserSchedule($staff->getId(), date("Ymd"));
 
 	//
-	return $twig->render('employee.html', array(
+	return $twig->render('employee.twig', array(
 		'title' => $staff->getNiceFirstLastname()
 		, 'photo' => $photo
 		, 'lbl_name' => Translations::get('lbl_name')
@@ -98,5 +98,8 @@ function createStaffContent( $staff ) {
 		, 'isAdmin' => ( $oWebuser->isAdmin() ? 1 : 0 )
 		, 'lbl_authorisation' => Translations::get('lbl_authorisation')
 //		, 'authorisation' => implode('<br>', $staff->getAuthorisations())
+		, 'lblBadgenr' => Translations::get('lbl_badgenr')
+		, 'badgenr' => $staff->getBadgenr()
+		, 'hasBadgeAuthorisation' => $staff->hasAuthorisationTabFire() || $staff->getId() == $oWebuser->getId()
 	));
 }

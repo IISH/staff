@@ -7,7 +7,7 @@ $oPage->setTitle('Staff - ' . Translations::get('header_nationalholidays'));
 $oPage->setContent(createNationalHolidaysContent( ));
 
 // show page
-echo $twig->render('design.html', $oPage->getPageAttributes() );
+echo $twig->render('design.twig', $oPage->getPageAttributes() );
 
 function createNationalHolidaysContent( ) {
 	global $dbConn, $twig;
@@ -28,7 +28,7 @@ function createNationalHolidaysContent( ) {
 		);
 	}
 
-	return $twig->render('nationalholidays.html', array(
+	return $twig->render('nationalholidays.twig', array(
 		'title' => Translations::get('header_nationalholidays')
 		, 'lblDate' => Translations::get('lbl_date')
 		, 'lblDescription' => Translations::get('lbl_description')

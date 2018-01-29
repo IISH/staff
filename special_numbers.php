@@ -9,7 +9,7 @@ $oPage->setTitle('Staff - ' . Translations::get('header_specialnumbers'));
 $oPage->setContent(createSpecialNumbersContent( ));
 
 // show page
-echo $twig->render('design.html', $oPage->getPageAttributes() );
+echo $twig->render('design.twig', $oPage->getPageAttributes() );
 
 // disconnect database connection
 $dbConn->close();
@@ -57,7 +57,7 @@ function createSpecialNumbersContent( ) {
 	}
 
 	//
-	return $twig->render('special_numbers.html', array(
+	return $twig->render('special_numbers.twig', array(
 		'title' => Translations::get('header_specialnumbers')
 		, 'isAdmin' => $isAdmin
 		, 'lbl_specnumber_object' => Translations::get('lbl_specnumber_object')

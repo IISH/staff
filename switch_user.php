@@ -14,7 +14,7 @@ $oPage->setTitle('Timecard | Switch user');
 $oPage->setContent(createChangeUserContent());
 
 // show page
-echo $twig->render('design.html', $oPage->getPageAttributes() );
+echo $twig->render('design.twig', $oPage->getPageAttributes() );
 
 function createChangeUserContent() {
 	global $protect, $twig;
@@ -46,7 +46,7 @@ function createChangeUserContent() {
 		}
 	}
 
-	return $twig->render('switch_user.html', array(
+	return $twig->render('switch_user.twig', array(
 		'title' => Translations::get('menu_switch_user')
 		, 'btn_login' => Translations::get('btn_login')
 		, 'lblLoginname' => Translations::get('loginname')

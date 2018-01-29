@@ -15,7 +15,7 @@ $oPage->setTitle('Staff - ' . Translations::get('menu_absences'));
 $oPage->setContent(createPresentContent( ));
 
 // show page
-echo $twig->render('design.html', $oPage->getPageAttributes() );
+echo $twig->render('design.twig', $oPage->getPageAttributes() );
 
 function createPresentContent() {
 	global $oWebuser, $twig;
@@ -43,7 +43,7 @@ function createPresentContent() {
 	}
 
 	//
-	return $twig->render('absences.html', array(
+	return $twig->render('absences.twig', array(
 		'title' => Translations::get('menu_absences')
 		, 's' => $s
 		, 'refreshAfterXSeconds' => 60

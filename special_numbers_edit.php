@@ -13,7 +13,7 @@ $oPage->setTitle('Staff - ' . Translations::get('header_specialnumbers'));
 $oPage->setContent(createSpecialNumbersContent( ));
 
 // show page
-echo $twig->render('design.html', $oPage->getPageAttributes() );
+echo $twig->render('design.twig', $oPage->getPageAttributes() );
 
 function createSpecialNumbersContent( ) {
     global $settings, $twig;
@@ -79,7 +79,7 @@ function createSpecialNumbersContent( ) {
 	// generate form
 	$form = $oForm->generate_form();
 
-	return $twig->render('special_numbers_edit.html', array(
+	return $twig->render('special_numbers_edit.twig', array(
 		'title' => Translations::get('header_specialnumbers')
 		, 'form' => $form
 	));

@@ -14,12 +14,12 @@ $oPage->setTitle('Timecard | Admin pages');
 $oPage->setContent(createChangeUserContent());
 
 // show page
-echo $twig->render('design.html', $oPage->getPageAttributes() );
+echo $twig->render('design.twig', $oPage->getPageAttributes() );
 
 function createChangeUserContent() {
 	global $protect, $twig;
 
-	return $twig->render('admin.html', array(
+	return $twig->render('admin.twig', array(
 		'title' => 'Admin pages'
 		, 'switch_user' => Translations::get('menu_switch_user')
 	));

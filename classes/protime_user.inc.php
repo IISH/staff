@@ -114,6 +114,7 @@ class ProtimeUser {
 	protected $dateIn;
 	protected $dateOut;
 	protected $arrUserAuthorisation = array();
+	protected $badgenr = '';
 
 	function __construct($protimeId) {
 		if ( !is_array( $protimeId ) ) {
@@ -147,6 +148,7 @@ class ProtimeUser {
 			$this->department = $row["DEPART"];
 			$this->dateIn = $row["DATE_IN"];
 			$this->dateOut = $row["DATE_OUT"];
+			$this->badgenr = $row["BADGENR"];
 
 			$this->oDepartment = new Department( $row["DEPART"] );
 			$this->roles = $row[Settings::get('curric_roles')];
@@ -426,6 +428,10 @@ class ProtimeUser {
 		}
 
 		return false;
+	}
+
+	public function getBadgenr() {
+		return $this->badgenr;
 	}
 
 	public function checkLoggedIn() {

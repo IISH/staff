@@ -8,7 +8,7 @@ $oPage->setTitle('Staff | Login');
 $oPage->setContent(createLoginPage());
 
 // show page
-echo $twig->render('design.html', $oPage->getPageAttributes() );
+echo $twig->render('design.twig', $oPage->getPageAttributes() );
 
 function createLoginPage() {
 	global $protect, $twig;
@@ -71,7 +71,7 @@ function createLoginPage() {
 		}
 	}
 
-	return $twig->render('login.html', array(
+	return $twig->render('login.twig', array(
 		'title' => Translations::get('please_log_in')
 		, 'your_login_credentials_are' => Translations::get('your_login_credentials_are')
 		, 'error' => $error

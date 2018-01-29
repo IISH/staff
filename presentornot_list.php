@@ -52,7 +52,11 @@ function createPresentOrNotList() {
 		$showCalendar = 1;
 	} else {
 		// search
-		$queryCriterium = Generate_Query(array("NAME", "FIRSTNAME", "EMAIL", "USER02", Settings::get('curric_room'), "SHORT_" . getLanguage()), explode(' ', $s));
+		$searchArray = array("NAME", "FIRSTNAME", "EMAIL", "USER02", Settings::get('curric_room'), "SHORT_" . getLanguage());
+		if ( $oWebuser->hasAuthorisationTabFire() ) {
+			$searchArray[] = 'BADGENR';
+		}
+		$queryCriterium = Generate_Query($searchArray, explode(' ', $s));
 		$title = 'Search: ' . $s;
 		$showCalendar = 1;
 	}
@@ -196,7 +200,7 @@ ORDER BY FIRSTNAME, NAME ";
 	}
 
 	//
-	return $twig->render('presentornot_list_' . $layout . '.html', array(
+	return $twig->render('presentornot_list_' . $layout . '.twig', array(
 		'title' => $title
 		, 'error' => $error
 		, 'lbl_name' => Translations::get('lbl_name')

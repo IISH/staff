@@ -7,7 +7,7 @@ $oPage->setTitle('Floor plans');
 $oPage->setContent(createFloorsContent());
 
 // show page
-echo $twig->render('design.html', $oPage->getPageAttributes() );
+echo $twig->render('design.twig', $oPage->getPageAttributes() );
 
 function createFloorsContent() {
 	global $twig;
@@ -21,7 +21,7 @@ function createFloorsContent() {
 		}
 	}
 
-	return $twig->render('floors.html', array(
+	return $twig->render('floors.twig', array(
 		'title' => 'Floors'
 		, 'floorImages' => $floorImages
 	));

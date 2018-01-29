@@ -15,14 +15,14 @@ $oPage->setTitle('Staff - ' . strip_tags($oBeo->getLabel()));
 $oPage->setContent(createBhvEhboContent( $oBeo ));
 
 // show page
-echo $twig->render('design.html', $oPage->getPageAttributes() );
+echo $twig->render('design.twig', $oPage->getPageAttributes() );
 
 function createBhvEhboContent( $oBeo ) {
 	global $twig;
 
 	$refreshAfterXSeconds = 60;
 
-	return $twig->render('beo.html', array(
+	return $twig->render('beo.twig', array(
 		'refreshAfterXSeconds' => $refreshAfterXSeconds
 		, 'scriptName' => $oBeo->getScriptName()
 	));

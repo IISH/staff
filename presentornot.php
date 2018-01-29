@@ -19,7 +19,7 @@ $oPage->setTitle('Staff - ' . $pageSettings['title']);
 $oPage->setContent(createPresentContent( $pageSettings ));
 
 // show page
-echo $twig->render('design.html', $oPage->getPageAttributes() );
+echo $twig->render('design.twig', $oPage->getPageAttributes() );
 
 function createPresentContent( $pageSettings ) {
 	global $chosenFilter, $twig;
@@ -30,7 +30,7 @@ function createPresentContent( $pageSettings ) {
 	//
 	$s = getAndProtectSearch();
 
-	return $twig->render('presentornot.html', array(
+	return $twig->render('presentornot.twig', array(
 		'title' => $pageSettings['title']
 		, 'refreshAfterXSeconds' => $refreshAfterXSeconds
 		, 's' => $s

@@ -9,7 +9,7 @@ $oPage->setTitle('Staff - ' . Translations::get('header_print'));
 $oPage->setContent(createSpecialNumbersContent( ));
 
 // show page
-echo $twig->render('design.html', $oPage->getPageAttributes() );
+echo $twig->render('design.twig', $oPage->getPageAttributes() );
 
 // disconnect database connection
 $dbConn->close();
@@ -22,7 +22,7 @@ function createSpecialNumbersContent( ) {
 		$show_fire = 1;
 	}
 
-	return $twig->render('print.html', array(
+	return $twig->render('print.twig', array(
 		'title' => Translations::get('header_print')
 		, 'show_fire' => $show_fire
 		, 'sorted_on' => Translations::get('sorted_on')

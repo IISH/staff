@@ -152,7 +152,7 @@ function createAbsencesList() {
 		}
 	}
 
-	return $twig->render('absences_list.html', array(
+	return $twig->render('absences_list.twig', array(
 		'title' => Translations::get('contact')
 		, 'users' => $users
 		, 'error' => $error
