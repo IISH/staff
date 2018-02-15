@@ -35,7 +35,12 @@ if (!xmlhttpCheckInOut && window.createRequest) {
 
 function tcRefreshSearch() {
 	var strDesign = document.getElementById('fldDesign').value;
-	xmlhttpSearch.open("GET", "{{scriptName}}?l=" + escape(strDesign), true);
+	var selYear = document.getElementById('fldYear').value;
+	var selMonth = document.getElementById('fldMonth').value;
+
+//	alert(strDesign)
+//alert("{{ scriptName }}?y=" + escape(selYear) + "&m=" + escape(selMonth))
+	xmlhttpSearch.open("GET", "{{scriptName}}?y=" + escape(selYear) + "&m=" + escape(selMonth), true);
 	xmlhttpSearch.onreadystatechange=function() {
 		if (xmlhttpSearch.readyState==4) {
 			document.getElementById('tcContentSearch').innerHTML = xmlhttpSearch.responseText;
@@ -69,11 +74,42 @@ function setDesign(fldValue) {
 	tcRefreshSearch();
 	return false;
 }
+
+function setYearMonth(year, month) {
+	document.getElementById('fldMonth').value = month;
+	document.getElementById('fldYear').value = year;
+
+	//
+	tcRefreshSearch();
+}
+
+function setMonth(value) {
+	var month = parseInt(document.getElementById('fldMonth').value,10);
+	var year = parseInt(document.getElementById('fldYear').value,10);
+	month = month + value;
+	if ( month < 1 ) {
+		month = 12;
+		year = year - 1;
+	} else if ( month > 12 ) {
+		month = 1;
+		year = year + 1;
+	}
+
+	setYearMonth(year, month);
+}
 // -->
 </script>
 <form name="frmTc" method="GET" onsubmit="return false;">
 <input type="hidden" name="fldDesign" id="fldDesign" value="">
+<input type="hidden" name="fldYear" id="fldYear" value="{{currentYear}}">
+<input type="hidden" name="fldMonth" id="fldMonth" value="{{currentMonth}}">
 <div style="float:right;">
+{% if isBhv == 1 %}
+    {{go_to}} &nbsp; &nbsp;
+    <a href="#" onclick="javascript:setYearMonth({{currentYear}}, {{currentMonth}});" title="{{go_to_current_month}}">*</a> &nbsp; &nbsp;
+    <a href="#" onclick="javascript:setMonth(-1);" title="{{go_to_previous_month}}">{{prev}}</a> &nbsp;
+    <a href="#" onclick="javascript:setMonth(+1);" title="{{go_to_next_month}}">{{next}}</a>
+{% endif %}
 </div>
 </form>
 <div id="tcContentSearch"><center><img src="images/misc/loading.gif"></center></div>

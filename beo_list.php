@@ -15,6 +15,41 @@ echo createBeoListContent();
 function createBeoListContent() {
 	global $twig, $oWebuser, $type_of_beo, $protect, $dbConn, $dateOutCriterium, $oBeo;
 
+//	if ( $type_of_beo == 'b' && $oWebuser->isBhv() ) {
+		if ( !isset($_GET["m"]) ) {
+			$selectedMonth = date("m");
+		} else {
+			$selectedMonth = trim(substr($_GET["m"],0,2));
+		}
+		if ( $selectedMonth == '' ) {
+			$selectedMonth = date("m");
+		}
+
+		if ( !isset($_GET["y"]) ) {
+			$selectedYear = date("Y");
+		} else {
+			$selectedYear = trim(substr($_GET["y"], 0, 4));
+		}
+		if ( $selectedYear == '' ) {
+			$selectedYear = date("Y");
+		}
+
+		// allow only previous, current and next year
+		if ( $selectedYear < date("Y")-1 ) {
+			$selectedYear = date("Y")-1;
+			$selectedMonth = 1;
+		} elseif ( $selectedYear > date("Y")+1 ) {
+			$selectedYear = date("Y")+1;
+			$selectedMonth = 12;
+		}
+
+		$arrHolidays = getNationalHolidays($selectedYear, $selectedMonth );
+
+		$daysInCurrentMonth = cal_days_in_month(CAL_GREGORIAN, $selectedMonth, $selectedYear);
+		$cellWidth = 23;
+		$vakantieWidth = $daysInCurrentMonth * $cellWidth+($daysInCurrentMonth*2);
+//	}
+
 	//
 	$layout = trim($protect->request('get', "l"));
 	if ($layout == '') {
@@ -102,9 +137,39 @@ function createBeoListContent() {
 		$item['status_text'] = $status["status_text"];
 		$item['status_alt'] = $status["status_alt"];
 
+		//
+		if ( $type_of_beo == 'b' && $oWebuser->isBhv() ) {
+			$oAbsenceCalendar = new AbsenceCalendar($oEmployee->getId());
+			$arrVakantie = $oAbsenceCalendar->getAbsencesAndHolidaysMonth($selectedYear, $selectedMonth);
+
+			$vak = AbsenceCalendarFormat::inMonthListFormat($selectedYear, $selectedMonth, $arrVakantie, $arrHolidays);
+
+			$item['vakantie'] = $vak;
+		}
+
 		$items[] = $item;
 
 		// als niet rood en ook niet groen dan altijd tonen
+	}
+
+	// HEADERS
+	$headerDays = '';
+	if ( $type_of_beo == 'b' && $oWebuser->isBhv() ) {
+		for ( $i = 1; $i <= $daysInCurrentMonth; $i++ ) {
+			$extrastyle = "width:" . $cellWidth ."px;border: thin solid white;";
+
+			$celValue = $i;
+
+			$cellStyle = getStyle($selectedYear, $selectedMonth, $i, array(), $arrHolidays,1 );
+
+			$extrastyle .= $cellStyle["tdStyle"];
+
+			if ( $cellStyle["alt"] != '' ) {
+				$celValue = '<a title="' . $cellStyle["alt"] . '" style="' . $cellStyle["hrefStyle"] . '" >' . $celValue . '</a>';
+			}
+
+			$headerDays .= "<TD style=\"" . $extrastyle . "\" align=center><font size=-2>" . $celValue . "</font></TD>";
+		}
 	}
 
 	// FLOORS
@@ -123,7 +188,12 @@ function createBeoListContent() {
 	}
 
 	//
-	return $twig->render('beo_list.twig', array(
+	if ( $type_of_beo == 'b' && $oWebuser->isBhv() ) {
+		$twigTemplate = 'beo_list_vakantie.twig';
+	} else {
+		$twigTemplate = 'beo_list.twig';
+	}
+	return $twig->render($twigTemplate, array(
 		'title' => $oBeo->getLabel()
 		, 'in_case_of_emergency_call' => Translations::get('in_case_of_emergency_call')
 		, 'emergency_number' => Settings::get('emergency_number')
@@ -140,7 +210,13 @@ function createBeoListContent() {
 		, 'lbl_name' => Translations::get('lbl_name')
 		, 'lbl_check_inout' => Translations::get('lbl_check_inout')
 		, 'lbl_telephone' => Translations::get('lbl_telephone')
-		, 'lbl_level' => Translations::get('lbl_level')
 		, 'items' => $items
+		, 'vakantieWidth' => $vakantieWidth
+		, 'lbl_today' => Translations::get('lbl_today')
+		, 'lbl_holidayabsences' => Translations::get('lbl_holidayabsences')
+		, 'selectedMonth' => Translations::get('month' . ($selectedMonth+0))
+		, 'selectedYear' => $selectedYear
+		, 'headerDays' => $headerDays
+		, 'isBhv' => ( $type_of_beo == 'b' && $oWebuser->isBhv() ) ? 1 : 0
 	));
 }

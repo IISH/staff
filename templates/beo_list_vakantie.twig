@@ -1,11 +1,13 @@
 <h1>{{title}}</h1>
 
+<div>
 <div class="incaseofemergency">{{in_case_of_emergency_call}} <span class="incaseofemergencynumber">{{emergency_number}}</span></div>
+</div>
 
 <table border=0 cellspacing=1 cellpadding=1>
 	<TR>
 		<TD width=25></TD>
-		<TD width=250><font size=-1><b>{{lbl_name}}</b></font></TD>
+		<TD width=190><font size=-1><b>{{lbl_name}}</b></font></TD>
 		<td width=80 align="center"><font size=-1><b>{{lbl_check_inout}}</b></font></td>
 		{% if showTelephone == 1 %}
 			<td width=100 align="center"><font size=-1><b>{{lbl_telephone}}</b></font></td>
@@ -13,7 +15,25 @@
 		{% if showFloors == 1 %}
 			<td width=100 align="center"><font size=-1><b>{{lbl_level}}</b></font></td>
 		{% endif %}
+
+        {% if isBhv == 1 %}
+            <TD style="width:{{vakantieWidth}}px;" align="center"><font size=-1><b>{{lbl_holidayabsences}} {{selectedMonth}} {{selectedYear}}</b></font></TD>
+        {% endif %}
+
 	</TR>
+    {% if isBhv == 1 %}
+    <TR>
+        <TD></TD>
+        <TD></TD>
+        <TD></TD>
+        <TD></TD>
+        <TD align=center>
+            <TABLE border=0 cellspacing=0 cellpadding=0>
+                <TR>{{headerDays|raw}}</TR>
+            </TABLE>
+        </TD>
+    </TR>
+    {% endif %}
 
 	{% for item in items %}
 	<tr>
@@ -26,6 +46,9 @@
 		{% if showFloors == 1 %}
 			<td align="center">{{item.verdieping}}</td>
 		{% endif %}
+        {% if isBhv == 1 %}
+            <TD align="center">{{item.vakantie|raw}}</TD>
+        {% endif %}
 	</tr>
 	{% endfor %}
 </table>

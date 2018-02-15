@@ -60,7 +60,7 @@ function createUserContent( ) {
 		, 'lblTelephone' => Translations::get('lbl_telephone')
 		, 'telephone' => Telephone::getTelephonesHref($oWebuser->getTelephones())
 		, 'lblEmail' => Translations::get('lbl_email')
-		, 'email' => "<a href=\"mailto:" . $oWebuser->getEmail() . "\">" . $oWebuser->getEmail() . "</a>"
+		, 'email' => $oWebuser->getEmail()
 		, 'lblDepartment' => Translations::get('lbl_department')
 		, 'department' => ( is_object($oWebuser->getDepartment()) ? $oWebuser->getDepartment()->getShort() : '' )
 		, 'lblBhv' => $bhv_link
