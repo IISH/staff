@@ -141,6 +141,7 @@ class Misc {
 		$string = str_ireplace('(vrijwilliger)', '', $string);
 		$string = str_ireplace('(vrijwillig)', '', $string);
 		$string = str_ireplace('(stz)', '', $string);
+		$string = str_ireplace('(oproep)', '', $string);
 		$string = str_ireplace('(rec)', '', $string);
 		$string = str_ireplace('(receptie)', '', $string);
 		$string = str_ireplace('(kantine)', '', $string);

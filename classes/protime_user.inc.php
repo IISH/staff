@@ -488,6 +488,7 @@ class ProtimeUser {
 		$string = str_ireplace('(vrijwilliger)', '', $string);
 		$string = str_ireplace('(vrijwillig)', '', $string);
 		$string = str_ireplace('(stz)', '', $string);
+		$string = str_ireplace('(oproep)', '', $string);
 		$string = str_ireplace('(rec)', '', $string);
 		$string = str_ireplace('(receptie)', '', $string);
 		$string = str_ireplace('(kantine)', '', $string);
@@ -503,6 +504,9 @@ class ProtimeUser {
 		$photo = str_replace('"', '', $photo);
 		$photo = str_replace('-', '', $photo);
 		$photo = str_replace(' ', '', $photo);
+		$photo = str_replace('/', '', $photo);
+		$photo = str_replace('\\', '', $photo);
+		$photo = str_replace('|', '', $photo);
 
 		return $photo;
 	}
@@ -699,6 +703,9 @@ class ProtimeUser {
 	}
 
 	public function hasInOutTimeAuthorisation() {
+//		preprint( $this->arrDepartmentRoleAuthorisation );
+//		preprint( in_array('inout_time', $this->arrDepartmentRoleAuthorisation) . '-aaa');
+//		preprint( in_array('inout_time', $this->arrUserAuthorisation) . '-bbb');
 		return ( $this->isAdmin() || in_array('inout_time', $this->arrDepartmentRoleAuthorisation) || in_array('inout_time', $this->arrUserAuthorisation) );
 	}
 

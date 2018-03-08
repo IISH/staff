@@ -95,10 +95,12 @@ function getCurrentDayCheckInoutState( $persnr ) {
 	$aanwezig = 0;
 
 	// achterhaal 'present' status
-	$query = "SELECT REC_NR, PERSNR, BOOKDATE, BOOKTIME FROM staff_today_checkinout WHERE PERSNR=" . $persnr . " AND BOOKDATE='" . $date . "' AND BOOKTIME<>9999 ORDER BY REC_NR ";
+	$query = "SELECT REC_NR, PERSNR, BOOKDATE, BOOKTIME FROM staff_today_checkinout WHERE PERSNR=" . $persnr . " AND BOOKDATE='" . $date . "' AND BOOKTIME<>9999 ORDER BY BOOKTIME, REC_NR ";
 	$stmt = $dbConn->getConnection()->prepare($query);
 	$stmt->execute();
 	$result = $stmt->fetchAll();
+//preprint(  $oWebuser->isAdmin() . '---');
+//preprint(  $oWebuser->hasInOutTimeAuthorisation() . '+++');
 	foreach ($result as $row) {
 		$found = 1;
 		$status++;
@@ -108,6 +110,7 @@ function getCurrentDayCheckInoutState( $persnr ) {
 			$status_color = 'background-color:green;color:white;';
 			$aanwezig = 1;
 			// check if user has inout_time rights
+
 			if ( $oWebuser->isAdmin() || $oWebuser->hasInOutTimeAuthorisation() || ( $oWebuser->isHeadOfDepartment() && $oWebuser->isHeadOfEmployee($persnr) ) || $oWebuser->getId() == $persnr ) {
 				$status_text = Translations::get('in') . ': ' . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes($row["BOOKTIME"]);
 				$status_alt .= Translations::get('in') . ': ' . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes($row["BOOKTIME"]);

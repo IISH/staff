@@ -40,7 +40,7 @@ function createAbsencesList() {
 	} else {
 		$to_short = strlen(str_replace(' ', '', $s)) < 3;
 		if ( $to_short == 1 ) {
-			// search
+			// search nothing
 			$queryCriterium = ' AND 1=0 ';
 		} else {
 			// search
