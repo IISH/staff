@@ -121,6 +121,9 @@ function getNationalHolidays($year, $month) {
 }
 
 class Misc {
+	public static function fixBrokenChars($text) {
+		return htmlentities($text, ENT_COMPAT | ENT_XHTML, 'ISO-8859-1', true);
+	}
 
     public static function get_remote_addr() {
         $retval = '';
@@ -170,8 +173,12 @@ class Misc {
 	}
 
 	public static function getNeverShowPersonsCriterium() {
-		$never_show_persnr = '0,' . preg_replace('/[^0-9]/', ',', trim(Settings::get("never_show_persnr")));
+		$never_show_persnr = preg_replace('/[^0-9]/', ',', trim(Settings::get("never_show_persnr")));
 		$never_show_persnr = preg_replace('/,{2,}/', ',', $never_show_persnr);
+		if ( $never_show_persnr == '' ) {
+			$never_show_persnr = '0';
+		}
+
 		$never_show_persnr = ' AND ' . Settings::get('protime_tables_prefix') . 'curric.PERSNR NOT IN (' . $never_show_persnr . ') ';
 		return $never_show_persnr;
 	}

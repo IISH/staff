@@ -9,7 +9,7 @@ require_once __DIR__ . "/../vendor/autoload.php";
 
 //
 $settings = array();
-require_once __DIR__ . "/../sites/default/staff.settings.php";
+require_once __DIR__ . "/../sites/default/settings.php";
 
 //
 if ( !isset($_SESSION["loginname"]) ) {
@@ -31,6 +31,7 @@ require_once __DIR__ . "/department.inc.php";
 require_once __DIR__ . "/feestdag.inc.php";
 require_once __DIR__ . "/holiday.inc.php";
 require_once __DIR__ . "/legenda.inc.php";
+require_once __DIR__ . "/mail.inc.php";
 require_once __DIR__ . "/menu.inc.php";
 require_once __DIR__ . "/page.inc.php";
 require_once __DIR__ . "/pdo.inc.php";
@@ -41,7 +42,6 @@ require_once __DIR__ . "/room.inc.php";
 require_once __DIR__ . "/settings.inc.php";
 require_once __DIR__ . "/statistics.inc.php";
 require_once __DIR__ . "/syncinfo.inc.php";
-require_once __DIR__ . "/syncprotimemysql.inc.php";
 require_once __DIR__ . "/synonyms.inc.php";
 require_once __DIR__ . "/telephone.inc.php";
 require_once __DIR__ . "/tcdatetime.inc.php";
@@ -100,6 +100,7 @@ if ( $oWebuser->hasAuthorisationTabOntruimer() || $oWebuser->isOntruimer() ) {
 }
 $menu[] = new MenuItem(Translations::get('menu_print'), 'print.php');
 $menu[] = new MenuItem(Translations::get('menu_nationalholidays'), 'nationalholidays.php');
+$menu[] = new MenuItem('HuC', 'https://intranet.bb.huc.knaw.nl/city-aanwezigheid/');
 if ( $oWebuser->isSuperAdmin() ) {
 //	$menu[] = new MenuItem(Translations::get('menu_switch_user'), 'switch_user.php');
 	$menu[] = new MenuItem('Admin pages', 'admin.php');

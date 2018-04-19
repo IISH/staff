@@ -10,19 +10,8 @@ $databases = array (
 			'host' => '',
 			'port' => '',
 			'driver' => 'mysql',
-			'prefix' => '',
 		),
-	'protime_cache' =>
-		array (
-			'database' => '',
-			'username' => '',
-			'password' => '',
-			'host' => '',
-			'port' => '',
-			'driver' => 'mysql',
-			'prefix' => '',
-		),
-	'protime_live' =>
+	'protime' =>
 		array (
 			'database' => '',
 			'username' => '',
@@ -30,6 +19,5 @@ $databases = array (
 			'host' => '',
 			'port' => '',
 			'driver' => 'mssql',
-			'prefix' => '',
 		),
 );

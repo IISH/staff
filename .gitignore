@@ -1,6 +1,6 @@
 settings.php
-sites/default/staff.settings.php
-staff.settings.php
+sites/default/settings.php
+settings.php
 *.ipr
 *.iml
 .idea

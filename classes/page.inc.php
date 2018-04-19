@@ -16,7 +16,8 @@ class Page {
 		$this->content = '';
 		$this->tab = 0;
 		$this->title = '';
-		$this->color = '73A0C9';
+		//$this->color = '73A0C9';
+		$this->color = '707070';
 		$this->favicon = 'favicon.ico';
 	}
 

@@ -4,6 +4,8 @@ class WebsiteProtection {
 
 	public function sendWarningMail($tekst) {
 		$message = '';
+		$eol = "\n";
+		$iplocator = "http://www.aboutmyip.com/AboutMyXApp/IP2Location.jsp?ip=";
 
 		$recipients = trim(Settings::get("admin_email"));
 
@@ -14,17 +16,10 @@ class WebsiteProtection {
 			$recipients = str_replace(',,', ',', $recipients);
 		}
 
-		if ( $recipients != '' ) {
+		$recipients = explode(',', $recipients);
 
-			$fromname = trim(Settings::get("email_sender_name"));
-			$fromaddress = trim(Settings::get("email_sender_email"));
-			$eol = "\n";
-
-			$headers = "From: " . $fromname . " <" . $fromaddress . ">";
-
-			$subject = "IISG Website warning";
-
-			$iplocator = "http://www.aboutmyip.com/AboutMyXApp/IP2Location.jsp?ip=";
+		if ( count($recipients) > 0 ) {
+			$subject = "Harbour Aanwezigheid Website warning";
 
 			$message .= "Date: " . date("Y-m-d") . $eol;
 			$message .= "Time: " . date("H:i:s") . $eol;
@@ -34,7 +29,7 @@ class WebsiteProtection {
 			$message .= "Warning: " . $tekst;
 
 			// send email
-			mail($recipients, $subject, $message, $headers);
+			Mail::sendEmail($recipients, $subject, $message);
 		}
 	}
 
@@ -61,15 +56,6 @@ class WebsiteProtection {
 		$val = '<span style="color:red;"><b>' . $val . '</b></span>';
 
 		echo $val;
-	}
-
-	public function check_instr_xss($foundxss, $test, $searchvalue) {
-		if ( $foundxss == 0 ) {
-			if ( strpos($test, $searchvalue) !== false ) {
-				$foundxss = 1;
-			}
-		}
-		return $foundxss;
 	}
 
 	public function getValue($type = 'get', $field = '') {
@@ -213,20 +199,5 @@ class WebsiteProtection {
 		}
 
 		return $text;
-	}
-
-	public function send_email( $recipients, $subject, $message ) {
-		// check recipients value
-		$recipients = str_replace(array(',', ' '), ';', trim($recipients));
-		while ( strpos($recipients, ';;') !== false ) {
-			$recipients = str_replace(';;', ';', $recipients);
-		}
-
-		if ( $recipients != '' ) {
-			$headers = "From: " . Settings::get("email_sender_name") . " <" . Settings::get("email_sender_email") . ">";
-
-			// send email
-			mail($recipients, $subject, $message, $headers);
-		}
 	}
 }

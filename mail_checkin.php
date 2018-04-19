@@ -22,7 +22,6 @@ foreach ( $protimeUsers as $protimeUser ) {
 	$timecardUsers = $oMail->getListOfTimecardUsersForProtimeUserNotification( $protimeUser["user"]->getId() );
 
 	foreach ( $timecardUsers as $timecardUser ) {
-
 		// controleer of user inout tijd mag zien
 		if ( $timecardUser->isAdmin() || $timecardUser->isHeadOfDepartment() || $timecardUser->hasInOutTimeAuthorisation() ) {
 			$body = trim( $protimeUser["user"]->getFirstname() . ' ' . $protimeUser["user"]->getLastname() ) . " has checked in at " . class_datetime::formatDate( $protimeUser["date"] ) . " " . class_datetime::ConvertTimeInMinutesToTimeInHoursAndMinutes( $protimeUser["time"] ) . " \r\n";
@@ -32,8 +31,7 @@ foreach ( $protimeUsers as $protimeUser ) {
 		$body .= "E-mail sent at " . date("d-m-Y H:i");
 
         if ( $timecardUser->getEmail() != '' ) {
-	        mail( $timecardUser->getEmail(), $subject, $body, $headers );
-	        //$oMail->deleteNotification( $timecardUser->getUser(), $protimeUser["user"]->getId() );
+	        Mail::sendEmail($timecardUser->getEmail(), $subject, $body);
         }
 	}
 	$oMail->deleteNotification( $protimeUser["user"]->getId() );

@@ -342,6 +342,7 @@ class ProtimeUser {
 			// if photo still empty, try to use a combination of firstname and lastname
 			if ( $ret == '' ) {
 				$ret = $this->firstname . '.' . $this->verplaatsTussenvoegselNaarBegin($this->lastname);
+				$ret = Misc::fixBrokenChars($ret);
 				$ret = $this->removeJobFunctionFromName($ret);
 				$ret = $this->fixPhotoCharacters($ret);
 				$ret = str_replace(' ', '', $ret);
@@ -352,6 +353,8 @@ class ProtimeUser {
 
         $ret = strtolower($ret);
 
+//		preprint( $ret );
+
 		return $ret;
 	}
 
@@ -360,7 +363,8 @@ class ProtimeUser {
 
 		$photo = $this->getPhoto();
 		$alttitle = '';
-		if ( checkPhotoExists(Settings::get('staff_images_directory') . $photo) ) {
+
+		if ( checkPhotoExists('../' . Settings::get('staff_images_directory') . $photo) ) {
 			$photo = Settings::get('staff_images_directory') . $photo;
 		} else {
 			if ( $oWebuser->isAdmin() ) {
@@ -507,6 +511,11 @@ class ProtimeUser {
 		$photo = str_replace('/', '', $photo);
 		$photo = str_replace('\\', '', $photo);
 		$photo = str_replace('|', '', $photo);
+		$photo = str_replace('&ouml;', 'o', $photo);
+		$photo = str_replace("&aacute;", 'a', $photo);
+
+//$a = str_split($photo);
+//preprint( $a );
 
 		return $photo;
 	}

@@ -34,7 +34,7 @@ function createSpecialNumbersContent( ) {
 		$item = array();
 
 		if ( $oWebuser->isAdmin() ) {
-			$object = "<a href=\"special_numbers_edit.php?ID=" . $row['ID'] . "\">" . $row['object'] . "</a>";
+			$object = "<a href=\"special_numbers_edit.php?ID=" . $row['ID'] . "\">" . Misc::fixBrokenChars($row['object']) . "</a>";
 		} else {
 			$object = $row['object'];
 		}
@@ -46,7 +46,7 @@ function createSpecialNumbersContent( ) {
 
         $item['object'] = $object;
         $item['telephone'] = Telephone::getTelephonesHref($row['number']);
-        $item['functie'] = $row['extra'];
+        $item['functie'] = Misc::fixBrokenChars($row['extra']);
 		$item['location'] = $row['location'];
 		$item['room'] = $row['room'];
 		$item['fax'] = $row['fax'];

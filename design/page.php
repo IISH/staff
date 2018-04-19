@@ -7,7 +7,7 @@
 	<meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
 	<meta name="Robots" content="noindex,nofollow">
 	<link rel="icon" type="img/ico" href="{favicon}">
-	<style type="text/css" media="all">@import url("/design/presentornot.css.php?c={color}");</style>
+	<style type="text/css" media="all">@import url("design/presentornot.css.php?c={color}");</style>
 <script language="Javascript">
 <!--
 	// source: http://stackoverflow.com/questions/2400935/browser-detection-in-javascript
@@ -61,7 +61,7 @@
 	<div class="header">
 	<table width="100%" cellspacing="0" cellpadding="0">
 		<tr>
-			<td rowspan="2" width="130"><div class="logo"><img src="images/logo/{color}.png"></div></td>
+			<td rowspan="2" width="120"><div class="logo"><img src="images/logo/huc-000000.png"></div></td>
 			<td><span class="title">{website_name}</span></td>
 			<td align="right">
 				<span class="name">{welcome}</span><br>

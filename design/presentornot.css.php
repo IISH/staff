@@ -1,19 +1,20 @@
 <?php 
 header('Content-type: text/css');
 require_once "../classes/misc.inc.php";
-require_once "../classes/website_protection.inc.php";
+//require_once "../classes/website_protection.inc.php";
 
 // number of tabs
 $t = 10;
 
 // menu/footer color (only 6 char/digit allowed)
-$protect = new WebsiteProtection();
-$c = $protect->request('get', 'c', '/^[0-9a-zA-Z]{6,6}$/');
-if ( $c == '' ) {
-	$c = '#73A0C9';
-} else {
-	$c = '#' . $c;
-}
+//$protect = new WebsiteProtection();
+//$c = $protect->request('get', 'c', '/^[0-9a-zA-Z]{6,6}$/');
+//if ( $c == '' ) {
+	//$c = '#73A0C9';
+	$c = '#707070;';
+//} else {
+//	$c = '#' . $c;
+//}
 ?>
 html, body, input, select {
 	font-family: Verdana;
@@ -108,10 +109,10 @@ div.header {
 }
 
 div.logo {
-	margin-left: -13px;
-	margin-bottom: 7px;
-	height: 94px;
-	width: 122px;
+	xxxmargin-left: -13px;
+	xxxmargin-bottom: 7px;
+	xxxheight: 94px;
+	xxxwidth: 122px;
 }
 
 div.title {
@@ -227,6 +228,14 @@ a.checkinouttime {
 	border-width: thin;
 	border-color: #AAAAAA;
 	border-bottom: 0px;
+	background-color: <?php echo $c; ?>;
+}
+
+#menu li a
+, #menu li a:visited
+, #menu li a:active
+, #menu li a:hover {
+	color: white;
 }
 
 a.favourites_on:link, a.favourites_on:visited {

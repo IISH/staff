@@ -1,6 +1,6 @@
 <?php 
 
-require_once dirname(__DIR__) . "/sites/default/staff.settings.php";
+require_once dirname(__DIR__) . "/sites/default/settings.php";
 
 class Holiday {
 	protected $id = 0;
