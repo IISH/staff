@@ -86,7 +86,7 @@ function createBeoListContent() {
 		LEFT JOIN staff_today_checkinout ON protime_curric.PERSNR = staff_today_checkinout.PERSNR AND  staff_today_checkinout.BOOKDATE = '" . date("Ymd") . "'
 	WHERE " . $dateOutCriterium . "
 		AND " . $oBeo->getQuery() . Misc::getNeverShowPersonsCriterium() . "
-	ORDER BY " . Settings::get('protime_tables_prefix') . "curric.FIRSTNAME, " . Settings::get('protime_tables_prefix') . "curric.NAME ";
+	ORDER BY " . $oBeo->getExtraOrderBy() . Settings::get('protime_tables_prefix') . "curric.FIRSTNAME, " . Settings::get('protime_tables_prefix') . "curric.NAME ";
 
 	//echo $querySelect;
 
@@ -172,6 +172,8 @@ function createBeoListContent() {
 		}
 	}
 
+	//
+
 	// FLOORS
 	$floors = '';
 	if ($oBeo->getShowFloor()) {
@@ -185,6 +187,12 @@ function createBeoListContent() {
 			}
 			$floors .= "<td align=\"center\" style=\"" . $style . "width:22px;\">" . $i . "</td>";
 		}
+	}
+
+	if ( $type_of_beo == 'b' ) {
+		$showBhvComment = 1;
+	} else {
+		$showBhvComment = 0;
 	}
 
 	//
@@ -203,6 +211,7 @@ function createBeoListContent() {
 		, 'totaal_afwezig' => $totaal["afwezig"]
 		, 'lbl_page_refreshes_every' => Translations::get('lbl_page_refreshes_every')
 		, 'date' => date("H:i:s")
+		, 'showBhvComment' => $showBhvComment
 		, 'showFloors' => $showFloors
 		, 'showTelephone' => $showTelephone
 		, 'floors' => $floors
