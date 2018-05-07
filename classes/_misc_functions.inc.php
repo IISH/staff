@@ -19,8 +19,8 @@ function valueOr( $value, $or = '?' ) {
 }
 
 function checkPhotoExists( $photo ) {
-	if ( !file_exists ( __DIR__ . '/' . $photo ) ) {
-		error_log("Error: Image does not exist: " . __DIR__ . '/' . $photo);
+	if ( !file_exists ( $photo ) ) {
+		error_log("Error: Image does not exist: " . $photo);
         return false;
 	}
 

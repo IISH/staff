@@ -364,7 +364,7 @@ class ProtimeUser {
 		$photo = $this->getPhoto();
 		$alttitle = '';
 
-		if ( checkPhotoExists('../' . Settings::get('staff_images_directory') . $photo) ) {
+		if ( checkPhotoExists(Settings::get('staff_images_directory') . $photo) ) {
 			$photo = Settings::get('staff_images_directory') . $photo;
 		} else {
 			if ( $oWebuser->isAdmin() ) {
