@@ -154,10 +154,11 @@ class Misc {
 	}
 
 	public static function verplaatsTussenvoegselNaarBegin( $text ) {
-		$array = array( ' van den', ' van der', ' van', ' de', ' el' );
+		$array = array( ' van den', ' van der', ' van de', ' van', ' de', ' el' );
 
 		foreach ( $array as $t ) {
-			if ( strtolower(substr($text, -strlen($t))) == strtolower($t) ) {
+			// check if last part
+			if ( strtolower(substr($text, -strlen($t))) == strtolower($t)) {
 				$text = trim($t . ' ' . substr($text, 0, strlen($text)-strlen($t)));
 			}
 		}
