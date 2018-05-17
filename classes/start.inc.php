@@ -100,7 +100,7 @@ if ( $oWebuser->hasAuthorisationTabOntruimer() || $oWebuser->isOntruimer() ) {
 }
 $menu[] = new MenuItem(Translations::get('menu_print'), 'print.php');
 $menu[] = new MenuItem(Translations::get('menu_nationalholidays'), 'nationalholidays.php');
-$menu[] = new MenuItem('HuC', 'https://intranet.bb.huc.knaw.nl/city-aanwezigheid/');
+$menu[] = new MenuItem('City', 'https://intranet.bb.huc.knaw.nl/city-aanwezigheid/');
 if ( $oWebuser->isSuperAdmin() ) {
 //	$menu[] = new MenuItem(Translations::get('menu_switch_user'), 'switch_user.php');
 	$menu[] = new MenuItem('Admin pages', 'admin.php');
