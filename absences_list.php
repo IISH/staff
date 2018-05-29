@@ -15,6 +15,7 @@ function createAbsencesList() {
 	global $dbConn, $oWebuser, $twig, $dateOutCriterium;
 
 	//
+	$headerDays = '';
 	$users = array();
 
 	//
@@ -38,7 +39,7 @@ function createAbsencesList() {
 		// use favourites
 		$queryCriterium = ' AND ' . Settings::get('protime_tables_prefix') . 'curric.PERSNR IN (' . $favIds . ') ';
 	} else {
-		$to_short = strlen(str_replace(' ', '', $s)) < 3;
+		$to_short = strlen(str_replace(' ', '', $s)) < 2;
 		if ( $to_short == 1 ) {
 			// search nothing
 			$queryCriterium = ' AND 1=0 ';
@@ -125,7 +126,6 @@ function createAbsencesList() {
 		}
 
 		// HEADERS
-		$headerDays = '';
 		for ( $i = 1; $i <= $daysInCurrentMonth; $i++ ) {
 			$extrastyle = "width:" . $cellWidth ."px;border: thin solid white;";
 
