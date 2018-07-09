@@ -14,7 +14,7 @@ class static_protime_user {
 			// Remark: don't check date_out here, sometimes they make errors when a person is re-hired they forget to remove the date_out value
 			$query = "
 				SELECT *
-				FROM " . Settings::get('protime_tables_prefix') .  "curric
+				FROM protime_curric
 					WHERE
 						(
 							CONCAT(TRIM(FIRSTNAME),'.',TRIM(NAME))='$loginname'
@@ -65,7 +65,7 @@ class static_protime_user {
 
 					$query2 = "
 						SELECT *
-						FROM " . Settings::get('protime_tables_prefix') .  "curric
+						FROM protime_curric
 						WHERE FIRSTNAME LIKE '%" . $arrLoginname[0] . "%'  AND NAME LIKE '%" . $arrLoginname[1] . "%'
 						" . Settings::get('exclude_protime_users') . "
 						ORDER BY PERSNR ASC
@@ -131,7 +131,7 @@ class ProtimeUser {
 	public function getProtimeValues( $protime_id ) {
 		global $dbConn;
 		// reset values
-		$query = "SELECT * FROM " . Settings::get('protime_tables_prefix') .  "curric WHERE PERSNR IN ( " . implode(',', $protime_id) . " ) ";
+		$query = "SELECT * FROM protime_curric WHERE PERSNR IN ( " . implode(',', $protime_id) . " ) ";
 		$stmt = $dbConn->getConnection()->prepare($query);
 		$stmt->execute();
 		$result = $stmt->fetchAll();
@@ -473,7 +473,7 @@ class ProtimeUser {
 			$department = $this->department;
 			if ( $department > 0 ) {
 				// reset values
-				$query = "SELECT PERSNR FROM " . Settings::get('protime_tables_prefix') .  "curric WHERE DEPART=" . $department . " AND PERSNR NOT IN ( " . $this->protime_id . " ) ";
+				$query = "SELECT PERSNR FROM protime_curric WHERE DEPART=" . $department . " AND PERSNR NOT IN ( " . $this->protime_id . " ) ";
 				$stmt = $dbConn->getConnection()->prepare($query);
 				$stmt->execute();
 				$result = $stmt->fetchAll();

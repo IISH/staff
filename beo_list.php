@@ -81,12 +81,12 @@ function createBeoListContent() {
 
 	//
 	$querySelect = "
-	SELECT DISTINCT " . Settings::get('protime_tables_prefix') . "curric.PERSNR, " . Settings::get('protime_tables_prefix') . "curric.FIRSTNAME, " . Settings::get('protime_tables_prefix') . "curric.NAME
-	FROM " . Settings::get('protime_tables_prefix') . "curric
+	SELECT DISTINCT protime_curric.PERSNR, protime_curric.FIRSTNAME, protime_curric.NAME
+	FROM protime_curric
 		LEFT JOIN staff_today_checkinout ON protime_curric.PERSNR = staff_today_checkinout.PERSNR AND  staff_today_checkinout.BOOKDATE = '" . date("Ymd") . "'
 	WHERE " . $dateOutCriterium . "
 		AND " . $oBeo->getQuery() . Misc::getNeverShowPersonsCriterium() . "
-	ORDER BY " . $oBeo->getExtraOrderBy() . Settings::get('protime_tables_prefix') . "curric.FIRSTNAME, " . Settings::get('protime_tables_prefix') . "curric.NAME ";
+	ORDER BY " . $oBeo->getExtraOrderBy() . "protime_curric.FIRSTNAME, protime_curric.NAME ";
 
 	//echo $querySelect;
 

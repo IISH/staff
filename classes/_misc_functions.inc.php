@@ -139,13 +139,11 @@ function getCurrentDayCheckInoutState( $persnr ) {
 	// dan betekent dat dat de persoon vandaag nog niet ingeklokt heeft
 	// misschien omdat de persoon op vakantie is
 	if ( $status_text == '' && $found == 0 ) {
-		$prefix = Settings::get('protime_tables_prefix');
-
 		$query = "
-SELECT DISTINCT CODE, ${prefix}absence.SHORT_" . getLanguage() . "
-FROM ${prefix}p_absence
-	INNER JOIN ${prefix}absence ON ${prefix}p_absence.ABSENCE = ${prefix}absence.ABSENCE
-WHERE ${prefix}p_absence.PERSNR = " . $persnr . " AND ${prefix}p_absence.BOOKDATE = '" . $date . "'
+SELECT DISTINCT CODE, protime_absence.SHORT_" . getLanguage() . "
+FROM protime_p_absence
+	INNER JOIN protime_absence ON protime_p_absence.ABSENCE = protime_absence.ABSENCE
+WHERE protime_p_absence.PERSNR = " . $persnr . " AND protime_p_absence.BOOKDATE = '" . $date . "'
 ";
 
 		$status_separator = '';

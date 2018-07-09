@@ -180,7 +180,7 @@ class Misc {
 			$never_show_persnr = '0';
 		}
 
-		$never_show_persnr = ' AND ' . Settings::get('protime_tables_prefix') . 'curric.PERSNR NOT IN (' . $never_show_persnr . ') ';
+		$never_show_persnr = ' AND protime_curric.PERSNR NOT IN (' . $never_show_persnr . ') ';
 		return $never_show_persnr;
 	}
 

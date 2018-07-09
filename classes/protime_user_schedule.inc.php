@@ -17,19 +17,17 @@ class ProtimeUserSchedule {
 	private function initValues() {
 		global $dbConn;
 
-		$prefix = Settings::get('protime_tables_prefix');
-
 		// probleem erhan
 		// nieuwe query naar aanleiding van wisselende week roosters
 		$query = "
-SELECT ${prefix}lnk_curric_profile.DATEFROM, MOD(CAST(${prefix}cyc_dp.DAYNR AS UNSIGNED),7) AS DAG, ${prefix}dayprog.NORM AS HOEVEEL
-FROM ${prefix}lnk_curric_profile
-	LEFT JOIN ${prefix}cyc_dp ON ${prefix}lnk_curric_profile.PROFILE = ${prefix}cyc_dp.CYCLIQ
-	LEFT JOIN ${prefix}dayprog ON ${prefix}cyc_dp.dayprog = ${prefix}dayprog.DAYPROG
+SELECT protime_lnk_curric_profile.DATEFROM, MOD(CAST(protime_cyc_dp.DAYNR AS UNSIGNED),7) AS DAG, protime_dayprog.NORM AS HOEVEEL
+FROM protime_lnk_curric_profile
+	LEFT JOIN protime_cyc_dp ON protime_lnk_curric_profile.PROFILE = protime_cyc_dp.CYCLIQ
+	LEFT JOIN protime_dayprog ON protime_cyc_dp.dayprog = protime_dayprog.DAYPROG
 WHERE PROFILETYPE = '4'
-	AND ${prefix}lnk_curric_profile.PERSNR = '" . $this->persnr . "'
-    AND ${prefix}lnk_curric_profile.DATEFROM <= '" . ($this->date_from+1)  . "'
-ORDER BY ${prefix}lnk_curric_profile.DATEFROM DESC, CAST(${prefix}cyc_dp.DAYNR AS UNSIGNED) ASC
+	AND protime_lnk_curric_profile.PERSNR = '" . $this->persnr . "'
+    AND protime_lnk_curric_profile.DATEFROM <= '" . ($this->date_from+1)  . "'
+ORDER BY protime_lnk_curric_profile.DATEFROM DESC, CAST(protime_cyc_dp.DAYNR AS UNSIGNED) ASC
 ";
 
 		$stmt = $dbConn->getConnection()->prepare($query);

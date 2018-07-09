@@ -12,15 +12,14 @@ class Legenda {
 
 		$arr = array();
 
-		$prefix = Settings::get('protime_tables_prefix');
 		$min_minutes = 120;
 
 		$query = "
-SELECT DISTINCT ID, ${prefix}absence.ABSENCE, SHORT_" . $language . ", CODE, background_color, font_color, everyone, show_always, substitute_" . $language . "
-FROM ${prefix}absence
-	RIGHT JOIN staff_colors ON ${prefix}absence.CODE = staff_colors.absence_code
-	LEFT JOIN ${prefix}p_absence ON ${prefix}absence.ABSENCE = ${prefix}p_absence.ABSENCE
-WHERE ( BOOKDATE LIKE '" . date("Y") . "%' AND ${prefix}p_absence.ABSENCE NOT IN (5, 19) AND ( ${prefix}p_absence.ABSENCE_VALUE>=" . $min_minutes . " OR ${prefix}p_absence.ABSENCE_VALUE=0 ) ) OR show_always = 1
+SELECT DISTINCT ID, protime_absence.ABSENCE, SHORT_" . $language . ", CODE, background_color, font_color, everyone, show_always, substitute_" . $language . "
+FROM protime_absence
+	RIGHT JOIN staff_colors ON protime_absence.CODE = staff_colors.absence_code
+	LEFT JOIN protime_p_absence ON protime_absence.ABSENCE = protime_p_absence.ABSENCE
+WHERE ( BOOKDATE LIKE '" . date("Y") . "%' AND protime_p_absence.ABSENCE NOT IN (5, 19) AND ( protime_p_absence.ABSENCE_VALUE>=" . $min_minutes . " OR protime_p_absence.ABSENCE_VALUE=0 ) ) OR show_always = 1
 ";
 
 		//

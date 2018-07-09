@@ -19,7 +19,7 @@ class Department {
 	private function initValues( $id ) {
 		global $dbConn;
 
-		$query = "SELECT * FROM " . Settings::get('protime_tables_prefix') .  "depart WHERE DEPART=" . $id;
+		$query = "SELECT * FROM protime_depart WHERE DEPART=" . $id;
 		$stmt = $dbConn->getConnection()->prepare($query);
 		$stmt->execute();
 		if ( $r = $stmt->fetch() ) {

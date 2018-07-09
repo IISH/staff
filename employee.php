@@ -47,7 +47,7 @@ function createStaffContent( $staff ) {
         }
         $photo = Settings::get('noimage_file');
 	}
-	$photo = "<img src=\"$photo\" title=\"$alttitle\">";
+	$photo = "<img src=\"$photo\" style=\"height:140px;\" title=\"$alttitle\">";
 
 	//
 	if ( $oWebuser->hasAuthorisationTabOntruimer() || $oWebuser->isOntruimer() ) {

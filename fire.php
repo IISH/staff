@@ -41,25 +41,25 @@ function createBrandContent( ) {
 
 	$loop[] = array(
 		'label' => Translations::get('present_employees_long') . " (A - $aTotEnMet)"
-		, 'query' => "SELECT * FROM " . Settings::get('protime_tables_prefix') . "curric WHERE NAME < '$vanafTotEnMetZ' ORDER BY NAME, FIRSTNAME "
+		, 'query' => "SELECT * FROM protime_curric WHERE NAME < '$vanafTotEnMetZ' ORDER BY NAME, FIRSTNAME "
 		, 'count_total' => true
 		, 'reset_group_counter' => true
 	);
 	$loop[] = array(
 		'label' => Translations::get('present_employees_long') . " ($vanafTotEnMetZ - Z)"
-		, 'query' => "SELECT * FROM " . Settings::get('protime_tables_prefix') . "curric WHERE NAME >= '$vanafTotEnMetZ' ORDER BY NAME, FIRSTNAME "
+		, 'query' => "SELECT * FROM protime_curric WHERE NAME >= '$vanafTotEnMetZ' ORDER BY NAME, FIRSTNAME "
 		, 'count_total' => true
 		, 'reset_group_counter' => false
 	);
 	$loop[] = array(
 		'label' => Translations::get('present_evacuators')
-		, 'query' => "SELECT * FROM " . Settings::get('protime_tables_prefix') . "curric WHERE " . $oBeoOntruimer->getQuery() . " ORDER BY NAME, FIRSTNAME "
+		, 'query' => "SELECT * FROM protime_curric WHERE " . $oBeoOntruimer->getQuery() . " ORDER BY NAME, FIRSTNAME "
 		, 'count_total' => false
 		, 'reset_group_counter' => true
 	);
 	$loop[] = array(
 		'label' => Translations::get('present_ert')
-		, 'query' => "SELECT * FROM " . Settings::get('protime_tables_prefix') . "curric WHERE " . $oBeoBhv->getQuery() . " ORDER BY NAME, FIRSTNAME "
+		, 'query' => "SELECT * FROM protime_curric WHERE " . $oBeoBhv->getQuery() . " ORDER BY NAME, FIRSTNAME "
 		, 'count_total' => false
 		, 'reset_group_counter' => true
 	);

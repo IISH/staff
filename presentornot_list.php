@@ -46,7 +46,7 @@ function createPresentOrNotList() {
 	} elseif ($s == '') {
 		// no search
 		// use favourites
-		$queryCriterium = ' AND ' . Settings::get('protime_tables_prefix') . 'curric.PERSNR IN (' . $favIds . ') ';
+		$queryCriterium = ' AND protime_curric.PERSNR IN (' . $favIds . ') ';
 
 		$title = Translations::get('your_favourites');
 		$showCalendar = 1;
@@ -63,10 +63,10 @@ function createPresentOrNotList() {
 
 	//
 	$querySelect = "
-SELECT DISTINCT " . Settings::get('protime_tables_prefix') . "curric.PERSNR, " . Settings::get('protime_tables_prefix') . "curric.NAME, " . Settings::get('protime_tables_prefix') . "curric.FIRSTNAME
-FROM " . Settings::get('protime_tables_prefix') . "curric
+SELECT DISTINCT protime_curric.PERSNR, protime_curric.NAME, protime_curric.FIRSTNAME
+FROM protime_curric
 	LEFT JOIN staff_today_checkinout ON protime_curric.PERSNR = staff_today_checkinout.PERSNR AND  staff_today_checkinout.BOOKDATE = '" . date("Ymd") . "'
-	LEFT JOIN " . Settings::get('protime_tables_prefix') . "depart ON " . Settings::get('protime_tables_prefix') . "curric.DEPART = " . Settings::get('protime_tables_prefix') . "depart.DEPART
+	LEFT JOIN protime_depart ON protime_curric.DEPART = protime_depart.DEPART
 WHERE " . $dateOutCriterium . $queryCriterium . Misc::getNeverShowPersonsCriterium() . "
 ORDER BY FIRSTNAME, NAME ";
 

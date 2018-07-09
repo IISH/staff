@@ -37,7 +37,7 @@ function createAbsencesList() {
 	if ( $s == '' ) {
 		// no search
 		// use favourites
-		$queryCriterium = ' AND ' . Settings::get('protime_tables_prefix') . 'curric.PERSNR IN (' . $favIds . ') ';
+		$queryCriterium = ' AND protime_curric.PERSNR IN (' . $favIds . ') ';
 	} else {
 		$to_short = strlen(str_replace(' ', '', $s)) < 2;
 		if ( $to_short == 1 ) {
@@ -79,12 +79,12 @@ function createAbsencesList() {
 
 		// loop employees
 		$querySelect = "
-		SELECT DISTINCT " . Settings::get('protime_tables_prefix') . "curric.PERSNR, " . Settings::get('protime_tables_prefix') . "curric.FIRSTNAME, " . Settings::get('protime_tables_prefix') . "curric.NAME
-		FROM " . Settings::get('protime_tables_prefix') . "curric
+		SELECT DISTINCT protime_curric.PERSNR, protime_curric.FIRSTNAME, protime_curric.NAME
+		FROM protime_curric
 			LEFT JOIN staff_today_checkinout ON protime_curric.PERSNR = staff_today_checkinout.PERSNR AND  staff_today_checkinout.BOOKDATE = '" . date("Ymd") . "'
-			LEFT JOIN " . Settings::get('protime_tables_prefix') . "depart ON " . Settings::get('protime_tables_prefix') . "curric.DEPART = " . Settings::get('protime_tables_prefix') . "depart.DEPART
+			LEFT JOIN protime_depart ON protime_curric.DEPART = protime_depart.DEPART
 		WHERE " . $dateOutCriterium . $queryCriterium . Misc::getNeverShowPersonsCriterium() . "
-		ORDER BY " . Settings::get('protime_tables_prefix') . "curric.FIRSTNAME, " . Settings::get('protime_tables_prefix') . "curric.NAME
+		ORDER BY protime_curric.FIRSTNAME, protime_curric.NAME
 		";
 
 		//echo $querySelect;

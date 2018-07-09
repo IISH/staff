@@ -16,12 +16,10 @@ class class_colors {
 
 		$arr = array();
 
-		$prefix = Settings::get('protime_tables_prefix');
-
 		$query = "
 SELECT ID, absence_code, ABSENCE, SHORT_" . $language . ", CODE, background_color, font_color, everyone, show_always, substitute_" . $language . "
-FROM ${prefix}absence
-	RIGHT JOIN staff_colors ON ${prefix}absence.CODE = staff_colors.absence_code
+FROM protime_absence
+	RIGHT JOIN staff_colors ON protime_absence.CODE = staff_colors.absence_code
 ";
 
 		$stmt = $dbConn->getConnection()->prepare($query);

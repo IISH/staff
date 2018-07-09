@@ -21,16 +21,14 @@ class AbsenceCalendar {
 
 		$yearMonth = createDateAsString($year, $month);
 
-		$prefix = Settings::get('protime_tables_prefix');
-
 		// SHORT_1 - dutch, SHORT_2 - english
 		$query = "
-SELECT CODE, ${prefix}p_absence.REC_NR, ${prefix}p_absence.PERSNR, ${prefix}p_absence.BOOKDATE, ${prefix}p_absence.ABSENCE_VALUE, ${prefix}p_absence.ABSENCE_STATUS, ${prefix}absence.SHORT_" . $language . ", ${prefix}p_absence.ABSENCE
-FROM ${prefix}p_absence
-	LEFT OUTER JOIN ${prefix}absence ON ${prefix}p_absence.ABSENCE = ${prefix}absence.ABSENCE
-WHERE ${prefix}p_absence.PERSNR=" . $this->protimePersnr . " AND ${prefix}p_absence.BOOKDATE LIKE '" . $yearMonth . "%' AND ${prefix}p_absence.ABSENCE NOT IN (5, 19)
-AND ( ${prefix}p_absence.ABSENCE_VALUE>=" . $this->min_minutes . " OR ${prefix}p_absence.ABSENCE_VALUE=0 )
-ORDER BY ${prefix}p_absence.BOOKDATE, ${prefix}p_absence.REC_NR
+SELECT CODE, protime_p_absence.REC_NR, protime_p_absence.PERSNR, protime_p_absence.BOOKDATE, protime_p_absence.ABSENCE_VALUE, protime_p_absence.ABSENCE_STATUS, protime_absence.SHORT_" . $language . ", protime_p_absence.ABSENCE
+FROM protime_p_absence
+	LEFT OUTER JOIN protime_absence ON protime_p_absence.ABSENCE = protime_absence.ABSENCE
+WHERE protime_p_absence.PERSNR=" . $this->protimePersnr . " AND protime_p_absence.BOOKDATE LIKE '" . $yearMonth . "%' AND protime_p_absence.ABSENCE NOT IN (5, 19)
+AND ( protime_p_absence.ABSENCE_VALUE>=" . $this->min_minutes . " OR protime_p_absence.ABSENCE_VALUE=0 )
+ORDER BY protime_p_absence.BOOKDATE, protime_p_absence.REC_NR
 ";
 
 		$stmt = $this->dbConn->getConnection()->prepare($query);
@@ -57,16 +55,14 @@ ORDER BY ${prefix}p_absence.BOOKDATE, ${prefix}p_absence.REC_NR
 		$firstDayOfNextWeek = DateTime::createFromFormat('Y-m-d', date("Y-m-d", $chosenDay));
 		$firstDayOfNextWeek->modify('+' . ( 7 - date("w", $chosenDay) + 1) . ' day');
 
-		$prefix = Settings::get('protime_tables_prefix');
-
 		// SHORT_1 - dutch, SHORT_2 - english
 		$query = "
-SELECT CODE, ${prefix}p_absence.REC_NR, ${prefix}p_absence.PERSNR, ${prefix}p_absence.BOOKDATE, ${prefix}p_absence.ABSENCE_VALUE, ${prefix}p_absence.ABSENCE_STATUS, ${prefix}absence.SHORT_" . $language . ", ${prefix}p_absence.ABSENCE
-FROM ${prefix}p_absence
-	LEFT OUTER JOIN ${prefix}absence ON ${prefix}p_absence.ABSENCE = ${prefix}absence.ABSENCE
-WHERE ${prefix}p_absence.PERSNR=" . $this->protimePersnr . " AND ${prefix}p_absence.BOOKDATE >= '" . $firstDayOfChosenWeek->format('Ymd') . "'  AND ${prefix}p_absence.BOOKDATE < '" . $firstDayOfNextWeek->format('Ymd') . "' AND ${prefix}p_absence.ABSENCE NOT IN (5, 19)
-AND ( ${prefix}p_absence.ABSENCE_VALUE>=" . $this->min_minutes . " OR ${prefix}p_absence.ABSENCE_VALUE=0 )
-ORDER BY ${prefix}p_absence.BOOKDATE, ${prefix}p_absence.REC_NR
+SELECT CODE, protime_p_absence.REC_NR, protime_p_absence.PERSNR, protime_p_absence.BOOKDATE, protime_p_absence.ABSENCE_VALUE, protime_p_absence.ABSENCE_STATUS, protime_absence.SHORT_" . $language . ", protime_p_absence.ABSENCE
+FROM protime_p_absence
+	LEFT OUTER JOIN protime_absence ON protime_p_absence.ABSENCE = protime_absence.ABSENCE
+WHERE protime_p_absence.PERSNR=" . $this->protimePersnr . " AND protime_p_absence.BOOKDATE >= '" . $firstDayOfChosenWeek->format('Ymd') . "'  AND protime_p_absence.BOOKDATE < '" . $firstDayOfNextWeek->format('Ymd') . "' AND protime_p_absence.ABSENCE NOT IN (5, 19)
+AND ( protime_p_absence.ABSENCE_VALUE>=" . $this->min_minutes . " OR protime_p_absence.ABSENCE_VALUE=0 )
+ORDER BY protime_p_absence.BOOKDATE, protime_p_absence.REC_NR
 ";
 
 //preprint( $query );
