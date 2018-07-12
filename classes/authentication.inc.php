@@ -4,56 +4,12 @@ class Authentication {
 	public static function authenticate( $login, $password ) {
 		if ( strpos($login, '.') !== false ) {
 			// if login contains 'dot' then IISG login
-//			return Authentication::check_ad($login, $password, 'iisg');
 			return Authentication::check_ldap($login, $password, 'iisg');
 		} else {
 			// if login does not contain 'dot' then KNAW login
 			return Authentication::check_ldap($login, $password, 'knaw');
 		}
 	}
-
-//	public static function check_ad($user, $pw, $authenticationServer) {
-//		$login_correct = 0;
-//
-//		// LDAP AUTHENTICATIE VIA PHP-LDAP
-//		// php-ldap must be installed on the server
-//
-//		// get settings
-//		$auth = Authentication::getServerAuthorisationInfo($authenticationServer);
-//
-//		// add prefix
-//		$user = $auth['prefix'] . $user;
-//		// remove double prefix
-//		$user = str_replace($auth['prefix'] . $auth['prefix'], $auth['prefix'], $user);
-//
-//		foreach (AdServerStatic::getAdServers($auth['ad_servers']) as $server ) {
-//			if ( $login_correct == 0 ) {
-//				// connect
-//				$ad = ldap_connect($server->getProtocolAndServer()) or die ("Could not connect to $server. Please contact IT Servicedesk");
-//
-//				// set some variables
-//				ldap_set_option($ad, LDAP_OPT_PROTOCOL_VERSION, 3);
-//				ldap_set_option($ad, LDAP_OPT_REFERRALS, 0);
-//
-//				// bind to the ldap directory
-//				$bd = @ldap_bind($ad, $user, $pw);
-//
-//				// verify binding
-//				if ($bd) {
-//					$login_correct = 1;
-//				}
-//
-//				// never forget to unbind!
-//				ldap_unbind($ad);
-//			}
-//		}
-//
-//		if ( $login_correct == 0 ) {
-//			error_log("LOGIN FAILED $user from " . Misc::get_remote_addr() . " (AD: " . trim($auth['ad_servers']) . ")");
-//		}
-//
-//		return $login_correct;
-//	}
 
 	//
 	public static function check_ldap($user, $pw, $authenticationServer) {
@@ -67,6 +23,7 @@ class Authentication {
 
 		//
 		$sAMAccountName = $user;
+		$sAMAccountName = str_replace($auth['prefix'], '', $sAMAccountName);
 
 		// add prefix
 		$user = $auth['prefix'] . $user;
@@ -86,7 +43,8 @@ class Authentication {
 				ldap_set_option($ad, LDAP_OPT_REFERRALS, 0);
 
 				// bind to the ldap directory
-				$bd = @ldap_bind($ad, $user, $pw);
+				//$bd = @ldap_bind($ad, $user, $pw);
+				$bd = ldap_bind($ad, $user, $pw);
 
 				// verify binding, if binding succeeds then login is correct
 				if ( $bd ) {
@@ -160,5 +118,14 @@ class Authentication {
 
 	public function __toString() {
 		return "Class: " . get_class($this) . "\n";
+	}
+
+	public static function getLoginPart( $login ) {
+		$arr = explode('\\', $login);
+		if ( count($arr) > 1 ) {
+			$login = $arr[count($arr)-1];
+		}
+
+		return $login;
 	}
 }

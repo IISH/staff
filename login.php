@@ -47,7 +47,7 @@ function createLoginPage() {
 				}
 
 				// retain login name
-				$_SESSION["loginname"] = $fldLogin;
+				$_SESSION["loginname"] = Authentication::getLoginPart($fldLogin);
 
 				//
 				$burl = getBackUrl();
