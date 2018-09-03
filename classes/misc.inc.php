@@ -19,9 +19,9 @@ function preprint( $object ) {
 }
 
 function preprintHidden( $object ) {
-	echo '<!-- ';
+	echo "\n<!-- \n";
 	print_r( $object );
-	echo '</pre>' . "\n";
+	echo "\n// -->\n";
 }
 
 function getStyle($selectedYear, $selectedMonth, $day, $absences = array(), $holidays = array(), $colorInCurrentDay = 1) {

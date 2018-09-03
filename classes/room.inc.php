@@ -9,8 +9,13 @@ class static_Room {
 			return $ret;
 		}
 
-		$room = str_replace( array(',', '.', ';', ':', '/', '\\', '|'), ' ', $room);
-		$arrRoom = explode(' ', $room);
+		// dirty quick fixes
+		$room = str_ireplace('Spinhuis Kamer ', 'S', $room);
+		$room = str_ireplace('Spinhuis ', 'S', $room);
+
+		//
+		$room = str_replace( array('/', '+'), ',', $room);
+		$arrRoom = explode(',', $room);
 
 		foreach ( $arrRoom as $item ) {
 			if ( $item != '' ) {
@@ -23,7 +28,11 @@ class static_Room {
 				} elseif ( preg_match("/^[0-9]{1}[^0-9]?/i", $item) ) {
 					$ret .= $separator . '<a href="#" onClick="return showFloorPlan(\'' . Settings::get('floorplan_level0') . '\', \'0\');">' . $item . "</a>";
 				} else {
-					$ret .= $separator . $item;
+					if ( (strtolower(trim($item)))[0] == 's' ) {
+						$ret .= $separator . "<a title=\"Spinhuis\">" . $item . "</a>";
+					} else {
+						$ret .= $separator . $item;
+					}
 				}
 
 				$separator = ', ';

@@ -15,6 +15,8 @@ echo createBeoListContent();
 function createBeoListContent() {
 	global $twig, $oWebuser, $type_of_beo, $protect, $dbConn, $dateOutCriterium, $oBeo;
 
+	$items = array();
+
 //	if ( $type_of_beo == 'b' && $oWebuser->isBhv() ) {
 		if ( !isset($_GET["m"]) ) {
 			$selectedMonth = date("m");
@@ -81,14 +83,14 @@ function createBeoListContent() {
 
 	//
 	$querySelect = "
-	SELECT DISTINCT protime_curric.PERSNR, protime_curric.FIRSTNAME, protime_curric.NAME
+	SELECT DISTINCT protime_curric.PERSNR, protime_curric.FIRSTNAME, protime_curric.NAME, IFNULL(bhv_sortorder, 9999)
 	FROM protime_curric
 		LEFT JOIN staff_today_checkinout ON protime_curric.PERSNR = staff_today_checkinout.PERSNR AND  staff_today_checkinout.BOOKDATE = '" . date("Ymd") . "'
 	WHERE " . $dateOutCriterium . "
 		AND " . $oBeo->getQuery() . Misc::getNeverShowPersonsCriterium() . "
 	ORDER BY " . $oBeo->getExtraOrderBy() . "protime_curric.FIRSTNAME, protime_curric.NAME ";
 
-	//echo $querySelect;
+//preprintHidden( $querySelect );
 
 	$showFloors = 0;
 	if ($oBeo->getShowFloor()) {
