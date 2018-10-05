@@ -236,6 +236,21 @@ class ProtimeUser {
 		$this->arrDepartmentRoleAuthorisation = $arrAuthorisation;
 	}
 
+	public function getAfwezigDates() {
+		global $dbConn;
+		$ret = array();
+
+		$query = "SELECT BOOKDATE FROM `protime_p_absence` WHERE BOOKDATE>='" . date("Ymd") . "'  AND PERSNR=" . $this->protime_id . " ORDER BY BOOKDATE ";
+		$stmt = $dbConn->getConnection()->prepare($query);
+		$stmt->execute();
+		$result = $stmt->fetchAll();
+		foreach ($result as $r) {
+			$ret[] = $r["BOOKDATE"];
+		}
+
+		return $ret;
+	}
+
 	private function calculateUserSettings() {
 		global $dbConn;
 

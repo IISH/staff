@@ -1,4 +1,4 @@
-<h1>{{title}}</h1>
+<h1>{{title|raw}}</h1>
 
 {{go_back|raw}}<br>
 <br>
@@ -8,7 +8,7 @@
 
 		<tr>
 			<td>{{lbl_name}}:</td>
-			<td>{{name}}</td>
+			<td>{{name|raw}}</td>
 		</tr>
 
 		<tr>
@@ -74,9 +74,16 @@
 		{% endif %}
 
 		<tr>
-			<td>{{lbl_schedule}}:</td>
+			<td valign="top">{{lbl_schedule}}:</td>
 			<td>{{schedule|raw}}</td>
 		</tr>
+
+		{% if afwezig != '' %}
+			<tr>
+				<td valign="top">{{lbl_afwezig}}:</td>
+				<td>{{afwezig|raw}}</td>
+			</tr>
+		{% endif %}
 
 		{% if isAdmin == 1 %}
 			{% if authorisation != '' %}
