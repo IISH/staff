@@ -90,7 +90,7 @@ function tcRefreshSearchStart() {
 
 function addRemove(pid, dowhat) {
 	document.getElementById('divAddRemove'+pid).innerHTML = '';
-	xmlhttpAddRemove.open("GET", "addremove_favourite.php?id=" + pid + "&dowhat=" + dowhat + "&fav=vakantie", true);
+	xmlhttpAddRemove.open("GET", "addremove_favourite.php?id=" + pid + "&dowhat=" + dowhat + "&fav=present", true);
 	xmlhttpAddRemove.onreadystatechange=function() {
 		if (xmlhttpAddRemove.readyState==4) {
 			document.getElementById('divAddRemove'+pid).innerHTML = xmlhttpAddRemove.responseText;

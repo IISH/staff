@@ -12,7 +12,7 @@ if ( !in_array($dowhat, array('a', 'r') ) ) {
 }
 
 $fav = substr(trim($protect->request_only_characters_or_numbers_or_empty('get', "fav")), 0, 10);
-if ( !in_array($fav, array('', 'vakantie', 'present', 'checkinout', 'absences') ) ) {
+if ( !in_array($fav, array('', 'present', 'checkinout', 'absences') ) ) {
 	die('Error 421794532 Unknown favourite: ' . $fav);
 }
 
@@ -41,6 +41,8 @@ if ( $dowhat == 'a' ) {
 		$div = '<a href="#" onClick="return addRemove(' . $id . ', \'a\');" title="' . $alttitle . '" class="nolink favourites_off">&#9733;</a>';
 	}
 }
+
+//echo $query . ' +<br>';
 
 if ( $query != '' ) {
 	$stmt = $dbConn->getConnection()->prepare($query);
