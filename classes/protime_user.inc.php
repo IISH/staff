@@ -115,6 +115,7 @@ class ProtimeUser {
 	protected $dateOut;
 	protected $arrUserAuthorisation = array();
 	protected $badgenr = '';
+	protected $replacement_photo = '';
 
 	function __construct($protimeId) {
 		if ( !is_array( $protimeId ) ) {
@@ -149,6 +150,7 @@ class ProtimeUser {
 			$this->dateIn = $row["DATE_IN"];
 			$this->dateOut = $row["DATE_OUT"];
 			$this->badgenr = $row["BADGENR"];
+			$this->replacement_photo = $row["replacement_photo"];
 
 			$this->oDepartment = new Department( $row["DEPART"] );
 			$this->roles = $row[Settings::get('curric_roles')];
@@ -348,6 +350,15 @@ class ProtimeUser {
 	}
 
 	public function getPhoto() {
+		$ret = Settings::get('uploadDir') . trim($this->replacement_photo);
+		if ( trim($this->replacement_photo) == '' || !checkPhotoExists($ret) ) {
+			$ret = $this->getDefaultPhoto();
+		}
+
+		return $ret;
+	}
+
+	public function getDefaultPhoto() {
 		$ret = trim($this->photo);
 
 		// if photo empty, try to use loginname
@@ -366,9 +377,8 @@ class ProtimeUser {
 			$ret .= '.jpg';
 		}
 
-        $ret = strtolower($ret);
-
-//		preprint( $ret );
+		$ret = strtolower($ret);
+		$ret = Settings::get('staff_images_directory') . $ret;
 
 		return $ret;
 	}
@@ -379,11 +389,9 @@ class ProtimeUser {
 		$photo = $this->getPhoto();
 		$alttitle = '';
 
-		if ( checkPhotoExists(Settings::get('staff_images_directory') . $photo) ) {
-			$photo = Settings::get('staff_images_directory') . $photo;
-		} else {
+		if ( !checkPhotoExists($photo) ) {
 			if ( $oWebuser->isAdmin() ) {
-				$alttitle = 'Missing photo: &quot;' . Settings::get('staff_images_directory') . $photo . '&quot;';
+				$alttitle = 'Missing photo: &quot;' . $this->getDefaultPhoto() . '&quot;';
 			}
 			$photo = Settings::get('noimage_file');
 		}
@@ -666,7 +674,6 @@ class ProtimeUser {
 			// rights via user authorisation
 			//		$query = "SELECT * FROM staff_user_authorisation WHERE user_id IN ( " . $this->protime_id . " ) AND isdeleted=0 ";
 			$query = "SELECT * FROM staff_user_authorisation_via_loginname WHERE loginname = '" . addslashes(trim($_SESSION['loginname'])) . "' AND isdeleted=0 ";
-//preprint( $query );
 			$stmt = $dbConn->getConnection()->prepare($query);
 			$stmt->execute();
 			$result = $stmt->fetchAll();
@@ -679,37 +686,9 @@ class ProtimeUser {
 
 			// make unique
 			$arrAuthorisation = array_unique( $arrAuthorisation );
-//			preprint( $arrAuthorisation );
 			$this->arrUserAuthorisation = $arrAuthorisation;
 		}
 	}
-
-//	private function calculateUserAuthorisationViaSessionName() {
-//		global $dbConn;
-//
-//		if ( trim($_SESSION['loginname']) != '' ) {
-//			$arrAuthorisation = $this->arrUserAuthorisation;
-//
-//			// rights via user authorisation
-//	//		$query = "SELECT * FROM staff_user_authorisation WHERE user_id IN ( " . $this->protime_id . " ) AND isdeleted=0 ";
-//			$query = "SELECT * FROM staff_user_authorisation_via_loginname WHERE loginname = '" . addslashes(trim($_SESSION['loginname'])) . "' AND isdeleted=0 ";
-////preprint( $query );
-//			$stmt = $dbConn->getConnection()->prepare($query);
-//			$stmt->execute();
-//			$result = $stmt->fetchAll();
-//			foreach ($result as $r) {
-//				$authorisation = strtolower( trim( $r["authorisation"] ) );
-//				if ( trim($authorisation) != '' ) {
-//					$arrAuthorisation[] = $authorisation;
-//				}
-//			}
-//
-//			// make unique
-//			$arrAuthorisation = array_unique( $arrAuthorisation );
-//preprint( $arrAuthorisation );
-//			$this->arrUserAuthorisation = $arrAuthorisation;
-//		}
-//	}
 
 	public function hasAuthorisationTabAbsences() {
 		return ( $this->isAdmin() || in_array('tab_absences', $this->arrDepartmentRoleAuthorisation) || in_array('tab_absences', $this->arrUserAuthorisation) );
@@ -726,13 +705,30 @@ class ProtimeUser {
 	}
 
 	public function hasInOutTimeAuthorisation() {
-//		preprint( $this->arrDepartmentRoleAuthorisation );
-//		preprint( in_array('inout_time', $this->arrDepartmentRoleAuthorisation) . '-aaa');
-//		preprint( in_array('inout_time', $this->arrUserAuthorisation) . '-bbb');
 		return ( $this->isAdmin() || in_array('inout_time', $this->arrDepartmentRoleAuthorisation) || in_array('inout_time', $this->arrUserAuthorisation) );
 	}
 
 	public function isHeadOfDepartment() {
 		return ( $this->isAdmin() || in_array('hfd', $this->arrRoles) );
+	}
+
+	public function saveReplacementPhoto( $newImage ) {
+		global $dbConn;
+
+		$query = "UPDATE protime_curric SET replacement_photo = '" . addslashes(trim($newImage)) . "' WHERE PERSNR=" . $this->getId();
+		$stmt = $dbConn->getConnection()->prepare($query);
+		$stmt->execute();
+	}
+
+	public function deleteReplacementPhoto() {
+		$this->saveReplacementPhoto('');
+	}
+
+	public function isReplacementPhotoSet() {
+		if ( trim($this->replacement_photo ) != '' ) {
+			return 1;
+		}
+
+		return 0;
 	}
 }

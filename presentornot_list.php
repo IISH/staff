@@ -110,11 +110,9 @@ ORDER BY FIRSTNAME, NAME ";
 		// PHOTO
 		$photo = $oEmployee->getPhoto();
 		$alttitle = '';
-		if (checkPhotoExists(Settings::get('staff_images_directory') . $photo)) {
-			$photo = Settings::get('staff_images_directory') . $photo;
-		} else {
+		if (!checkPhotoExists($photo)) {
 			if ($oWebuser->isAdmin()) {
-				$alttitle = 'Missing photo: &quot;' . Settings::get('staff_images_directory') . $photo . '&quot;';
+				$alttitle = 'Missing photo: &quot;' . $oEmployee->getDefaultPhoto() . '&quot;';
 			}
 			$photo = Settings::get('noimage_file');
 		}

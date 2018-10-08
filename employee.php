@@ -19,15 +19,44 @@ echo $twig->render('design.twig', $oPage->getPageAttributes() );
 
 function createStaffContent( $staff ) {
 	global $oWebuser, $twig;
+	$goback = '';
 
-	// go back
-	$goback = ( isset( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : '' );
+	// check authorisation
+	if ( $oWebuser->isSuperAdmin() || $oWebuser->hasAuthorisationTabFire() || $staff->getId() == $oWebuser->getId() ) {
+		// if submitted
+		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+			if ( $_POST["what"] == 'upload' ) {
+				// upload replacement photo
+				$newImage = uploadReplacementPhoto($staff);
+				if ( $newImage != '' ) {
+					// save image in table
+					$staff->saveReplacementPhoto($newImage);
+				}
+			} elseif ( $_POST["what"] == 'delete' ) {
+				// delete replacement photo
+				$staff->deleteReplacementPhoto();
+			}
+
+			$goback = trim($_POST["http_referer"]);
+		}
+	}
+
+	$staff = new ProtimeUser($staff->getId());
+
+	// go back from http referer
+	if ( $goback == '' ) {
+		$goback = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '');
+	}
+
+	//
 	if ( $goback == '' ) {
 		$goback = 'presentornot.php';
 	} else {
 		$goback = stripDomainnameFromUrl( $goback );
 	}
-	$goback = createUrl( array( 'url' => $goback, 'label' => Translations::get('go_back') ) );
+
+	//
+	$goback_url = createUrl( array( 'url' => $goback, 'label' => Translations::get('go_back') ) );
 
 	// get check in/out status
 	$status = getCurrentDayCheckInoutState($staff->getId());
@@ -37,13 +66,10 @@ function createStaffContent( $staff ) {
 
 	//
 	$photo = $staff->getPhoto();
-	// TODOGCU
 	$alttitle = '';
-	if ( checkPhotoExists(Settings::get('staff_images_directory') . $photo) ) {
-		$photo = Settings::get('staff_images_directory') . $photo;
-	} else {
+	if ( !checkPhotoExists($photo) ) {
 		if ( $oWebuser->isAdmin() ) {
-			$alttitle = 'Missing photo: &quot;' . Settings::get('staff_images_directory') . $photo . '&quot;';
+			$alttitle = 'Missing photo: &quot;' . $staff->getDefaultPhoto() . '&quot;';
 		}
 		$photo = Settings::get('noimage_file');
 	}
@@ -73,7 +99,7 @@ function createStaffContent( $staff ) {
 	, 'photo' => $photo
 	, 'lbl_name' => Translations::get('lbl_name')
 	, 'name' => $staff->getNiceFirstLastname()
-	, 'go_back' => $goback
+	, 'go_back' => $goback_url
 	, 'lbl_check_inout' => Translations::get('lbl_check_inout')
 	, 'status_color' => $status["status_color"]
 	, 'status_alt' => $status["status_alt"]
@@ -98,12 +124,14 @@ function createStaffContent( $staff ) {
 	, 'schedule' => $currentSchedule->getCurrentSchedule()
 	, 'isAdmin' => ( $oWebuser->isAdmin() ? 1 : 0 )
 	, 'lbl_authorisation' => Translations::get('lbl_authorisation')
-//		, 'authorisation' => implode('<br>', $staff->getAuthorisations())
 	, 'lblBadgenr' => Translations::get('lbl_badgenr')
 	, 'badgenr' => $staff->getBadgenr()
 	, 'hasBadgeAuthorisation' => $staff->hasAuthorisationTabFire() || $staff->getId() == $oWebuser->getId()
 	, 'lbl_afwezig' => Translations::get('lbl_afwezig')
 	, 'afwezig' => convertAfwezigDatesToNiceString($staff->getAfwezigDates())
+	, 'isImageUploadAllowed' => $oWebuser->isSuperAdmin() || $oWebuser->hasAuthorisationTabFire() || $staff->getId() == $oWebuser->getId()
+	, 'http_referer' => $goback
+	, 'showDeleteButton' => $staff->isReplacementPhotoSet()
 	));
 }
 

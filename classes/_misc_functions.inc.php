@@ -1,4 +1,41 @@
 <?php
+
+function uploadReplacementPhoto($oStaff ) {
+	$target_dir = Settings::get('uploadDir');
+
+	$newName = $oStaff->getId() . '-' . str_replace('_.', '.', basename($_FILES["fileToUpload"]["name"]));
+	$target_file = $target_dir . $newName;
+
+	$imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+
+	if ( $_FILES["fileToUpload"]["tmp_name"] == '' ) {
+		return '';
+	}
+
+	// Check file size
+	if ($_FILES["fileToUpload"]["size"] > 500000) {
+		die("Sorry, your file is too large.");
+	}
+
+	// Allow certain file formats
+	if ( !in_array($imageFileType, array('jpg', 'png', 'jpeg', 'gif')) ) {
+		die( "Sorry, only JPG, JPEG, PNG & GIF files are allowed." );
+	}
+
+	//
+	$check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
+	if ( $check === false ) {
+		die("File is not an image.");
+	}
+
+	// Check if $uploadOk is set to 0 by an error
+	if ( !move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file) ) {
+		die("Sorry, there was an error uploading your file.");
+	}
+
+	return $newName;
+}
+
 function getLanguage() {
 	global $oWebuser;
 
@@ -20,6 +57,7 @@ function valueOr( $value, $or = '?' ) {
 
 function checkPhotoExists( $photo ) {
 	if ( !file_exists ( $photo ) ) {
+echo $photo . '+<br>';
 		error_log("Error: Image does not exist: " . $photo);
         return false;
 	}
