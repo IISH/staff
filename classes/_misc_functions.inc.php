@@ -99,8 +99,7 @@ function getCurrentDayCheckInoutState( $persnr ) {
 	$stmt = $dbConn->getConnection()->prepare($query);
 	$stmt->execute();
 	$result = $stmt->fetchAll();
-//preprint(  $oWebuser->isAdmin() . '---');
-//preprint(  $oWebuser->hasInOutTimeAuthorisation() . '+++');
+
 	foreach ($result as $row) {
 		$found = 1;
 		$status++;

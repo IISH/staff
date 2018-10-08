@@ -147,7 +147,11 @@ ORDER BY FIRSTNAME, NAME ";
 
 		$firstDayOfChosenWeek = DateTime::createFromFormat('Y-m-d', date("Y-m-d"));
 		$firstDayOfChosenWeek->modify('-' . (date("w") - 1) . ' day');
-		$absenceCalendarWeek = AbsenceCalendarFormat::InWeekFormat($firstDayOfChosenWeek->format("Y"), $firstDayOfChosenWeek->format("m"), $firstDayOfChosenWeek->format('d'), $arrAbsences, $arrHolidays);
+
+		$currentSchedule = new ProtimeUserSchedule($oEmployee->getId(), date("Ymd"));
+		$vrijeWerkdagen = $currentSchedule->getFreeWorkingdays();
+
+		$absenceCalendarWeek = AbsenceCalendarFormat::InWeekFormat($firstDayOfChosenWeek->format("Y"), $firstDayOfChosenWeek->format("m"), $firstDayOfChosenWeek->format('d'), $arrAbsences, $arrHolidays, $vrijeWerkdagen);
 		$item['absenceCalendarWeek'] = $absenceCalendarWeek;
 
 		//

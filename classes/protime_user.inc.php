@@ -609,8 +609,6 @@ class ProtimeUser {
 	public function getAuthorisations() {
 		$arr = array();
 
-//preprint( $this->getLoginname() );
-
 		if ( $this->isSuperAdmin() ) {
 			$arr[] = 'Superadmin';
 		} elseif ( $this->isAdmin() ) {

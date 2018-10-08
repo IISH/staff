@@ -97,6 +97,10 @@ function createAbsencesList() {
 			$oEmployee = new ProtimeUser($row["PERSNR"]);
 
 			//
+			$currentSchedule = new ProtimeUserSchedule($oEmployee->getId(), date("Ymd"));
+			$vrijeWerkdagen = $currentSchedule->getFreeWorkingdays();
+
+			//
 			$status = getCurrentDayCheckInoutState($oEmployee->getId());
 
 			$tmp = array();
@@ -117,7 +121,8 @@ function createAbsencesList() {
 			$oAbsenceCalendar = new AbsenceCalendar($oEmployee->getId());
 			$arrVakantie = $oAbsenceCalendar->getAbsencesAndHolidaysMonth($selectedYear, $selectedMonth );
 
-			$vak = AbsenceCalendarFormat::inMonthListFormat($selectedYear, $selectedMonth, $arrVakantie, $arrHolidays );
+			// color in month
+			$vak = AbsenceCalendarFormat::inMonthListFormat($selectedYear, $selectedMonth, $arrVakantie, $arrHolidays, $vrijeWerkdagen );
 
 			$tmp['vakantie'] = $vak;
 
@@ -131,7 +136,7 @@ function createAbsencesList() {
 
 			$celValue = $i;
 
-			$cellStyle = getStyle($selectedYear, $selectedMonth, $i, array(), $arrHolidays,1 );
+			$cellStyle = getStyle($selectedYear, $selectedMonth, $i, array(), $arrHolidays,1, null );
 
 			$extrastyle .= $cellStyle["tdStyle"];
 

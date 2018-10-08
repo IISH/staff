@@ -24,7 +24,8 @@ function preprintHidden( $object ) {
 	echo "\n// -->\n";
 }
 
-function getStyle($selectedYear, $selectedMonth, $day, $absences = array(), $holidays = array(), $colorInCurrentDay = 1) {
+// color in single day
+function getStyle($selectedYear, $selectedMonth, $day, $absences = array(), $holidays = array(), $colorInCurrentDay = 1, $vrijeWerkdagen) {
 	global $oWebuser;
 
 	$tdStyle = '';
@@ -34,7 +35,18 @@ function getStyle($selectedYear, $selectedMonth, $day, $absences = array(), $hol
 	$datum = createDateAsString($selectedYear, $selectedMonth, $day);
 	$dayOfWeek = date("w", mktime(0,0,0,$selectedMonth, $day, $selectedYear));
 
-	// if
+	//
+	if ( $vrijeWerkdagen != null ) {
+		if ( $tdStyle == '' && $dayOfWeek != 0 && $dayOfWeek != 6 ) {
+		    if ( in_array($dayOfWeek, $vrijeWerkdagen) ) {
+			    $tdStyle = class_colors::get('vrije_werkdag')->getBackgroundColor();
+			    $hrefStyle = class_colors::get('vrije_werkdag')->getFontColor();
+			    $alt = class_colors::get('vrije_werkdag')->getDescriptin();
+	  		}
+		}
+	}
+
+	//
 	if ( $tdStyle == '' && $dayOfWeek != 0 && $dayOfWeek != 6 ) {
 		for ($i = 0; $i < count($holidays); $i++) {
 			if ( $datum == str_replace('-', '', $holidays[$i]->getDate()) ) {

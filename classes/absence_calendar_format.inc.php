@@ -1,7 +1,7 @@
 <?php
 
 class AbsenceCalendarFormat {
-	public static function InWeekFormat($year, $month, $firstDay, $arrVakantie, $arrHolidays ) {
+	public static function InWeekFormat($year, $month, $firstDay, $arrVakantie, $arrHolidays, $vrijeWerkdagen ) {
 		global $oWebuser;
 
 		$vak = '';
@@ -15,7 +15,7 @@ class AbsenceCalendarFormat {
 			$newDate = date("Y-m-d", strtotime(" +".($i-$firstDay)." days", strtotime($year . '-' . $month . '-' . $firstDay)));
 			$oDate = DateTime::createFromFormat('Y-m-d', $newDate);
 
-			$cellStyle = getStyle($oDate->format('Y'), $oDate->format('m'), $oDate->format('d'), $arrVakantie, $arrHolidays, 0);
+			$cellStyle = getStyle($oDate->format('Y'), $oDate->format('m'), $oDate->format('d'), $arrVakantie, $arrHolidays, 0, $vrijeWerkdagen);
 
 			$style .= $cellStyle["tdStyle"];
 			if ( $cellStyle["alt"] != '' ) {
@@ -43,7 +43,7 @@ class AbsenceCalendarFormat {
 		return $ret;
 	}
 
-	public static function inMonthListFormat($year, $month, $arrVakantie, $arrHolidays ) {
+	public static function inMonthListFormat($year, $month, $arrVakantie, $arrHolidays, $vrijeWerkdagen ) {
 		global $oWebuser;
 		$cellWidth = 23;
 		$daysInCurrentMonth = cal_days_in_month(CAL_GREGORIAN, $month, $year);
@@ -55,7 +55,8 @@ class AbsenceCalendarFormat {
 			//
 			$celValue = '&nbsp;&nbsp;';
 
-			$cellStyle = getStyle($year, $month, $i, $arrVakantie, $arrHolidays, 1);
+			// color in every day
+			$cellStyle = getStyle($year, $month, $i, $arrVakantie, $arrHolidays, 1, $vrijeWerkdagen);
 
 			$style .= $cellStyle["tdStyle"];
 			if ( $cellStyle["alt"] != '' ) {

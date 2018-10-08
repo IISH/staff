@@ -129,4 +129,29 @@ ORDER BY protime_lnk_curric_profile.DATEFROM DESC, CAST(protime_cyc_dp.DAYNR AS 
 
 		return $dow;
 	}
+
+
+	public function getFreeWorkingdays() {
+		$ret = array();
+
+		//
+		if ( count( $this->arr ) > 0 ) {
+			// alle default werkdagen
+			for ( $i = 1; $i <= 5; $i++ ) {
+				$ret[$i] = $i;
+			}
+
+			foreach ( $this->arr as $element ) {
+				if ( $element['dayOfWeek'] <= 5 ) {
+					if ( $element['minutes'] > 0 ) {
+						// verwijder als niet werkt op deze weekdag
+						unset($ret[$element['dayOfWeek']]);
+					}
+				}
+			}
+		}
+
+		// return vrije werkdagen
+		return $ret;
+	}
 }

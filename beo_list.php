@@ -17,40 +17,38 @@ function createBeoListContent() {
 
 	$items = array();
 
-//	if ( $type_of_beo == 'b' && $oWebuser->isBhv() ) {
-		if ( !isset($_GET["m"]) ) {
-			$selectedMonth = date("m");
-		} else {
-			$selectedMonth = trim(substr($_GET["m"],0,2));
-		}
-		if ( $selectedMonth == '' ) {
-			$selectedMonth = date("m");
-		}
+	if ( !isset($_GET["m"]) ) {
+		$selectedMonth = date("m");
+	} else {
+		$selectedMonth = trim(substr($_GET["m"],0,2));
+	}
+	if ( $selectedMonth == '' ) {
+		$selectedMonth = date("m");
+	}
 
-		if ( !isset($_GET["y"]) ) {
-			$selectedYear = date("Y");
-		} else {
-			$selectedYear = trim(substr($_GET["y"], 0, 4));
-		}
-		if ( $selectedYear == '' ) {
-			$selectedYear = date("Y");
-		}
+	if ( !isset($_GET["y"]) ) {
+		$selectedYear = date("Y");
+	} else {
+		$selectedYear = trim(substr($_GET["y"], 0, 4));
+	}
+	if ( $selectedYear == '' ) {
+		$selectedYear = date("Y");
+	}
 
-		// allow only previous, current and next year
-		if ( $selectedYear < date("Y")-1 ) {
-			$selectedYear = date("Y")-1;
-			$selectedMonth = 1;
-		} elseif ( $selectedYear > date("Y")+1 ) {
-			$selectedYear = date("Y")+1;
-			$selectedMonth = 12;
-		}
+	// allow only previous, current and next year
+	if ( $selectedYear < date("Y")-1 ) {
+		$selectedYear = date("Y")-1;
+		$selectedMonth = 1;
+	} elseif ( $selectedYear > date("Y")+1 ) {
+		$selectedYear = date("Y")+1;
+		$selectedMonth = 12;
+	}
 
-		$arrHolidays = getNationalHolidays($selectedYear, $selectedMonth );
+	$arrHolidays = getNationalHolidays($selectedYear, $selectedMonth );
 
-		$daysInCurrentMonth = cal_days_in_month(CAL_GREGORIAN, $selectedMonth, $selectedYear);
-		$cellWidth = 23;
-		$vakantieWidth = $daysInCurrentMonth * $cellWidth+($daysInCurrentMonth*2);
-//	}
+	$daysInCurrentMonth = cal_days_in_month(CAL_GREGORIAN, $selectedMonth, $selectedYear);
+	$cellWidth = 23;
+	$vakantieWidth = $daysInCurrentMonth * $cellWidth+($daysInCurrentMonth*2);
 
 	//
 	$layout = trim($protect->request('get', "l"));
@@ -140,11 +138,16 @@ function createBeoListContent() {
 		$item['status_alt'] = $status["status_alt"];
 
 		//
-		if ( $type_of_beo == 'b' && $oWebuser->isBhv() ) {
+		if ( $type_of_beo == 'b' && ( $oWebuser->isBhv() || $oWebuser->isAdmin() ) ) {
 			$oAbsenceCalendar = new AbsenceCalendar($oEmployee->getId());
 			$arrVakantie = $oAbsenceCalendar->getAbsencesAndHolidaysMonth($selectedYear, $selectedMonth);
 
-			$vak = AbsenceCalendarFormat::inMonthListFormat($selectedYear, $selectedMonth, $arrVakantie, $arrHolidays);
+			//
+			$currentSchedule = new ProtimeUserSchedule($oEmployee->getId(), date("Ymd"));
+			$vrijeWerkdagen = $currentSchedule->getFreeWorkingdays();
+
+			//
+			$vak = AbsenceCalendarFormat::inMonthListFormat($selectedYear, $selectedMonth, $arrVakantie, $arrHolidays, $vrijeWerkdagen);
 
 			$item['vakantie'] = $vak;
 		}
@@ -156,13 +159,13 @@ function createBeoListContent() {
 
 	// HEADERS
 	$headerDays = '';
-	if ( $type_of_beo == 'b' && $oWebuser->isBhv() ) {
+	if ( $type_of_beo == 'b'  && ( $oWebuser->isBhv() || $oWebuser->isAdmin() ) ) {
 		for ( $i = 1; $i <= $daysInCurrentMonth; $i++ ) {
 			$extrastyle = "width:" . $cellWidth ."px;border: thin solid white;";
 
 			$celValue = $i;
 
-			$cellStyle = getStyle($selectedYear, $selectedMonth, $i, array(), $arrHolidays,1 );
+			$cellStyle = getStyle($selectedYear, $selectedMonth, $i, array(), $arrHolidays,1, null );
 
 			$extrastyle .= $cellStyle["tdStyle"];
 
@@ -198,7 +201,7 @@ function createBeoListContent() {
 	}
 
 	//
-	if ( $type_of_beo == 'b' && $oWebuser->isBhv() ) {
+	if ( $type_of_beo == 'b' && ( $oWebuser->isBhv() || $oWebuser->isAdmin() ) ) {
 		$twigTemplate = 'beo_list_vakantie.twig';
 	} else {
 		$twigTemplate = 'beo_list.twig';
@@ -228,6 +231,6 @@ function createBeoListContent() {
 		, 'selectedMonth' => Translations::get('month' . ($selectedMonth+0))
 		, 'selectedYear' => $selectedYear
 		, 'headerDays' => $headerDays
-		, 'isBhv' => ( $type_of_beo == 'b' && $oWebuser->isBhv() ) ? 1 : 0
+		, 'isBhv' => ( $type_of_beo == 'b' && ( $oWebuser->isBhv() ||  $oWebuser->isAdmin() ) ) ? 1 : 0
 	));
 }
