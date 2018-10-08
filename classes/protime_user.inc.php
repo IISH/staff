@@ -240,7 +240,7 @@ class ProtimeUser {
 		global $dbConn;
 		$ret = array();
 
-		$query = "SELECT BOOKDATE FROM `protime_p_absence` WHERE BOOKDATE>='" . date("Ymd") . "'  AND PERSNR=" . $this->protime_id . " ORDER BY BOOKDATE ";
+		$query = "SELECT BOOKDATE FROM `protime_p_absence` WHERE BOOKDATE>='" . date("Ymd") . "'  AND PERSNR=" . $this->protime_id . " AND ABSENCE<>6 ORDER BY BOOKDATE ";
 		$stmt = $dbConn->getConnection()->prepare($query);
 		$stmt->execute();
 		$result = $stmt->fetchAll();
