@@ -14,16 +14,34 @@ echo $twig->render('design.twig', $oPage->getPageAttributes() );
 function createUserContent( ) {
     global $oWebuser, $twig;
 
+	// if submitted
+	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+		if ( $_POST["what"] == 'upload' ) {
+			// upload replacement photo
+			$newImage = uploadReplacementPhoto($oWebuser);
+			if ( $newImage != '' ) {
+				// save image in table
+				$oWebuser->saveReplacementPhoto($newImage);
+			}
+		} elseif ( $_POST["what"] == 'delete' ) {
+			// delete replacement photo
+			$oWebuser->deleteReplacementPhoto();
+		}
+	}
+
+	$oWebuser = new ProtimeUser($oWebuser->getId());
+
     // photo
 	$photo = $oWebuser->getPhoto();
 	$alttitle = '';
 	if ( !checkPhotoExists($photo) ) {
 		if ( $oWebuser->isAdmin() ) {
-			$alttitle = 'Missing photo: &quot;' . $oWebuser->getDefaultPhoto() . '&quot;';
+			$alttitle .= 'Missing photo: &quot;' . $oWebuser->getDefaultPhoto() . '&quot;';
 		}
 		$photo = Settings::get('noimage_file');
 	}
-	$photo = "<img src=\"$photo\" title=\"$alttitle\">";
+	$alttitle .= 'Click to upload a new photo. ';
+	$photo = "<img src=\"$photo\" style=\"height:140px;\" title=\"$alttitle\">";
 
 	// get check in/out status
 	$status = getCurrentDayCheckInoutState($oWebuser->getId());
@@ -71,5 +89,6 @@ function createUserContent( ) {
 		, 'schedule' => $currentSchedule->getCurrentSchedule()
 		, 'lblBadgenr' => Translations::get('lbl_badgenr')
 		, 'badgenr' => $oWebuser->getBadgenr()
+		, 'showDeleteButton' => $oWebuser->isReplacementPhotoSet()
 	));
 }

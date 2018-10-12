@@ -72,5 +72,21 @@
 	</table>
 </div>
 
-<div class="personalpage">{{photo|raw}}</div>
+<div class="personalpage"><a href="#" onclick="return hideShowUploadDiv();" class="image-link">{{photo|raw}}</a>
+	<div id="uploadDiv" style="display:none;">
+		<br>
+		<font size="-1">
+			<form method="post" enctype="multipart/form-data">
+				<input type="file" name="fileToUpload" id="fileToUpload" accept=".jpg,.jpeg,.gif,.png"><br><br>
+				<input type="hidden" id="what" name="what" value="">
+				<input type="submit" onclick="document.getElementById('what').value='upload';" value="Upload photo" name="submit">
+				{% if showDeleteButton == 1 %}
+					&nbsp; &nbsp;
+					<input type="submit" onclick="document.getElementById('what').value='delete';return confirm('Are you sure?');" value="Delete photo" name="submit">
+				{% endif %}
+			</form>
+		</font>
+	</div>
+</div>
+
 <br class="clearBoth">

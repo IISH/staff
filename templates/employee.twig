@@ -97,9 +97,9 @@
 	</table>
 </div>
 
-<div class="personalpage">{{photo|raw}}
 {% if isImageUploadAllowed == 1 %}
-	<br>
+<div class="personalpage"><a href="#" onclick="return hideShowUploadDiv();" class="image-link">{{photo|raw}}</a>
+	<div id="uploadDiv" style="display:none;">
 	<br>
 	<font size="-1">
 		<form method="post" enctype="multipart/form-data">
@@ -113,7 +113,10 @@
 			{% endif %}
 		</form>
 	</font>
-{% endif %}
+	</div>
 </div>
+{% else %}
+<div class="personalpage">{{photo|raw}}</div>
+{% endif %}
 
 <br class="clearBoth">

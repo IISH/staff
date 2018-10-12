@@ -2,14 +2,14 @@ var browser_IE4 = (document.all) ? 1 : 0;
 var browser_NS6 = (document.getElementById&&!document.all) ? 1 : 0;
 var browser_SAFARI = (navigator.userAgent.indexOf('Safari')>-1) ? 1 : 0;
 
-// TODOEXPLAIN
+//
 function open_page(url) {
   window.open(url, '_top');
 
 	return false;
 }
 
-// TODOEXPLAIN
+//
 function doc_submit(pressedbutton) {
 	if (browser_SAFARI) { // SAFARI
 		document.formulier.pressedbutton.value=pressedbutton;
@@ -28,7 +28,7 @@ function doc_submit(pressedbutton) {
 	return true;
 }
 
-// TODOEXPLAIN
+//
 function doc_delete(pressedbutton) {
 	input_box=confirm('Please confirm delete');
 	if (input_box==true) {
@@ -55,4 +55,16 @@ function doc_delete(pressedbutton) {
 	} else {
 		return false;
 	}
+}
+
+// hide & show upload new photo div
+function hideShowUploadDiv() {
+	var x = document.getElementById("uploadDiv");
+	if (x.style.display === "none") {
+		x.style.display = "block";
+	} else {
+		x.style.display = "none";
+	}
+
+	return false;
 }

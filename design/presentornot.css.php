@@ -1,10 +1,6 @@
 <?php 
 header('Content-type: text/css');
 require_once "../classes/misc.inc.php";
-//require_once "../classes/website_protection.inc.php";
-
-// number of tabs
-$t = 10;
 
 // menu/footer color (only 6 char/digit allowed)
 //$protect = new WebsiteProtection();
@@ -47,7 +43,7 @@ a.nolink
 , a.nolink:active
 , a.nolink:hover {
 	text-decoration: none;
-	border-bottom: 0px;
+	border-bottom: 0;
 }
 
 a.add
@@ -77,8 +73,8 @@ input, select {
 
 h1 {
 	color: <?php echo $c; ?>;
-	margin-top: 0px;
-	margin-bottom: 0px;
+	margin-top: 0;
+	margin-bottom: 0;
 	font-size: 15px;
 }
 
@@ -94,7 +90,7 @@ hr {
 }
 
 div {
-	border: 0px solid;
+	border: 0 solid;
 }
 
 div.main {
@@ -106,13 +102,6 @@ div.main {
 div.header {
 	margin-top: auto;
 	margin-bottom: auto;
-}
-
-div.logo {
-	xxxmargin-left: -13px;
-	xxxmargin-bottom: 7px;
-	xxxheight: 94px;
-	xxxwidth: 122px;
 }
 
 div.title {
@@ -203,21 +192,21 @@ div.checkedInOut {
 a.checkinouttime {
 	color: white;
 	text-decoration: double;
-	border-bottom: 0px;
+	border-bottom: 0;
 }
 
 #menu {
 	margin-top: 9px;
-	margin-bottom: 0px;
+	margin-bottom: 0;
 }
 
 #menu ul {
-	margin-top: 0px;
+	margin-top: 0;
 	margin-bottom: 1px;
-	margin-left: 0px;
-	margin-right: 0px;
+	margin-left: 0;
+	margin-right: 0;
 	list-style-type: none;
-	padding-left: 0px;
+	padding-left: 0;
 }
 
 #menu li {
@@ -227,7 +216,7 @@ a.checkinouttime {
 	border-style: solid;
 	border-width: thin;
 	border-color: #AAAAAA;
-	border-bottom: 0px;
+	border-bottom: 0;
 	background-color: <?php echo $c; ?>;
 }
 
@@ -374,12 +363,12 @@ table.fire a
 , table.fire a:hover
 {
 	color: black;
-	border-bottom: 0px
+	border-bottom: 0
 }
 
 #menu li.fire {
 	background-color: red;
-	margin-right: 0px !important;
+	margin-right: 0 !important;
 }
 
 #menu li a
@@ -387,7 +376,7 @@ table.fire a
 , ul li a:active
 , ul li a:hover {
 	text-decoration: none;
-	border-bottom: 0px;
+	border-bottom: 0;
 }
 
 #menu li.fire a
@@ -432,12 +421,12 @@ table.nationalholidays {
 }
 
 table.nationalholidays tr th {
-    padding: 0px 6px 0px 0px;
+    padding: 0 6px 0 0;
     text-align: left;
 }
 
 table.nationalholidays tr td {
-    padding: 0px 6px 0px 0px;
+    padding: 0 6px 0 0;
 }
 
 div.warningalert {
@@ -457,4 +446,18 @@ div.warningalert {
 	border-radius: 5px;
 	text-align: center;
 	font-weight: bold;
+}
+
+a img
+, a:link img
+, a:visited img
+, a:hover img
+, a:active img {
+	border: 0 none;
+	text-decoration: underline;
+}
+
+.image-link {
+	border: 0 none;
+	text-decoration: underline;
 }

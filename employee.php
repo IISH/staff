@@ -67,12 +67,22 @@ function createStaffContent( $staff ) {
 	//
 	$photo = $staff->getPhoto();
 	$alttitle = '';
+
+	//
 	if ( !checkPhotoExists($photo) ) {
 		if ( $oWebuser->isAdmin() ) {
-			$alttitle = 'Missing photo: &quot;' . $staff->getDefaultPhoto() . '&quot;';
+			$alttitle = 'Missing photo: &quot;' . $staff->getDefaultPhoto() . '&quot; ';
 		}
 		$photo = Settings::get('noimage_file');
+
 	}
+
+	//
+	if ( $oWebuser->isSuperAdmin() || $oWebuser->hasAuthorisationTabFire() || $staff->getId() == $oWebuser->getId() ) {
+		$alttitle .= 'Click to upload a new photo. ';
+	}
+
+	//
 	$photo = "<img src=\"$photo\" style=\"height:140px;\" title=\"$alttitle\">";
 
 	//

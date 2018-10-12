@@ -13,7 +13,7 @@ function uploadReplacementPhoto($oStaff ) {
 	}
 
 	// Check file size
-	if ($_FILES["fileToUpload"]["size"] > 500000) {
+	if ($_FILES["fileToUpload"]["size"] > 2*1024*1024) {
 		die("Sorry, your file is too large.");
 	}
 
