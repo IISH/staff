@@ -57,9 +57,8 @@ function valueOr( $value, $or = '?' ) {
 
 function checkPhotoExists( $photo ) {
 	if ( !file_exists ( $photo ) ) {
-echo $photo . '+<br>';
 		error_log("Error: Image does not exist: " . $photo);
-        return false;
+		return false;
 	}
 
 	return true;
