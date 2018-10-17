@@ -17,10 +17,13 @@ function createUserContent( ) {
 	// if submitted
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		if ( $_POST["what"] == 'upload' ) {
-			// upload replacement photo
+			// delete previous replacement photo
+			$oWebuser->deleteReplacementPhoto();
+
+			// upload new replacement photo
 			$newImage = uploadReplacementPhoto($oWebuser);
 			if ( $newImage != '' ) {
-				// save image in table
+				// save photo name in table
 				$oWebuser->saveReplacementPhoto($newImage);
 			}
 		} elseif ( $_POST["what"] == 'delete' ) {

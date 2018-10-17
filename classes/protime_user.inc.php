@@ -721,7 +721,16 @@ class ProtimeUser {
 	}
 
 	public function deleteReplacementPhoto() {
-		$this->saveReplacementPhoto('');
+		if ( trim($this->replacement_photo) != '' ) {
+			// check if file exists
+			if ( file_exists( Settings::get('uploadDir') . trim($this->replacement_photo) ) ) {
+				// remove from disk
+				unlink( Settings::get('uploadDir') . trim($this->replacement_photo) );
+			}
+
+			// remove from database
+			$this->saveReplacementPhoto('');
+		}
 	}
 
 	public function isReplacementPhotoSet() {
