@@ -43,8 +43,7 @@ class Authentication {
 				ldap_set_option($ad, LDAP_OPT_REFERRALS, 0);
 
 				// bind to the ldap directory
-				//$bd = @ldap_bind($ad, $user, $pw);
-				$bd = ldap_bind($ad, $user, $pw);
+				$bd = @ldap_bind($ad, $user, $pw);
 
 				// verify binding, if binding succeeds then login is correct
 				if ( $bd ) {

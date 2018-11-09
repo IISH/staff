@@ -2,8 +2,7 @@
 function uploadReplacementPhoto($oStaff ) {
 	$target_dir = Settings::get('uploadDir');
 
-//	$newName = $oStaff->getId() . '-' . str_replace('_.', '.', basename($_FILES["fileToUpload"]["name"]));
-	$newName = $oStaff->getId() . '.' . pathinfo($_FILES["fileToUpload"]["name"], PATHINFO_EXTENSION);
+	$newName = $oStaff->getId() . '-' . str_replace('_.', '.', basename($_FILES["fileToUpload"]["name"]));
 	$target_file = $target_dir . $newName;
 
 	$imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
