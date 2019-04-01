@@ -24,11 +24,13 @@ class Authentication {
 		//
 		$sAMAccountName = $user;
 		$sAMAccountName = str_replace($auth['prefix'], '', $sAMAccountName);
+		$sAMAccountName = str_replace($auth['postfix'], '', $sAMAccountName);
 
 		// add prefix
-		$user = $auth['prefix'] . $user;
+		$user = $auth['prefix'] . $user . $auth['postfix'];
 		// remove double prefix
 		$user = str_replace($auth['prefix'] . $auth['prefix'], $auth['prefix'], $user);
+		$user = str_replace($auth['postfix'] . $auth['postfix'], $auth['postfix'], $user);
 
 		// loop all Active Directory servers
 		//foreach ( unserialize($auth['servers']) as $server ) {

@@ -159,8 +159,9 @@ class ProtimeUser {
 			$this->findSubEmployees();
 			$this->calculateUserSettings();
 			$this->calculateDepartmentRoleAuthorisation();
-			$this->calculateUserAuthorisation();
+//			$this->calculateUserAuthorisation();
 		}
+		$this->calculateUserAuthorisation();
 
 		// outside the loop
 		// get extra authorisation via session name, this is for users not in protime but who need extra authorisation
@@ -304,6 +305,7 @@ class ProtimeUser {
 	}
 
 	public function hasAuthorisationTabFire() {
+//print_r(  $this->arrUserAuthorisation );
 		return ( $this->isAdmin() || in_array('tab_fire', $this->arrDepartmentRoleAuthorisation) || in_array('tab_fire', $this->arrUserAuthorisation) );
 	}
 
@@ -674,6 +676,7 @@ class ProtimeUser {
 			// rights via user authorisation
 			//		$query = "SELECT * FROM staff_user_authorisation WHERE user_id IN ( " . $this->protime_id . " ) AND isdeleted=0 ";
 			$query = "SELECT * FROM staff_user_authorisation_via_loginname WHERE loginname = '" . addslashes(trim($_SESSION['loginname'])) . "' AND isdeleted=0 ";
+//echo $query . ' +++';
 			$stmt = $dbConn->getConnection()->prepare($query);
 			$stmt->execute();
 			$result = $stmt->fetchAll();
@@ -686,6 +689,7 @@ class ProtimeUser {
 
 			// make unique
 			$arrAuthorisation = array_unique( $arrAuthorisation );
+//print_r( $arrAuthorisation );
 			$this->arrUserAuthorisation = $arrAuthorisation;
 		}
 	}
