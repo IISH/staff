@@ -1,4 +1,7 @@
 <?php
+header('Location: https://aanwezigheidsbord.huc.knaw.nl/Presence?filterVisible=true');
+die('go to: <a href="https://aanwezigheidsbord.huc.knaw.nl/Presence?filterVisible=true</a>">https://aanwezigheidsbord.huc.knaw.nl/</a>');
+
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 

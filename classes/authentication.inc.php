@@ -68,6 +68,7 @@ class Authentication {
 							$whitelist = explode("\n", $whitelist);
 							foreach ( $whitelist as $wl ) {
 								foreach($entries[0]['memberof'] as $grps) {
+
 									if ( $grps == trim($wl)) {
 										$login_correct = 1; // authenticated & authorised
 										break;

@@ -135,7 +135,7 @@ class WebsiteProtection {
 				if ( preg_match($pattern, $retval) == 0) {
 					// niet goed
 					$this->sendErrorToBrowser("ERROR 8564125");
-					$this->sendWarningMail("ERROR 8564125 - command: " . $type . " - value: " . $retval);
+					$this->sendWarningMail("ERROR 8564125 - command: " . $type . " - value: " . $retval . ' - pattern: ' . $pattern);
 					die('');
 				}
 			}
