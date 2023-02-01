@@ -1,7 +1,7 @@
 {
     "require": {
         "twig/twig": "~1.0",
-        "symfony/symfony": "~2.3",
+        "symfony/symfony": "~4.4",
         "phpmailer/phpmailer": "~6.1"
     }
 }
